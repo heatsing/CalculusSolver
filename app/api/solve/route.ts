@@ -3,7 +3,7 @@ import { buildDeepSeekMessages, callDeepSeek } from "@/lib/deepseek";
 import { detectOperation, detectPrimaryVariable } from "@/lib/math-parser";
 import { computeLocalAnswer, verifyResult } from "@/lib/math-verifier";
 import { isRateLimited } from "@/lib/rate-limit";
-import { solveRequestSchema, type SolverResultResponse } from "@/lib/solver-schema";
+import { solveRequestSchema, solverResultSchema, type SolverResultResponse } from "@/lib/solver-schema";
 import { generateRequestId } from "@/lib/utils";
 
 function createErrorResponse(
@@ -127,12 +127,12 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
     }
 
-    const parsedResult = solveRequestSchema.safeParse({ input, mode });
-    if (!parsedResult.success) {
-      return createErrorResponse("INVALID_REQUEST", "Could not process the request.", requestId, 400);
+    const parsedAiResult = solverResultSchema.safeParse(parsedAi);
+    if (!parsedAiResult.success) {
+      return createErrorResponse("INVALID_AI_RESPONSE", "AI response did not match the expected format.", requestId, 502);
     }
 
-    const aiResult = parsedAi as SolverResultResponse;
+    const aiResult = parsedAiResult.data;
     const localVerification = verifyResult(aiResult);
 
     return NextResponse.json({
