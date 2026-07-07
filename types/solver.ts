@@ -1,3 +1,5 @@
+import type { SolverMachine } from "@/lib/solver-schema";
+
 export type SolverMode = "auto" | "calculus" | "algebra";
 
 export type AnswerType =
@@ -11,7 +13,8 @@ export type VerificationStatus =
   | "verified"
   | "partially_verified"
   | "not_verified"
-  | "uncertain";
+  | "uncertain"
+  | "unsupported";
 
 export type SolverOperation =
   | "derivative"
@@ -59,5 +62,6 @@ export type SolverResult = {
     explanation: string;
   };
   graph: GraphDefinition;
+  machine: SolverMachine;
   warnings: string[];
 };

@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
-import { buildDeepSeekMessages, callDeepSeek } from "@/lib/deepseek";
+import { buildDeepSeekMessages, callDeepSeek, estimateDeepSeekCost } from "@/lib/deepseek";
 import { detectOperation, detectPrimaryVariable } from "@/lib/math-parser";
 import { computeLocalAnswer, verifyResult } from "@/lib/math-verifier";
+import { checkResultConsistency } from "@/lib/result-consistency";
 import { isRateLimited } from "@/lib/rate-limit";
+import { solveCache } from "@/lib/request-cache";
 import { solveRequestSchema, solverResultSchema, type SolverResultResponse } from "@/lib/solver-schema";
 import { generateRequestId } from "@/lib/utils";
+import type { SolverResult } from "@/types/solver";
+
+export const dynamic = "force-dynamic";
 
 function createErrorResponse(
   code: string,
@@ -24,21 +29,45 @@ function createErrorResponse(
   );
 }
 
-function snakeToCamelSteps(steps: SolverResultResponse["steps"]): SolverResultResponse["steps"] {
-  return steps.map((step) => ({
-    number: step.number,
-    title: step.title,
-    explanation: step.explanation,
-    rule: step.rule,
-    latex_before: step.latex_before,
-    latex_after: step.latex_after
+function renumberSteps(steps: SolverResultResponse["steps"]): SolverResultResponse["steps"] {
+  return steps.map((step, index) => ({
+    ...step,
+    number: index + 1
   }));
 }
 
-function createLocalFallback(input: string, mode: string): SolverResultResponse {
+function mapSolverResultResponse(
+  response: SolverResultResponse,
+  localVerification: SolverResult["localVerification"],
+  aiVerification: SolverResult["aiVerification"]
+): SolverResult {
+  return {
+    operation: response.operation,
+    interpretedProblem: response.interpreted_problem,
+    interpretedLatex: response.interpreted_latex,
+    answer: response.answer,
+    answerLatex: response.answer_latex,
+    answerType: response.answer_type,
+    steps: response.steps.map((step) => ({
+      number: step.number,
+      title: step.title,
+      explanation: step.explanation,
+      rule: step.rule,
+      latexBefore: step.latex_before,
+      latexAfter: step.latex_after
+    })),
+    aiVerification,
+    localVerification,
+    graph: response.graph,
+    machine: response.machine,
+    warnings: response.warnings
+  };
+}
+
+async function createLocalFallback(input: string, mode: string): Promise<SolverResultResponse> {
   const operation = detectOperation(input);
   const variable = detectPrimaryVariable(input);
-  const localAnswer = computeLocalAnswer(input, operation, variable);
+  const localAnswer = await computeLocalAnswer(input, operation, variable);
 
   return {
     operation: operation as SolverResultResponse["operation"],
@@ -61,6 +90,18 @@ function createLocalFallback(input: string, mode: string): SolverResultResponse 
       variable,
       domain: [-10, 10]
     },
+    machine: {
+      source_expression: operation !== "graph" ? input : null,
+      answer_expression: operation !== "graph" ? localAnswer : null,
+      variable,
+      equation_left: null,
+      equation_right: null,
+      solutions: [],
+      lower_bound: null,
+      upper_bound: null,
+      limit_point: null,
+      limit_direction: null
+    },
     warnings: ["AI unavailable. Results are generated locally and may be limited."]
   };
 }
@@ -82,29 +123,52 @@ export async function POST(request: Request): Promise<NextResponse> {
       return createErrorResponse("INVALID_REQUEST", issues, requestId, 400);
     }
 
+    const { input, mode } = parsedRequest.data;
+    const cacheKey = `${mode}:${input.trim()}`;
+    const cached = solveCache.get(cacheKey);
+    if (cached) {
+      return NextResponse.json({
+        status: "success",
+        requestId,
+        result: cached
+      });
+    }
+
     if (isRateLimited()) {
       return createErrorResponse("RATE_LIMITED", "Too many requests. Please slow down.", requestId, 429);
     }
 
-    const { input, mode } = parsedRequest.data;
-
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
-      const fallback = createLocalFallback(input, mode);
-      const localVerification = verifyResult(fallback);
+      const fallback = await createLocalFallback(input, mode);
+      const localVerification = await verifyResult(fallback);
+      const consistencyWarnings = checkResultConsistency(fallback);
+      const result = mapSolverResultResponse(
+        {
+          ...fallback,
+          steps: renumberSteps(fallback.steps),
+          warnings: [...fallback.warnings, ...consistencyWarnings]
+        },
+        localVerification,
+        fallback.verification
+      );
       return NextResponse.json({
         status: "success",
         requestId,
-        result: {
-          ...fallback,
-          localVerification,
-          aiVerification: fallback.verification
-        }
+        result
       });
     }
 
     const messages = buildDeepSeekMessages({ input, mode });
     const deepseekResponse = await callDeepSeek(messages);
+
+    const usage = (deepseekResponse as { usage?: { prompt_tokens?: number; completion_tokens?: number } }).usage;
+    if (usage) {
+      const cost = estimateDeepSeekCost(usage);
+      console.info(
+        `DeepSeek cost estimate: $${cost.estimatedCostUsd.toFixed(6)} (${cost.totalTokens} tokens)`
+      );
+    }
 
     const choices = (deepseekResponse as { choices?: Array<{ message?: { content?: string } }> }).choices;
     const content = choices?.[0]?.message?.content;
@@ -133,17 +197,25 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     const aiResult = parsedAiResult.data;
-    const localVerification = verifyResult(aiResult);
+    const consistencyWarnings = checkResultConsistency(aiResult);
+    const localVerification = await verifyResult(aiResult);
+
+    const result = mapSolverResultResponse(
+      {
+        ...aiResult,
+        steps: renumberSteps(aiResult.steps),
+        warnings: [...aiResult.warnings, ...consistencyWarnings]
+      },
+      localVerification,
+      aiResult.verification
+    );
+
+    solveCache.set(cacheKey, result);
 
     return NextResponse.json({
       status: "success",
       requestId,
-      result: {
-        ...aiResult,
-        steps: snakeToCamelSteps(aiResult.steps),
-        localVerification,
-        aiVerification: aiResult.verification
-      }
+      result
     });
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") {

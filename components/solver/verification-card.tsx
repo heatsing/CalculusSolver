@@ -1,4 +1,4 @@
-import { Shield, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
+import { Shield, ShieldAlert, ShieldCheck, ShieldQuestion, ShieldX } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SolverResult } from "@/types/solver";
 import { cn } from "@/lib/utils";
@@ -6,8 +6,9 @@ import { cn } from "@/lib/utils";
 const statusConfig = {
   verified: { icon: ShieldCheck, color: "text-success", bg: "bg-success/10", label: "Verified" },
   partially_verified: { icon: ShieldAlert, color: "text-warning", bg: "bg-warning/10", label: "Partially Verified" },
-  not_verified: { icon: Shield, color: "text-error", bg: "bg-error/10", label: "Not Verified" },
-  uncertain: { icon: ShieldQuestion, color: "text-body", bg: "bg-secondary-background", label: "Uncertain" }
+  not_verified: { icon: ShieldX, color: "text-error", bg: "bg-error/10", label: "Not Verified" },
+  uncertain: { icon: ShieldQuestion, color: "text-body", bg: "bg-secondary-background", label: "Uncertain" },
+  unsupported: { icon: Shield, color: "text-body", bg: "bg-secondary-background", label: "Unsupported" }
 };
 
 export function VerificationCard({ result }: { result: SolverResult }): React.JSX.Element {

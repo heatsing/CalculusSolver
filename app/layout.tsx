@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { StructuredData } from "@/components/seo/structured-data";
+import {
+  websiteStructuredData,
+  softwareApplicationStructuredData
+} from "@/lib/seo";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -47,6 +52,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <StructuredData data={websiteStructuredData()} />
+        <StructuredData data={softwareApplicationStructuredData()} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

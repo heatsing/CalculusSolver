@@ -3,16 +3,17 @@ declare module "nerdamer" {
     toString(): string;
     expand(): NerdamerExpression;
     factor(): NerdamerExpression;
+    evaluate(): NerdamerExpression;
   };
 
-  type NerdamerStatic = {
+  type NerdamerFunction = {
     (expression: string): NerdamerExpression;
     diff(expression: string, variable: string): NerdamerExpression;
     integrate(expression: string, variable: string): NerdamerExpression;
     solveEquations(expression: string, variable: string): unknown;
   };
 
-  const nerdamer: NerdamerStatic;
+  const nerdamer: NerdamerFunction;
   export default nerdamer;
 }
 

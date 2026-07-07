@@ -5,6 +5,19 @@ export const solveRequestSchema = z.object({
   mode: z.enum(["auto", "calculus", "algebra"]).default("auto")
 });
 
+export const solverMachineSchema = z.object({
+  source_expression: z.string().nullable(),
+  answer_expression: z.string().nullable(),
+  variable: z.string().nullable(),
+  equation_left: z.string().nullable(),
+  equation_right: z.string().nullable(),
+  solutions: z.array(z.string()),
+  lower_bound: z.string().nullable(),
+  upper_bound: z.string().nullable(),
+  limit_point: z.string().nullable(),
+  limit_direction: z.enum(["both", "left", "right"]).nullable()
+});
+
 export const solverResultSchema = z.object({
   operation: z.enum([
     "derivative",
@@ -44,6 +57,18 @@ export const solverResultSchema = z.object({
     domain: z.tuple([z.number(), z.number()]).nullable(),
     title: z.string().nullable().optional()
   }),
+  machine: solverMachineSchema.default({
+    source_expression: null,
+    answer_expression: null,
+    variable: null,
+    equation_left: null,
+    equation_right: null,
+    solutions: [],
+    lower_bound: null,
+    upper_bound: null,
+    limit_point: null,
+    limit_direction: null
+  }),
   warnings: z.array(z.string())
 });
 
@@ -59,4 +84,5 @@ export const apiErrorCodeSchema = z.enum([
 
 export type SolveRequest = z.infer<typeof solveRequestSchema>;
 export type SolverResultResponse = z.infer<typeof solverResultSchema>;
+export type SolverMachine = z.infer<typeof solverMachineSchema>;
 export type ApiErrorCode = z.infer<typeof apiErrorCodeSchema>;

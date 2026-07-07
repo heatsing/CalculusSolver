@@ -71,7 +71,7 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
             onKeyDown={handleKeyDown}
             placeholder="Solve ∫ x² sin(x) dx or find the derivative of x³ + 2x"
             disabled={loading}
-            className="min-h-[100px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/60 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-[120px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/60 focus-visible:ring-0 focus-visible:ring-offset-0 sm:min-h-[100px]"
             aria-label="Math problem input"
           />
         )}
@@ -81,14 +81,14 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
             onClick={onSubmit}
             disabled={loading || value.trim().length === 0 || mode === "image"}
             size="icon"
-            className="h-10 w-10 rounded-input"
+            className="h-12 w-12 rounded-input sm:h-10 sm:w-10"
           >
             {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 px-1">
         {modes.map((m) => {
           const Icon = m.icon;
           const isBeta = m.id === "image";

@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { readHistory, writeHistory, clearHistory, type HistoryItem } from "@/lib/storage";
+import { readHistory, writeHistory, clearHistory, deleteHistoryItem, type HistoryItem } from "@/lib/storage";
+import type { SolverResult } from "@/types/solver";
 
 export function useSolverHistory() {
   const [history, setHistory] = React.useState<HistoryItem[]>([]);
@@ -12,7 +13,7 @@ export function useSolverHistory() {
     setHistory(readHistory());
   }, []);
 
-  function add(input: string, mode: string, result: unknown): void {
+  function add(input: string, mode: string, result: SolverResult): void {
     if (typeof window === "undefined") return;
     const item: HistoryItem = {
       id: crypto.randomUUID(),
@@ -26,10 +27,16 @@ export function useSolverHistory() {
     writeHistory(next);
   }
 
+  function remove(id: string): void {
+    const next = history.filter((item) => item.id !== id);
+    setHistory(next);
+    deleteHistoryItem(id);
+  }
+
   function clear(): void {
     setHistory([]);
     clearHistory();
   }
 
-  return { history: mounted ? history : [], add, clear };
+  return { history: mounted ? history : [], add, remove, clear };
 }

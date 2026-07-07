@@ -29,6 +29,7 @@ export async function callDeepSeek(messages: DeepSeekMessage[]) {
         model,
         messages,
         temperature: 0.1,
+        max_tokens: 2048,
         response_format: {
           type: "json_object"
         }
@@ -45,6 +46,28 @@ export async function callDeepSeek(messages: DeepSeekMessage[]) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+export function estimateDeepSeekCost(usage: {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+}): {
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+  estimatedCostUsd: number;
+} {
+  const inputTokens = usage.prompt_tokens ?? 0;
+  const outputTokens = usage.completion_tokens ?? 0;
+  const totalTokens = inputTokens + outputTokens;
+  const estimatedCostUsd = (inputTokens * 0.27 + outputTokens * 1.1) / 1_000_000;
+
+  return {
+    inputTokens,
+    outputTokens,
+    totalTokens,
+    estimatedCostUsd
+  };
 }
 
 export function buildDeepSeekMessages({ input, mode }: SolveRequest): DeepSeekMessage[] {

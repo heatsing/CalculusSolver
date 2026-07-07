@@ -2,7 +2,9 @@ import { Copy, Check, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LatexBlock } from "@/components/solver/latex-render";
+import { MathDisplay } from "@/components/math/math-display";
+import { ResultFeedback } from "@/components/solver/result-feedback";
+import { ShareButton } from "@/components/solver/share-button";
 import type { SolverResult } from "@/types/solver";
 import * as React from "react";
 
@@ -16,9 +18,13 @@ const answerTypeLabels: Record<string, string> = {
 
 export function AnswerCard({
   result,
+  input,
+  mode,
   onNewProblem
 }: {
   result: SolverResult;
+  input: string;
+  mode: string;
   onNewProblem: () => void;
 }): React.JSX.Element {
   const [copiedAnswer, setCopiedAnswer] = React.useState(false);
@@ -45,7 +51,7 @@ export function AnswerCard({
       </CardHeader>
       <CardContent>
         <div className="rounded-card bg-white p-4">
-          <LatexBlock latex={result.answerLatex} />
+          <MathDisplay latex={result.answerLatex} />
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
@@ -64,11 +70,13 @@ export function AnswerCard({
             {copiedLatex ? <Check className="mr-1 h-4 w-4" /> : <Copy className="mr-1 h-4 w-4" />}
             Copy LaTeX
           </Button>
+          <ShareButton input={input} mode={mode} />
           <Button variant="outline" size="sm" onClick={onNewProblem}>
             <RefreshCw className="mr-1 h-4 w-4" />
             New Problem
           </Button>
         </div>
+        <ResultFeedback result={result} className="mt-4" />
       </CardContent>
     </Card>
   );

@@ -5,17 +5,41 @@ import { FeatureStrip } from "@/components/marketing/feature-strip";
 import { AiProcess } from "@/components/marketing/ai-process";
 import { ExampleGrid } from "@/components/marketing/example-grid";
 import { SolverShell } from "@/components/solver/solver-shell";
+import { Faq } from "@/components/marketing/faq";
+import { generalFaqs } from "@/data/faqs";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "AI Math Solver",
+  description:
+    "Solve calculus and algebra problems with one smart input. Get step-by-step solutions, LaTeX rendering, local verification, and interactive graphs.",
+  path: "/",
+  keywords: [
+    "calculus solver",
+    "algebra solver",
+    "AI math solver",
+    "derivative",
+    "integral",
+    "limit",
+    "step by step math",
+    "free math solver",
+    "online math help"
+  ]
+});
 
 export default function HomePage(): React.JSX.Element {
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
+      <main className="relative mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute -top-20 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="pointer-events-none absolute top-60 right-0 -z-10 h-[400px] w-[400px] rounded-full bg-purple-300/20 blur-3xl" />
         <Hero />
         <SolverShell mode="auto" />
         <FeatureStrip />
         <AiProcess />
         <ExampleGrid />
+        <Faq items={generalFaqs} />
       </main>
       <Footer />
     </>

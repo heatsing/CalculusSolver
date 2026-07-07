@@ -18,6 +18,14 @@
     @apply bg-background text-heading antialiased;
     font-family: var(--font-sans);
   }
+  button,
+  [type="button"],
+  [type="submit"],
+  [type="reset"],
+  input[type="text"],
+  textarea {
+    touch-action: manipulation;
+  }
 }
 
 @layer utilities {

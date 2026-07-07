@@ -29,6 +29,7 @@ type SolverFormValues = z.infer<typeof solverFormSchema>;
 export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
   const searchParams = useSearchParams();
   const exampleId = searchParams.get("example");
+  const queryInput = searchParams.get("q");
 
   const { register, handleSubmit, setValue, watch, reset: resetForm } = useForm<SolverFormValues>({
     resolver: zodResolver(solverFormSchema),
@@ -36,8 +37,8 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
   });
 
   const inputValue = watch("input");
-  const { state, solve, reset } = useSolver();
-  const { history, add, clear } = useSolverHistory();
+  const { state, solve, cancel, reset } = useSolver();
+  const { history, add, remove, clear } = useSolverHistory();
 
   React.useEffect(() => {
     if (exampleId) {
@@ -49,6 +50,16 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
       }
     }
   }, [exampleId, setValue]);
+
+  React.useEffect(() => {
+    if (queryInput) {
+      setValue("input", decodeURIComponent(queryInput));
+      const element = document.getElementById("solver-input");
+      const textarea = element?.querySelector("textarea");
+      textarea?.focus();
+      element?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [queryInput, setValue]);
 
   async function onSubmit(values: SolverFormValues): Promise<void> {
     await solve(values.input, mode);
@@ -87,17 +98,17 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
       <QuickExamples onSelect={handleSelectExample} />
 
       <div className="mt-4 flex justify-end">
-        <HistoryDrawer history={history} onClear={clear} onSelect={handleSelectExample} />
+        <HistoryDrawer history={history} onClear={clear} onSelect={handleSelectExample} onRemove={remove} />
       </div>
 
-      {state.status === "loading" && <SolverLoading />}
-      {state.status === "error" && <SolverError message={state.message} />}
+      {state.status === "loading" && <SolverLoading onCancel={cancel} />}
+      {state.status === "error" && <SolverError message={state.message} onRetry={() => solve(inputValue.trim(), mode)} />}
 
       {state.status === "success" && (
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
           <div className="space-y-5">
             <InterpretedProblem result={state.result} />
-            <AnswerCard result={state.result} onNewProblem={handleNewProblem} />
+            <AnswerCard result={state.result} input={inputValue.trim()} mode={mode} onNewProblem={handleNewProblem} />
             <VerificationCard result={state.result} />
           </div>
           <div className="space-y-5">

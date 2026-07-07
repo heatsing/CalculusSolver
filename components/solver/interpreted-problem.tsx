@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LatexBlock } from "@/components/solver/latex-render";
+import { MathDisplay } from "@/components/math/math-display";
 import type { SolverResult } from "@/types/solver";
 
 const operationLabels: Record<string, string> = {
@@ -26,7 +26,7 @@ export function InterpretedProblem({ result }: { result: SolverResult }): React.
         </div>
       </CardHeader>
       <CardContent>
-        <LatexBlock latex={result.interpretedLatex} />
+        <MathDisplay latex={result.interpretedLatex} />
         <p className="mt-2 text-sm text-body">{result.interpretedProblem}</p>
       </CardContent>
     </Card>

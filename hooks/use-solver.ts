@@ -11,15 +11,27 @@ export type SolverState =
 
 export function useSolver() {
   const [state, setState] = React.useState<SolverState>({ status: "idle" });
+  const abortControllerRef = React.useRef<AbortController | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   async function solve(input: string, mode: string): Promise<void> {
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setState({ status: "loading" });
 
     try {
       const response = await fetch("/api/solve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input, mode })
+        body: JSON.stringify({ input, mode }),
+        signal: controller.signal
       });
 
       const payload = (await response.json()) as unknown;
@@ -47,14 +59,27 @@ export function useSolver() {
       }
 
       setState({ status: "error", message: "Unexpected response format." });
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setState({ status: "idle" });
+        return;
+      }
       setState({ status: "error", message: "Network error. Please check your connection and try again." });
+    } finally {
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
     }
   }
 
+  function cancel(): void {
+    abortControllerRef.current?.abort();
+  }
+
   function reset(): void {
+    abortControllerRef.current?.abort();
     setState({ status: "idle" });
   }
 
-  return { state, solve, reset };
+  return { state, solve, cancel, reset };
 }
