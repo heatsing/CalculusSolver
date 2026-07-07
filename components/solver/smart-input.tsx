@@ -6,14 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const placeholderExamples = [
-  "Solve ∫ x² sin(x) dx",
-  "Find the derivative of x³ + 2x",
-  "Solve 2x + 5 = 17",
-  "Evaluate lim x→0 sin(x)/x",
-  "Factor x² − 9"
-];
-
 export type SmartInputProps = {
   value: string;
   onChange: (value: string) => void;
@@ -22,17 +14,7 @@ export type SmartInputProps = {
 };
 
 export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputProps): React.JSX.Element {
-  const [placeholder, setPlaceholder] = React.useState(placeholderExamples[0]);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    let index = 0;
-    const interval = setInterval(() => {
-      index = (index + 1) % placeholderExamples.length;
-      setPlaceholder(placeholderExamples[index]);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>): void {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -53,9 +35,9 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder}
+        placeholder="Solve ∫ x² sin(x) dx or find the derivative of x³ + 2x"
         disabled={loading}
-        className="min-h-[100px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+        className="min-h-[100px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/60 focus-visible:ring-0 focus-visible:ring-offset-0"
         aria-label="Math problem input"
       />
       <div className="absolute bottom-3 right-3 flex items-center gap-2">
@@ -63,19 +45,10 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
         <Button
           onClick={onSubmit}
           disabled={loading || value.trim().length === 0}
-          size="sm"
-          className="h-9 rounded-input px-4"
+          size="icon"
+          className="h-10 w-10 rounded-input"
         >
-          {loading ? (
-            <>
-              <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Solving...
-            </>
-          ) : (
-            <>
-              <span className="hidden sm:inline">Solve</span>
-              <ArrowRight className="h-4 w-4 sm:ml-1" />
-            </>
-          )}
+          {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
         </Button>
       </div>
     </div>
