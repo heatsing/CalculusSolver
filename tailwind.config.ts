@@ -37,8 +37,8 @@ const config: Config = {
         "solver-input": "920px"
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "Inter", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "ui-monospace", "SFMono-Regular", "monospace"]
+        sans: ["Inter", "Noto Sans Math", "system-ui", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "monospace"]
       },
       keyframes: {
         shimmer: {

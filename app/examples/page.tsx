@@ -87,8 +87,13 @@ export default function ExamplesPage(): React.JSX.Element {
                 </div>
                 <p className="text-base font-medium text-heading">{example.problem}</p>
               </div>
-              <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
-                Try this problem <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <div className="mt-4 flex items-center justify-between">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-sm font-semibold text-primary">
+                  {example.symbol}
+                </span>
+                <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  Try this problem <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </div>
               </div>
             </a>
           ))}

@@ -6,6 +6,7 @@ export type Example = {
   category: Exclude<ExampleCategory, "All">;
   difficulty: Difficulty;
   problem: string;
+  symbol: string;
   operation: string;
 };
 
@@ -15,6 +16,7 @@ export const examplesData: Example[] = [
     category: "Integrals",
     difficulty: "Advanced",
     problem: "Solve ∫ x² sin(x) dx",
+    symbol: "∫",
     operation: "integral"
   },
   {
@@ -22,6 +24,7 @@ export const examplesData: Example[] = [
     category: "Derivatives",
     difficulty: "Easy",
     problem: "Find the derivative of x³ + 2x",
+    symbol: "d/dx",
     operation: "derivative"
   },
   {
@@ -29,6 +32,7 @@ export const examplesData: Example[] = [
     category: "Limits",
     difficulty: "Medium",
     problem: "Evaluate lim x→0 sin(x)/x",
+    symbol: "lim",
     operation: "limit"
   },
   {
@@ -36,6 +40,7 @@ export const examplesData: Example[] = [
     category: "Algebra",
     difficulty: "Easy",
     problem: "Solve 2x + 5 = 17",
+    symbol: "x",
     operation: "solve_equation"
   },
   {
@@ -43,6 +48,7 @@ export const examplesData: Example[] = [
     category: "Algebra",
     difficulty: "Easy",
     problem: "Factor x² − 9",
+    symbol: "( )",
     operation: "factor"
   },
   {
@@ -50,6 +56,7 @@ export const examplesData: Example[] = [
     category: "Algebra",
     difficulty: "Easy",
     problem: "Expand (x + 3)²",
+    symbol: "(a+b)²",
     operation: "expand"
   },
   {
@@ -57,6 +64,7 @@ export const examplesData: Example[] = [
     category: "Algebra",
     difficulty: "Medium",
     problem: "Simplify (x² − 1)/(x − 1)",
+    symbol: "÷",
     operation: "simplify"
   },
   {
@@ -64,6 +72,7 @@ export const examplesData: Example[] = [
     category: "Graphs",
     difficulty: "Easy",
     problem: "Graph y = x² − 4x + 3",
+    symbol: "ƒ",
     operation: "graph"
   },
   {
@@ -71,6 +80,7 @@ export const examplesData: Example[] = [
     category: "Integrals",
     difficulty: "Medium",
     problem: "∫₀¹ x² dx",
+    symbol: "∫",
     operation: "integral"
   },
   {
@@ -78,6 +88,7 @@ export const examplesData: Example[] = [
     category: "Algebra",
     difficulty: "Medium",
     problem: "Solve x² − 5x + 6 = 0",
+    symbol: "x",
     operation: "solve_equation"
   },
   {
@@ -85,6 +96,7 @@ export const examplesData: Example[] = [
     category: "Derivatives",
     difficulty: "Medium",
     problem: "d²/dx² (x⁴)",
+    symbol: "d²/dx²",
     operation: "derivative"
   },
   {
@@ -92,6 +104,7 @@ export const examplesData: Example[] = [
     category: "Algebra",
     difficulty: "Medium",
     problem: "Solve x + y = 5 and x − y = 1",
+    symbol: "{ }",
     operation: "solve_system"
   }
 ];

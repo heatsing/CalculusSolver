@@ -5,8 +5,8 @@
 @import "katex/dist/katex.min.css";
 
 :root {
-  --font-geist-sans: "Geist", "Inter", system-ui, sans-serif;
-  --font-geist-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Inter", "Noto Sans Math", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
@@ -15,7 +15,7 @@
   }
   body {
     @apply bg-background text-heading antialiased;
-    font-family: var(--font-geist-sans);
+    font-family: var(--font-sans);
   }
 }
 
