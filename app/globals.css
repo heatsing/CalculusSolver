@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import "katex/dist/katex.min.css";
+@import "mathlive/static.css";
 
 :root {
   --font-sans: "Inter", "Noto Sans Math", system-ui, sans-serif;
