@@ -3,7 +3,6 @@
 import * as React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const keyboardGroups = [
   {
@@ -80,27 +79,20 @@ const keyboardGroups = [
           { label: "sin", value: "sin(" },
           { label: "cos", value: "cos(" },
           { label: "tan", value: "tan(" },
-          { label: "ln", value: "ln(" },
-          { label: "log", value: "log(" },
-          { label: "exp", value: "exp(" },
-          { label: "sqrt", value: "sqrt(" },
-          { label: "abs", value: "abs(" }
+          { label: "asin", value: "asin(" },
+          { label: "acos", value: "acos(" },
+          { label: "atan", value: "atan(" }
         ]
       },
       {
-        name: "Greek",
+        name: "More functions",
         symbols: [
-          { label: "α", value: "alpha" },
-          { label: "β", value: "beta" },
-          { label: "γ", value: "gamma" },
-          { label: "δ", value: "delta" },
-          { label: "ε", value: "epsilon" },
-          { label: "θ", value: "theta" },
-          { label: "λ", value: "lambda" },
-          { label: "μ", value: "mu" },
-          { label: "σ", value: "sigma" },
-          { label: "φ", value: "phi" },
-          { label: "ω", value: "omega" }
+          { label: "sinh", value: "sinh(" },
+          { label: "cosh", value: "cosh(" },
+          { label: "tanh", value: "tanh(" },
+          { label: "log", value: "log(" },
+          { label: "ln", value: "ln(" },
+          { label: "exp", value: "exp(" }
         ]
       }
     ]
@@ -141,6 +133,22 @@ const keyboardGroups = [
           { label: "∃", value: "exists " },
           { label: "⇒", value: "=>" },
           { label: "⇔", value: "<=>" }
+        ]
+      },
+      {
+        name: "Greek",
+        symbols: [
+          { label: "α", value: "alpha" },
+          { label: "β", value: "beta" },
+          { label: "γ", value: "gamma" },
+          { label: "δ", value: "delta" },
+          { label: "ε", value: "epsilon" },
+          { label: "θ", value: "theta" },
+          { label: "λ", value: "lambda" },
+          { label: "μ", value: "mu" },
+          { label: "σ", value: "sigma" },
+          { label: "φ", value: "phi" },
+          { label: "ω", value: "omega" }
         ]
       }
     ]
@@ -247,36 +255,16 @@ export function SymbolKeyboard({ onInsert, className }: SymbolKeyboardProps): Re
   }
 
   return (
-    <div className={cn("space-y-3", className)}>
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-body/70">Math keyboard</p>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() =>
-            setExpandedGroups({
-              Basic: false,
-              Calculus: false,
-              Advanced: false
-            })
-          }
-          className="h-auto px-2 py-1 text-xs text-body hover:text-heading"
-        >
-          Collapse all
-        </Button>
-      </div>
-      <div className="space-y-2">
-        {keyboardGroups.map((group) => (
-          <GroupPanel
-            key={group.title}
-            group={group}
-            expanded={expandedGroups[group.title] ?? false}
-            onToggle={() => toggleGroup(group.title)}
-            onInsert={onInsert}
-          />
-        ))}
-      </div>
+    <div className={cn("space-y-2", className)}>
+      {keyboardGroups.map((group) => (
+        <GroupPanel
+          key={group.title}
+          group={group}
+          expanded={expandedGroups[group.title] ?? false}
+          onToggle={() => toggleGroup(group.title)}
+          onInsert={onInsert}
+        />
+      ))}
     </div>
   );
 }

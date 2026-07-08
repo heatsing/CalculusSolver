@@ -2,10 +2,10 @@ import { ArrowDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const steps = [
-  { title: "Input", description: "Type or paste your math problem." },
-  { title: "AI interpretation", description: "DeepSeek identifies the operation and expression." },
-  { title: "Math verification", description: "Local engines cross-check the result." },
-  { title: "Answer and steps", description: "View the answer, derivation, and graph." }
+  { title: "Input", description: "Type or paste your math problem in any form." },
+  { title: "Interpret", description: "The solver recognizes the operation and expression." },
+  { title: "Verify", description: "Results are cross-checked with symbolic engines." },
+  { title: "Result", description: "View the answer, derivation, and graph." }
 ];
 
 export function AiProcess(): React.JSX.Element {
@@ -13,17 +13,17 @@ export function AiProcess(): React.JSX.Element {
     <section className="mt-20">
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-heading sm:text-4xl">
-            Built with AI-Powered Math Reasoning
+          <h2 className="font-serif text-3xl font-semibold tracking-tight text-heading sm:text-4xl">
+            How the solver works
           </h2>
           <p className="mt-4 text-lg text-body">
-            The solver understands natural language, formulas, and common calculus or algebra notation.
+            Enter a problem in plain words, standard notation, or LaTeX. The solver interprets it, computes the result, and walks you through each step.
           </p>
         </div>
 
-        <Card>
+        <Card className="border-border shadow-none">
           <CardHeader>
-            <CardTitle>How it works</CardTitle>
+            <CardTitle className="text-base font-semibold">Process</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-3">

@@ -35,7 +35,7 @@ export function Footer(): React.JSX.Element {
               Calculus Solver
             </Link>
             <p className="mt-3 text-sm text-body">
-              AI-powered math solutions with clear steps and interactive graphs.
+              Step-by-step math solutions for calculus, algebra, and more.
             </p>
           </div>
 

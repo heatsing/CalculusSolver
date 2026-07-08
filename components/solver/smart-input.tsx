@@ -23,14 +23,6 @@ const modes: { id: InputMode; label: string; icon: React.ElementType }[] = [
   { id: "image", label: "Image", icon: ImageUp }
 ];
 
-const placeholderExamples = [
-  "Solve ∫ x² sin(x) dx",
-  "Find derivative of x³ + 2x",
-  "Evaluate lim x→0 sin(x)/x",
-  "Solve x² − 5x + 6 = 0",
-  "Simplify (x² − 1)/(x − 1)"
-];
-
 const popularShortcuts = [
   { label: "∫ Integral", value: "integrate " },
   { label: "d/dx Derivative", value: "derivative of " },
@@ -40,15 +32,8 @@ const popularShortcuts = [
 
 export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputProps): React.JSX.Element {
   const [mode, setMode] = React.useState<InputMode>("natural");
-  const [placeholderIndex, setPlaceholderIndex] = React.useState(0);
+  const [keyboardOpen, setKeyboardOpen] = React.useState(true);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % placeholderExamples.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>): void {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -94,7 +79,7 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
       <div
         id="solver-input"
         className={cn(
-          "relative mx-auto w-full max-w-solver-input rounded-input border border-border bg-white p-2 shadow-sm transition-shadow focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/20"
+          "relative mx-auto w-full max-w-solver-input rounded-input border border-border bg-white p-2 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-primary/20"
         )}
       >
         {mode === "image" ? (
@@ -118,9 +103,9 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={placeholderExamples[placeholderIndex]}
+            placeholder="Type a math problem, e.g. integrate x^2 sin(x)"
             disabled={loading}
-            className="min-h-[140px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/60 focus-visible:ring-0 focus-visible:ring-offset-0 sm:min-h-[120px]"
+            className="min-h-[120px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/60 focus-visible:ring-0 focus-visible:ring-offset-0"
             aria-label="Math problem input"
           />
         )}
@@ -130,11 +115,34 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
             onClick={onSubmit}
             disabled={loading || value.trim().length === 0 || mode === "image"}
             size="icon"
-            className="h-12 w-12 rounded-input sm:h-10 sm:w-10"
+            className="h-11 w-11 rounded-input"
           >
             {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
           </Button>
         </div>
+      </div>
+
+      <div className="mx-auto flex max-w-solver-input flex-wrap items-center justify-center gap-2 px-1">
+        {modes.map((m) => {
+          const Icon = m.icon;
+          const active = mode === m.id;
+          return (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => handleModeChange(m.id)}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                active
+                  ? "bg-primary text-white"
+                  : "bg-white text-body hover:bg-primary-soft hover:text-primary"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {m.label}
+            </button>
+          );
+        })}
       </div>
 
       {mode === "natural" && (
@@ -152,36 +160,17 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
               </button>
             ))}
           </div>
-          <SymbolKeyboard onInsert={handleInsertSymbol} />
+          <button
+            type="button"
+            onClick={() => setKeyboardOpen((prev) => !prev)}
+            className="flex w-full items-center justify-between rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:bg-primary-soft/30"
+          >
+            <span>Math keyboard</span>
+            <span className="text-xs text-body">{keyboardOpen ? "Hide" : "Show"}</span>
+          </button>
+          {keyboardOpen && <SymbolKeyboard onInsert={handleInsertSymbol} />}
         </div>
       )}
-
-      <div className="flex flex-wrap items-center justify-center gap-2 px-1">
-        {modes.map((m) => {
-          const Icon = m.icon;
-          const isBeta = m.id === "image";
-          const active = mode === m.id;
-          return (
-            <button
-              key={m.id}
-              type="button"
-              onClick={() => handleModeChange(m.id)}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary text-white"
-                  : "bg-white text-body hover:bg-primary-soft hover:text-primary"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {m.label}
-              {isBeta && (
-                <span className="ml-0.5 rounded-full bg-white/20 px-1.5 py-0 text-[10px]">Beta</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }

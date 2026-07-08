@@ -8,8 +8,8 @@ import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/s
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Calculus Solver", href: "/calculus-solver" },
-  { label: "Algebra Solver", href: "/algebra-solver" },
+  { label: "Calculus", href: "/calculus-solver" },
+  { label: "Algebra", href: "/algebra-solver" },
   { label: "Examples", href: "/examples" }
 ];
 
@@ -37,12 +37,12 @@ export function Header(): React.JSX.Element {
     <header
       className={cn(
         "sticky top-0 z-40 h-16 w-full border-b transition-colors",
-        scrolled ? "border-border bg-white/90 backdrop-blur" : "border-transparent bg-white"
+        scrolled ? "border-border bg-white/95 backdrop-blur" : "border-transparent bg-white"
       )}
     >
       <div className="mx-auto flex h-full max-w-content items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-heading">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">∫</span>
+        <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-heading">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-serif text-white">∫</span>
           Calculus Solver
         </Link>
 
@@ -59,7 +59,7 @@ export function Header(): React.JSX.Element {
         </nav>
 
         <div className="hidden md:block">
-          <Button onClick={scrollToSolver}>Start Free</Button>
+          <Button onClick={scrollToSolver}>Solve now</Button>
         </div>
 
         <Sheet>
@@ -82,7 +82,7 @@ export function Header(): React.JSX.Element {
               ))}
               <SheetClose asChild>
                 <Button onClick={scrollToSolver} className="mt-4 w-full">
-                  Start Free
+                  Solve now
                 </Button>
               </SheetClose>
             </div>

@@ -13,32 +13,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#FFFFFF",
-        "secondary-background": "#F8F8FC",
+        background: "#FAFAF8",
+        "secondary-background": "#F2F2EF",
         primary: {
-          DEFAULT: "#6D3EF2",
-          hover: "#5A2ED6",
-          soft: "#F2EDFF"
+          DEFAULT: "#1E3A5F",
+          hover: "#152A45",
+          soft: "#E8EDF2"
         },
-        heading: "#101828",
-        body: "#667085",
-        border: "#E4E7EC",
-        success: "#16A34A",
-        warning: "#D97706",
-        error: "#DC2626"
+        accent: {
+          DEFAULT: "#D97706",
+          hover: "#B45309",
+          soft: "#FEF3C7"
+        },
+        heading: "#111827",
+        body: "#57534E",
+        border: "#E7E5E4",
+        success: "#15803D",
+        warning: "#B45309",
+        error: "#B91C1C"
       },
       borderRadius: {
-        card: "16px",
-        button: "10px",
-        input: "18px"
+        card: "12px",
+        button: "8px",
+        input: "12px"
       },
       maxWidth: {
-        content: "1200px",
-        "solver-input": "920px"
+        content: "1100px",
+        "solver-input": "760px"
       },
       fontFamily: {
-        sans: ["Inter", "Noto Sans Math", "system-ui", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "monospace"]
+        sans: ['"Source Sans 3"', '"Noto Sans Math"', "system-ui", "sans-serif"],
+        serif: ['"Source Serif 4"', "Georgia", "serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"]
       },
       keyframes: {
         shimmer: {
@@ -46,13 +52,13 @@ const config: Config = {
           "100%": { backgroundPosition: "200% 0" }
         },
         "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "0%": { opacity: "0", transform: "translateY(6px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
         }
       },
       animation: {
         shimmer: "shimmer 2s linear infinite",
-        "fade-in": "fade-in 0.35s ease-out forwards"
+        "fade-in": "fade-in 0.25s ease-out forwards"
       }
     }
   },

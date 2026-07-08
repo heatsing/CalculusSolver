@@ -31,12 +31,10 @@ export default function CalculusSolverPage(): React.JSX.Element {
     <>
       <StructuredData data={faqPageStructuredData(calculusFaqs)} />
       <Header />
-      <main className="relative mx-auto w-full max-w-content overflow-hidden px-4 sm:px-6 lg:px-8">
-        <div className="pointer-events-none absolute -top-20 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
-        <div className="pointer-events-none absolute top-60 right-0 -z-10 h-[400px] w-[400px] rounded-full bg-purple-300/20 blur-3xl" />
+      <main className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
         <Hero
-          title="Calculus Solver Helps You Get Quick Answers"
-          subtitle="Compute derivatives, integrals, limits, and more with detailed explanations and interactive graphs."
+          title="Calculus problems solved clearly"
+          subtitle="Derivatives, integrals, limits, and more. Each step explained so you can follow the logic."
         />
         <SolverShell mode="calculus" />
         <FeatureStrip />
