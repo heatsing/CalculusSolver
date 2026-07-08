@@ -4,9 +4,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   images: {
     unoptimized: true
-  },
-  env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
   }
 };
 
