@@ -1,21 +1,62 @@
 "use client";
 
 import * as React from "react";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MathDisplay } from "@/components/math/math-display";
+import { useExplainStep } from "@/hooks/use-explain-step";
 import type { SolverResult, SolverStep } from "@/types/solver";
 
-function StepRow({
-  step,
-  onExplain
-}: {
-  step: SolverStep;
-  onExplain?: (step: SolverStep) => void;
-}): React.JSX.Element {
+function StepExplanation({ input, step }: { input: string; step: SolverStep }): React.JSX.Element {
+  const { result, loading, error, explain } = useExplainStep();
   const [expanded, setExpanded] = React.useState(false);
 
+  function handleToggle(): void {
+    if (!expanded && !result && !loading) {
+      void explain(input, step);
+    }
+    setExpanded((prev) => !prev);
+  }
+
+  return (
+    <div className="mt-2">
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={handleToggle}
+        className="gap-1.5 text-xs font-medium text-primary hover:text-primary"
+      >
+        {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Lightbulb className="h-3.5 w-3.5" />}
+        {loading ? "Explaining..." : expanded ? "Hide explanation" : "Explain this step"}
+      </Button>
+
+      {expanded && (
+        <div className="mt-2 rounded-lg bg-primary-soft/50 p-3 text-sm text-body">
+          {error && <p className="text-error">{error}</p>}
+          {!error && !result && !loading && <p>Click above to get a deeper explanation.</p>}
+          {result && (
+            <div className="space-y-2">
+              <p>{result.explanation}</p>
+              {result.latexExample && <MathDisplay latex={result.latexExample} display="block" />}
+              {result.commonMistake && <p><strong>Common mistake:</strong> {result.commonMistake}</p>}
+              {result.keyTakeaway && <p><strong>Key takeaway:</strong> {result.keyTakeaway}</p>}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StepRow({
+  input,
+  step
+}: {
+  input: string;
+  step: SolverStep;
+}): React.JSX.Element {
   return (
     <div className="border-b border-border py-4 last:border-b-0">
       <div className="flex items-start gap-3">
@@ -45,27 +86,7 @@ function StepRow({
 
           <p className="text-sm text-body">{step.explanation}</p>
 
-          {onExplain && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setExpanded((prev) => !prev);
-                onExplain(step);
-              }}
-              className="gap-1.5 text-xs font-medium text-primary hover:text-primary"
-            >
-              <Lightbulb className="h-3.5 w-3.5" />
-              Explain this step
-            </Button>
-          )}
-
-          {expanded && (
-            <div className="rounded-lg bg-primary-soft/50 p-3 text-sm text-body">
-              Deeper explanation will appear here once the AI explanation endpoint is connected.
-            </div>
-          )}
+          <StepExplanation input={input} step={step} />
         </div>
       </div>
     </div>
@@ -74,10 +95,10 @@ function StepRow({
 
 export function StepsCard({
   result,
-  onExplainStep
+  input
 }: {
   result: SolverResult;
-  onExplainStep?: (step: SolverStep) => void;
+  input: string;
 }): React.JSX.Element {
   return (
     <Card className="animate-fade-in">
@@ -87,7 +108,7 @@ export function StepsCard({
       </CardHeader>
       <CardContent className="pt-0">
         {result.steps.map((step) => (
-          <StepRow key={step.number} step={step} onExplain={onExplainStep} />
+          <StepRow key={step.number} input={input} step={step} />
         ))}
       </CardContent>
     </Card>

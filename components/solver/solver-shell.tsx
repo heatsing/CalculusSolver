@@ -14,13 +14,14 @@ import { VerificationCard } from "@/components/solver/verification-card";
 import { StepsCard } from "@/components/solver/steps-card";
 import { GraphCard } from "@/components/solver/graph-card";
 import { RelatedExamples } from "@/components/solver/related-examples";
+import { CheckAnswer } from "@/components/solver/check-answer";
+import { PracticePanel } from "@/components/solver/practice-panel";
 import { SolverError } from "@/components/solver/solver-error";
 import { PreviewCards } from "@/components/solver/preview-cards";
 import { HistoryDrawer } from "@/components/solver/history-drawer";
 import { useSolver } from "@/hooks/use-solver";
 import { useSolverHistory } from "@/hooks/use-solver-history";
 import { examplesData } from "@/data/examples";
-import type { SolverStep } from "@/types/solver";
 
 const solverFormSchema = z.object({
   input: z.string().trim().min(1, "Please enter a math problem")
@@ -103,12 +104,6 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
     textarea?.focus();
   }
 
-  function handleExplainStep(step: SolverStep): void {
-    // Placeholder for Phase 4 AI explanation integration.
-    // eslint-disable-next-line no-console
-    console.log("Explain step", step.number);
-  }
-
   return (
     <section className="py-6">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -139,10 +134,12 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
               />
               <AnswerCard result={state.result} input={inputValue.trim()} mode={mode} onNewProblem={handleNewProblem} />
               <VerificationCard result={state.result} />
+              <CheckAnswer correctAnswer={state.result.answer} correctLatex={state.result.answerLatex} />
+              <PracticePanel result={state.result} />
               <RelatedExamples result={state.result} onSelect={handleSelectExample} />
             </div>
             <div className="space-y-5">
-              <StepsCard result={state.result} onExplainStep={handleExplainStep} />
+              <StepsCard result={state.result} input={inputValue.trim()} />
               <GraphCard result={state.result} />
             </div>
           </div>
