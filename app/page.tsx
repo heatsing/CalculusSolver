@@ -10,9 +10,9 @@ import { generalFaqs } from "@/data/faqs";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "AI Math Solver",
+  title: "Calculus Solver & Algebra Solver | Step-by-Step Math Solutions",
   description:
-    "Solve calculus and algebra problems with one smart input. Get step-by-step solutions, LaTeX rendering, local verification, and interactive graphs.",
+    "Free AI math solver for calculus and algebra. Solve derivatives, integrals, limits, equations, and expressions with clear explanations and interactive graphs.",
   path: "/",
   keywords: [
     "calculus solver",
