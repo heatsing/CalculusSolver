@@ -7,13 +7,9 @@ const keyboardRows = [
     { label: "x", value: "x" },
     { label: "y", value: "y" },
     { label: "z", value: "z" },
-    { label: "x²", value: "^2" },
-    { label: "x³", value: "^3" },
-    { label: "√", value: "sqrt(" },
-    { label: "π", value: "pi" },
-    { label: "∞", value: "Infinity" },
-    { label: "(", value: "(" },
-    { label: ")", value: ")" }
+    { label: "n", value: "n" },
+    { label: "t", value: "t" },
+    { label: "θ", value: "theta" }
   ],
   [
     { label: "0", value: "0" },
@@ -35,21 +31,42 @@ const keyboardRows = [
     { label: "=", value: "=" },
     { label: "<", value: "<" },
     { label: ">", value: ">" },
+    { label: "(", value: "(" },
+    { label: ")", value: ")" },
     { label: "| |", value: "abs(" },
     { label: "!", value: "!" },
     { label: "^", value: "^" }
+  ],
+  [
+    { label: "x²", value: "^2" },
+    { label: "x³", value: "^3" },
+    { label: "√", value: "sqrt(" },
+    { label: "π", value: "pi" },
+    { label: "e", value: "e" },
+    { label: "i", value: "i" },
+    { label: "∞", value: "Infinity" }
   ],
   [
     { label: "∫", value: "integrate(" },
     { label: "d/dx", value: "derivative(" },
     { label: "∂", value: "partial_derivative(" },
     { label: "lim", value: "limit(" },
-    { label: "Σ", value: "summation(" }
+    { label: "Σ", value: "summation(" },
+    { label: "dx", value: " dx" },
+    { label: "dy", value: " dy" }
   ],
   [
     { label: "sin", value: "sin(" },
     { label: "cos", value: "cos(" },
     { label: "tan", value: "tan(" },
+    { label: "asin", value: "asin(" },
+    { label: "acos", value: "acos(" },
+    { label: "atan", value: "atan(" }
+  ],
+  [
+    { label: "sinh", value: "sinh(" },
+    { label: "cosh", value: "cosh(" },
+    { label: "tanh", value: "tanh(" },
     { label: "log", value: "log(" },
     { label: "ln", value: "ln(" },
     { label: "eˣ", value: "exp(" }
