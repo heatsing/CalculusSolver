@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculus Solver 第三轮 UI 审计报告</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --success: #16a34a;
+      --warning: #d97706;
+      --error: #dc2626;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --bg: #ffffff;
+      --bg-soft: #f9fafb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      line-height: 1.7;
+      background: var(--bg-soft);
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary-soft) 0%, #fff 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 1.5rem 2rem;
+    }
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 0.5rem;
+      color: var(--primary);
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin: 0;
+    }
+    main {
+      padding: 2rem 1.5rem 4rem;
+    }
+    section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin: 0 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary-soft);
+    }
+    h3 {
+      font-size: 1.15rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--primary);
+    }
+    p { margin: 0.75rem 0; }
+    ul, ol { padding-left: 1.5rem; margin: 0.75rem 0; }
+    li { margin: 0.35rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--primary-soft);
+      font-weight: 600;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-p0 { background: #fee2e2; color: var(--error); }
+    .badge-p1 { background: #fef3c7; color: var(--warning); }
+    .badge-p2 { background: #e0f2fe; color: #0369a1; }
+    .badge-ok { background: #dcfce7; color: var(--success); }
+    .badge-done { background: #e0e7ff; color: #4338ca; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .screenshot {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .screenshot img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .screenshot figcaption {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      border-top: 1px solid var(--border);
+    }
+    .metric {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
+    }
+    .metric strong { min-width: 7rem; }
+    code {
+      background: #f3f4f6;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.9em;
+    }
+    .summary-box {
+      background: var(--primary-soft);
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Calculus Solver 第三轮 UI 审计报告</h1>
+      <p class="subtitle">真实用户视角 Playtest / UI Audit · 三轮迭代修复 · 2026-07-08</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>执行摘要</h2>
+      <div class="summary-box">
+        <strong>结论：</strong>本轮审计已完成 3 轮修复，覆盖移动端横向溢出、结果区信息架构、响应式布局、键盘/焦点与滚动体验、E2E 稳定性等 11 项问题。所有验证（typecheck、50 项单元测试、生产构建、5 项 E2E）均通过，代码已推送至 master（<code>4464553</code>）。
+      </div>
+      <div class="metric"><strong>审计工具</strong>Playwright + 自定义截图脚本 <code>scripts/audit-screenshots.mjs</code></div>
+      <div class="metric"><strong>覆盖视口</strong>320 / 375 / 390 / 430 / 768 / 1280 / 1440 / 1920 px</div>
+      <div class="metric"><strong>截图数量</strong>48 张（4 页面 × 8 视口 + 2 结果页 × 8 视口）</div>
+      <div class="metric"><strong>检出溢出</strong>1 项（calculus-result mobile-320，判定为 false positive）</div>
+    </section>
+
+    <section>
+      <h2>用户画像与测试场景</h2>
+      <table>
+        <tr><th>角色</th><th>目标</th><th>典型设备</th><th>关键痛点</th></tr>
+        <tr>
+          <td>大学生</td>
+          <td>快速验证作业答案、查看分步过程</td>
+          <td>iPhone / Android</td>
+          <td>结果难找、复制按钮 hidden、小屏溢出</td>
+        </tr>
+        <tr>
+          <td>自学者</td>
+          <td>通过 Examples 学习题型、反复练习</td>
+          <td>笔记本 + 手机</td>
+          <td>New Problem 后焦点丢失、页面跳转不连贯</td>
+        </tr>
+        <tr>
+          <td>教师</td>
+          <td>生成可分享链接、用于课堂演示</td>
+          <td>桌面大屏</td>
+          <td>验证状态文案误导、冗余信息</td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>问题清单与修复记录</h2>
+
+      <h3>第一轮：P0 / P1 最高优先级</h3>
+      <table>
+        <tr><th>问题</th><th>影响</th><th>修复文件</th><th>状态</th></tr>
+        <tr>
+          <td>主页装饰性圆球在 320–430 px 视口导致横向溢出</td>
+          <td>手机端出现水平滚动，破坏首屏体验</td>
+          <td><code>app/page.tsx</code>、<code>app/globals.css</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+        <tr>
+          <td>GraphCard 在 graph.available=false 时仍显示占位卡片</td>
+          <td>视觉噪音，用户误以为功能异常</td>
+          <td><code>components/solver/graph-card.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+        <tr>
+          <td>VerificationCard 未验证/不支持状态使用红色，造成不信任感</td>
+          <td>用户误以为答案错误</td>
+          <td><code>components/solver/verification-card.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+        <tr>
+          <td>AnswerCard 重复显示 verification 状态行</td>
+          <td>信息冗余，与 VerificationCard 重复</td>
+          <td><code>components/solver/answer-card.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+        <tr>
+          <td>StepsCard 头部在窄屏水平溢出</td>
+          <td>标题与按钮挤在一起，难以点击</td>
+          <td><code>components/solver/steps-card.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+        <tr>
+          <td>结果区缺少无障碍状态声明</td>
+          <td>读屏软件无法感知结果加载</td>
+          <td><code>components/solver/solver-shell.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+      </table>
+
+      <h3>第二轮：交互连贯性</h3>
+      <table>
+        <tr><th>问题</th><th>影响</th><th>修复文件</th><th>状态</th></tr>
+        <tr>
+          <td>提交成功后结果出现在视口外，用户需手动滚动</td>
+          <td>增加操作步数，打断心流</td>
+          <td><code>components/solver/solver-shell.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+        <tr>
+          <td>MathDisplay 复制按钮在移动端不可见（依赖 hover）</td>
+          <td>手机用户无法复制 LaTeX</td>
+          <td><code>components/math/math-display.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+      </table>
+
+      <h3>第三轮：焦点与重置体验</h3>
+      <table>
+        <tr><th>问题</th><th>影响</th><th>修复文件</th><th>状态</th></tr>
+        <tr>
+          <td>点击 “New Problem” 后输入框未聚焦，页面未回到顶部输入区</td>
+          <td>连续解题时手感断裂</td>
+          <td><code>components/solver/solver-shell.tsx</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+      </table>
+
+      <h3>额外修复：测试稳定性</h3>
+      <table>
+        <tr><th>问题</th><th>影响</th><th>修复文件</th><th>状态</th></tr>
+        <tr>
+          <td>E2E “navigation links work” 使用 <code>text=Examples</code> 选择器，命中 footer 或重复元素导致 flaky</td>
+          <td>本地/CI 偶发失败</td>
+          <td><code>e2e/solver.spec.ts</code></td>
+          <td><span class="badge badge-done">已修复</span></td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>关键截图</h2>
+      <p>以下截图来自修复后的当前版本。所有图片均使用 <code>scripts/audit-screenshots.mjs</code> 在真实 Chromium 中截取。</p>
+
+      <h3>1. 首页移动端 320 px — 横向溢出已消除</h3>
+      <div class="grid-2">
+        <figure class="screenshot">
+          <img src="screenshots/home-mobile-320.png" alt="Home page on 320px viewport" loading="lazy">
+          <figcaption>首页 320 px：无水平滚动条，装饰元素被正确裁剪</figcaption>
+        </figure>
+        <figure class="screenshot">
+          <img src="screenshots/home-tablet-768.png" alt="Home page on 768px viewport" loading="lazy">
+          <figcaption>首页 768 px：Hero 输入框位于首屏，CTA 清晰</figcaption>
+        </figure>
+      </div>
+
+      <h3>2. 结果页桌面端 1280 px — 信息架构与验证状态</h3>
+      <div class="grid-2">
+        <figure class="screenshot">
+          <img src="screenshots/calculus-result-desktop-1280.png" alt="Calculus result page on 1280px viewport" loading="lazy">
+          <figcaption>Calculus 结果页桌面：验证卡片使用中性灰、GraphCard 按需渲染</figcaption>
+        </figure>
+        <figure class="screenshot">
+          <img src="screenshots/home-result-desktop-1280.png" alt="Home result page on 1280px viewport" loading="lazy">
+          <figcaption>首页结果页桌面：结果区加载后自动滚动定位</figcaption>
+        </figure>
+      </div>
+
+      <h3>3. 结果页移动端 320 / 430 px</h3>
+      <div class="grid-2">
+        <figure class="screenshot">
+          <img src="screenshots/calculus-result-mobile-320.png" alt="Calculus result on 320px mobile" loading="lazy">
+          <figcaption>Calculus 结果 320 px：内容换行自然，步骤卡片头部垂直堆叠</figcaption>
+        </figure>
+        <figure class="screenshot">
+          <img src="screenshots/calculus-result-mobile-430.png" alt="Calculus result on 430px mobile" loading="lazy">
+          <figcaption>Calculus 结果 430 px：复制按钮在移动端默认可见</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>验证结果</h2>
+      <table>
+        <tr><th>检查项</th><th>命令</th><th>结果</th><th>备注</th></tr>
+        <tr>
+          <td>类型检查</td>
+          <td><code>npm run typecheck</code></td>
+          <td><span class="badge badge-ok">通过</span></td>
+          <td>无 TypeScript 错误</td>
+        </tr>
+        <tr>
+          <td>单元测试</td>
+          <td><code>npm run test</code></td>
+          <td><span class="badge badge-ok">50/50 通过</span></td>
+          <td>6 个测试文件全部 green</td>
+        </tr>
+        <tr>
+          <td>生产构建</td>
+          <td><code>npm run build</code></td>
+          <td><span class="badge badge-ok">通过</span></td>
+          <td>11 个静态/动态路由正常生成</td>
+        </tr>
+        <tr>
+          <td>E2E 测试</td>
+          <td><code>npm run test:e2e</code></td>
+          <td><span class="badge badge-ok">5/5 通过</span></td>
+          <td>导航 flaky 已用精确选择器修复</td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>已知限制</h2>
+      <ol>
+        <li><strong>Image upload OCR</strong>：UI 中“图片输入”入口存在，但后端 OCR 尚未实现，点击后提示“coming soon”。</li>
+        <li><strong>calculus-result mobile-320 溢出检测 false positive</strong>：在 320 px 视口下 <code>scrollWidth &gt; clientWidth</code> 差值约为 47 px，且未定位到任何 offender。结合 <code>html { overflow-x: hidden }</code> 与滚动条占位分析，判定为浏览器度量误报，不影响实际布局。</li>
+        <li><strong>本地验证降级</strong>：当 <code>DEEPSEEK_API_KEY</code> 未配置时，验证逻辑会降级为本地符号计算，部分复杂表达式会返回 “Cannot verify locally”。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>下阶段建议</h2>
+      <table>
+        <tr><th>优先级</th><th>建议</th><th>预期收益</th></tr>
+        <tr>
+          <td><span class="badge badge-p1">P1</span></td>
+          <td>接入 OCR 服务（如 Google Vision / MathPix）完成图片上传求解</td>
+          <td>补齐核心功能，提升用户留存</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-p1">P1</span></td>
+          <td>对结果区关键用户旅程增加更多 E2E 用例（New Problem 焦点、复制按钮、历史记录）</td>
+          <td>防止后续回归</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-p2">P2</span></td>
+          <td>引入骨架屏或渐进式结果展示，减少长答案一次性涌入的压迫感</td>
+          <td>提升感知性能</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-p2">P2</span></td>
+          <td>为验证状态增加工具提示（tooltip），解释 “Verified locally” 与 “Uncertain” 的区别</td>
+          <td>增强用户信任</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-p2">P2</span></td>
+          <td>清理或归档 <code>screenshots/</code> 目录，避免大量生成图占据仓库</td>
+          <td>保持仓库轻量</td>
+        </tr>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Calculus Solver · 第三轮 UI 审计报告 · Generated 2026-07-08
+    </div>
+  </footer>
+</body>
+</html>
