@@ -10,7 +10,16 @@ function baseResult(overrides: Partial<SolverResultResponse> = {}): SolverResult
     answer: "2x",
     answer_latex: "2x",
     answer_type: "exact",
-    steps: [{ number: 1, title: "Differentiate", explanation: "Use the power rule." }],
+    steps: [
+      {
+        number: 1,
+        title: "Differentiate",
+        explanation: "Use the power rule.",
+        rule: "Power rule",
+        latexBefore: "x^2",
+        latexAfter: "2x"
+      }
+    ],
     verification: { status: "verified", explanation: "Checked." },
     graph: { available: false, expression: null, variable: null, domain: null },
     machine: {
@@ -59,8 +68,8 @@ describe("checkResultConsistency", () => {
   it("warns when step numbering is inconsistent", () => {
     const result = baseResult({
       steps: [
-        { number: 1, title: "First", explanation: "Step one." },
-        { number: 3, title: "Third", explanation: "Step three." }
+        { number: 1, title: "First", explanation: "Step one.", rule: "Rule 1", latexBefore: "a", latexAfter: "b" },
+        { number: 3, title: "Third", explanation: "Step three.", rule: "Rule 3", latexBefore: "c", latexAfter: "d" }
       ]
     });
 

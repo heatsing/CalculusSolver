@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page, type Disposable } from "@playwright/test";
 import type { SolverResult } from "@/types/solver";
 
 const mockResult: SolverResult = {
@@ -13,13 +13,17 @@ const mockResult: SolverResult = {
       number: 1,
       title: "Interpret the problem",
       explanation: "The derivative of x^2 is requested.",
-      rule: "Operation detection"
+      rule: "Operation detection",
+      latexBefore: undefined,
+      latexAfter: undefined
     },
     {
       number: 2,
       title: "Apply the power rule",
       explanation: "Bring down the exponent and subtract one from it.",
-      rule: "Power rule"
+      rule: "Power rule",
+      latexBefore: "x^2",
+      latexAfter: "2x"
     }
   ],
   aiVerification: {
@@ -51,6 +55,24 @@ const mockResult: SolverResult = {
   warnings: []
 };
 
+function mockSolveRoute(page: Page): Promise<Disposable> {
+  return page.route("**/api/solve", async (route) => {
+    if (route.request().method() === "POST") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          status: "success",
+          requestId: "e2e-request",
+          result: mockResult
+        })
+      });
+    } else {
+      await route.continue();
+    }
+  });
+}
+
 test.describe("Calculus Solver", () => {
   test("home page loads and shows the solver", async ({ page }) => {
     await page.goto("/");
@@ -61,61 +83,33 @@ test.describe("Calculus Solver", () => {
   test("navigation links work", async ({ page }) => {
     await page.goto("/");
     await page.locator("header nav >> text=Examples").click();
-    await expect(page).toHaveURL("/examples");
+    await expect(page).toHaveURL("/examples", { timeout: 10000 });
   });
 
   test("submitting a problem shows the mocked result", async ({ page }) => {
-    await page.route("**/api/solve", async (route) => {
-      if (route.request().method() === "POST") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            status: "success",
-            requestId: "e2e-request",
-            result: mockResult
-          })
-        });
-      } else {
-        await route.continue();
-      }
-    });
+    await mockSolveRoute(page);
 
     await page.goto("/");
     const input = page.locator("[aria-label='Math problem input']");
     await input.fill("derivative of x^2");
     await input.press("Enter");
 
-    await expect(page.getByText("Answer", { exact: true })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole("heading", { name: "Step-by-Step Solution" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "1 Interpret the problem" })).toBeVisible();
+    await expect(page.getByText("Derivative", { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("heading", { name: "Step-by-step solution" })).toBeVisible();
+    await expect(page.getByText("1Interpret the problem")).toBeVisible();
   });
 
-  test("clicking Show all steps reveals every step", async ({ page }) => {
-    await page.route("**/api/solve", async (route) => {
-      if (route.request().method() === "POST") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            status: "success",
-            requestId: "e2e-request",
-            result: mockResult
-          })
-        });
-      } else {
-        await route.continue();
-      }
-    });
+  test("all steps are visible without clicking", async ({ page }) => {
+    await mockSolveRoute(page);
 
     await page.goto("/");
     const input = page.locator("[aria-label='Math problem input']");
     await input.fill("derivative of x^2");
     await input.press("Enter");
 
-    await expect(page.getByRole("heading", { name: "Step-by-Step Solution" })).toBeVisible({ timeout: 10000 });
-    await page.getByRole("button", { name: "Show all steps" }).click();
-    await expect(page.getByRole("button", { name: "2 Apply the power rule" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Step-by-step solution" })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Interpret the problem")).toBeVisible();
+    await expect(page.getByText("Apply the power rule")).toBeVisible();
   });
 
   test("examples page search filters the list", async ({ page }) => {

@@ -53,8 +53,8 @@ function mapSolverResultResponse(
       title: step.title,
       explanation: step.explanation,
       rule: step.rule,
-      latexBefore: step.latex_before,
-      latexAfter: step.latex_after
+      latexBefore: step.latexBefore,
+      latexAfter: step.latexAfter
     })),
     aiVerification,
     localVerification,
@@ -77,8 +77,22 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
     answer_latex: localAnswer,
     answer_type: "exact",
     steps: [
-      { number: 1, title: "Interpret the problem", explanation: `The input was interpreted as ${operation}.`, rule: "Operation detection" },
-      { number: 2, title: "Compute locally", explanation: `Using local symbolic computation, the result is ${localAnswer}.`, rule: "Nerdamer / math.js" }
+      {
+        number: 1,
+        title: "Interpret the problem",
+        explanation: `The input was interpreted as ${operation}.`,
+        rule: "Operation detection",
+        latexBefore: undefined,
+        latexAfter: undefined
+      },
+      {
+        number: 2,
+        title: "Compute locally",
+        explanation: `Using local symbolic computation, the result is ${localAnswer}.`,
+        rule: "Nerdamer / math.js",
+        latexBefore: undefined,
+        latexAfter: undefined
+      }
     ],
     verification: {
       status: "uncertain",
