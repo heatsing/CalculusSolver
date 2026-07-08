@@ -29,6 +29,8 @@ function MathFieldInternal({ value, onChange, placeholder, disabled }: MathField
       mathField.value = value;
       mathField.placeholder = placeholder ?? "Type a formula...";
       mathField.disabled = disabled ?? false;
+      mathField.setAttribute("virtual-keyboard-mode", "onfocus");
+      mathField.setAttribute("virtual-keyboard-theme", "material");
       mathField.style.cssText =
         "width: 100%; min-height: 100px; border: none; background: transparent; font-size: 1rem; --hue: 265;";
 

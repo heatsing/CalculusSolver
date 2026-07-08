@@ -12,6 +12,8 @@ export function normalizeInput(input: string): string {
     .replace(/\u2079/g, "^9")
     .replace(/\u2212/g, "-")
     .replace(/\u222B/g, "integrate")
+    .replace(/\u2202/g, "partial_derivative")
+    .replace(/\u2211/g, "summation")
     .replace(/\u221A/g, "sqrt")
     .replace(/\u03C0/g, "pi")
     .replace(/\u221E/g, "Infinity")
@@ -19,6 +21,20 @@ export function normalizeInput(input: string): string {
     .replace(/\u2192/g, "->")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+export function toMachineExpression(input: string): string {
+  let normalized = normalizeInput(input);
+
+  // Insert explicit multiplication where a number precedes a variable or opening parenthesis.
+  // Examples: "2x" -> "2*x", "2(x+1)" -> "2*(x+1)", "3sin(x)" -> "3*sin(x)"
+  normalized = normalized.replace(/(\d)([a-zA-Z_(])/g, "$1*$2");
+  normalized = normalized.replace(/(\d)(\()/g, "$1*$2");
+
+  // Convert common Unicode math operators.
+  normalized = normalized.replace(/\u00D7/g, "*").replace(/\u00F7/g, "/");
+
+  return normalized;
 }
 
 const equationKeywords = ["solve", "=", "find x", "find y", "root"];
