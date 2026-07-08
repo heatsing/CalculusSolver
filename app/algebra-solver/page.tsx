@@ -36,7 +36,6 @@ export default function AlgebraSolverPage(): React.JSX.Element {
         <div className="pointer-events-none absolute top-60 right-0 -z-10 h-[400px] w-[400px] rounded-full bg-purple-300/20 blur-3xl" />
         <Hero
           title="Algebra Solver Helps You Get Quick Answers"
-          highlight="Step-by-Step"
           subtitle="Solve equations, simplify expressions, factor polynomials, and understand every algebra step."
         />
         <SolverShell mode="algebra" />

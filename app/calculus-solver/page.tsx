@@ -36,7 +36,6 @@ export default function CalculusSolverPage(): React.JSX.Element {
         <div className="pointer-events-none absolute top-60 right-0 -z-10 h-[400px] w-[400px] rounded-full bg-purple-300/20 blur-3xl" />
         <Hero
           title="Calculus Solver Helps You Get Quick Answers"
-          highlight="Step-by-Step"
           subtitle="Compute derivatives, integrals, limits, and more with detailed explanations and interactive graphs."
         />
         <SolverShell mode="calculus" />
