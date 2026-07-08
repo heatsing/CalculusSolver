@@ -4,11 +4,11 @@ import type { SolverResult } from "@/types/solver";
 import { cn } from "@/lib/utils";
 
 const statusConfig = {
-  verified: { icon: ShieldCheck, color: "text-success", bg: "bg-success/10", label: "Verified" },
-  partially_verified: { icon: ShieldAlert, color: "text-warning", bg: "bg-warning/10", label: "Partially Verified" },
-  not_verified: { icon: ShieldX, color: "text-error", bg: "bg-error/10", label: "Not Verified" },
+  verified: { icon: ShieldCheck, color: "text-success", bg: "bg-success/10", label: "Verified locally" },
+  partially_verified: { icon: ShieldAlert, color: "text-warning", bg: "bg-warning/10", label: "Partially verified locally" },
+  not_verified: { icon: ShieldX, color: "text-body", bg: "bg-secondary-background", label: "Not verified locally" },
   uncertain: { icon: ShieldQuestion, color: "text-body", bg: "bg-secondary-background", label: "Uncertain" },
-  unsupported: { icon: Shield, color: "text-body", bg: "bg-secondary-background", label: "Unsupported" }
+  unsupported: { icon: Shield, color: "text-body", bg: "bg-secondary-background", label: "Cannot verify locally" }
 };
 
 export function VerificationCard({ result }: { result: SolverResult }): React.JSX.Element {

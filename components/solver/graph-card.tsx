@@ -12,47 +12,20 @@ const Plot = dynamic<PlotParams>(() => import("react-plotly.js"), {
   loading: () => <div className="grid h-80 place-items-center text-sm text-body">Loading graph...</div>
 });
 
-export function GraphCard({ result }: { result: SolverResult }): React.JSX.Element {
-  if (!result.graph.available || !result.graph.expression || !result.graph.variable || !result.graph.domain) {
-    return (
-      <Card className="animate-fade-in">
-        <CardHeader>
-          <CardTitle>Graph</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-body">Graph unavailable for this expression.</p>
-        </CardContent>
-      </Card>
-    );
+export function GraphCard({ result }: { result: SolverResult }): React.JSX.Element | null {
+  if (!result.graph.available) {
+    return null;
   }
 
-  const expression = sanitizeGraphExpression(result.graph.expression);
-  if (!expression) {
-    return (
-      <Card className="animate-fade-in">
-        <CardHeader>
-          <CardTitle>Graph</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-body">Graph unavailable for this expression.</p>
-        </CardContent>
-      </Card>
-    );
+  const expression = sanitizeGraphExpression(result.graph.expression ?? "");
+  if (!expression || !result.graph.variable || !result.graph.domain) {
+    return null;
   }
 
   const points = sampleGraph(expression, result.graph.variable, result.graph.domain);
 
   if (points.length === 0) {
-    return (
-      <Card className="animate-fade-in">
-        <CardHeader>
-          <CardTitle>Graph</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-body">Graph unavailable for this expression.</p>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   const data: Data[] = [

@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 
 export function Hero(): React.JSX.Element {
   return (
-    <section className="pt-14 pb-8 text-center sm:pt-20 sm:pb-10">
+    <section className="relative overflow-hidden bg-gradient-to-b from-primary-soft/50 via-white to-white py-16 sm:py-20 md:py-32 text-center">
       <Badge
         variant="secondary"
         className="mb-5 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide"
@@ -11,7 +11,7 @@ export function Hero(): React.JSX.Element {
         <Sparkles className="h-3.5 w-3.5" />
         AI Powered
       </Badge>
-      <h1 className="mx-auto max-w-3xl text-4xl font-extrabold tracking-tight text-heading sm:text-6xl lg:text-7xl">
+      <h1 className="mx-auto max-w-3xl text-3xl font-extrabold tracking-tight text-heading sm:text-4xl md:text-5xl lg:text-6xl">
         Solve Calculus with <span className="text-primary">One Smart Input</span>
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body sm:text-xl">

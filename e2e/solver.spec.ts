@@ -60,7 +60,7 @@ test.describe("Calculus Solver", () => {
 
   test("navigation links work", async ({ page }) => {
     await page.goto("/");
-    await page.click("text=Examples");
+    await page.locator("header nav >> text=Examples").click();
     await expect(page).toHaveURL("/examples");
   });
 

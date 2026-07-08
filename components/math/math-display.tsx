@@ -34,7 +34,7 @@ function CopyButton({ latex }: { latex: string }): React.JSX.Element {
       onClick={handleCopy}
       className={cn(
         "absolute right-2 top-2 inline-flex h-7 items-center justify-center rounded-md border border-border bg-white/90 px-2 text-body shadow-sm transition-opacity",
-        "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100",
+        "opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100",
         "hover:bg-white hover:text-heading focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
       )}
       aria-label="Copy LaTeX"

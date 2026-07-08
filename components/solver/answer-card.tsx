@@ -1,5 +1,5 @@
 import { Copy, Check, RefreshCw } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MathDisplay } from "@/components/math/math-display";
@@ -45,9 +45,6 @@ export function AnswerCard({
             <Badge variant="secondary">{answerTypeLabels[result.answerType] ?? result.answerType}</Badge>
           </div>
         </div>
-        <CardDescription>
-          Verification: <span className="font-medium text-heading capitalize">{result.localVerification.status.replace("_", " ")}</span>
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="rounded-card bg-white p-4">

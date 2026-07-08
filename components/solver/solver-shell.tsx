@@ -68,13 +68,25 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
   React.useEffect(() => {
     if (state.status === "success") {
       add(inputValue.trim(), mode, state.result);
+      document.getElementById("solver-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (state.status === "error") {
+      document.getElementById("solver-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.status === "success"]);
+  }, [state.status === "success", state.status === "error"]);
+
+  function focusInput(): void {
+    const element = document.getElementById("solver-input");
+    const textarea = element?.querySelector("textarea");
+    textarea?.focus();
+    element?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 
   function handleNewProblem(): void {
     resetForm();
     reset();
+    focusInput();
   }
 
   function handleSelectExample(value: string): void {
@@ -101,22 +113,24 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
         <HistoryDrawer history={history} onClear={clear} onSelect={handleSelectExample} onRemove={remove} />
       </div>
 
-      {state.status === "loading" && <SolverLoading onCancel={cancel} />}
-      {state.status === "error" && <SolverError message={state.message} onRetry={() => solve(inputValue.trim(), mode)} />}
+      <div id="solver-result" aria-live="polite" aria-busy={state.status === "loading"}>
+        {state.status === "loading" && <SolverLoading onCancel={cancel} />}
+        {state.status === "error" && <SolverError message={state.message} onRetry={() => solve(inputValue.trim(), mode)} />}
 
-      {state.status === "success" && (
-        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div className="space-y-5">
-            <InterpretedProblem result={state.result} />
-            <AnswerCard result={state.result} input={inputValue.trim()} mode={mode} onNewProblem={handleNewProblem} />
-            <VerificationCard result={state.result} />
+        {state.status === "success" && (
+          <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div className="space-y-5">
+              <InterpretedProblem result={state.result} />
+              <AnswerCard result={state.result} input={inputValue.trim()} mode={mode} onNewProblem={handleNewProblem} />
+              <VerificationCard result={state.result} />
+            </div>
+            <div className="space-y-5">
+              <StepsCard result={state.result} />
+              <GraphCard result={state.result} />
+            </div>
           </div>
-          <div className="space-y-5">
-            <StepsCard result={state.result} />
-            <GraphCard result={state.result} />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {state.status === "idle" && <PreviewCards />}
     </section>

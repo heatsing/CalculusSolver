@@ -31,7 +31,7 @@ export default function HomePage(): React.JSX.Element {
   return (
     <>
       <Header />
-      <main className="relative mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
+      <main className="relative mx-auto w-full max-w-content overflow-hidden px-4 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute -top-20 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
         <div className="pointer-events-none absolute top-60 right-0 -z-10 h-[400px] w-[400px] rounded-full bg-purple-300/20 blur-3xl" />
         <Hero />

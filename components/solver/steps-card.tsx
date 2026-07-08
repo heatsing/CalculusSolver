@@ -98,9 +98,9 @@ export function StepsCard({ result }: { result: SolverResult }): React.JSX.Eleme
 
   return (
     <Card className="animate-fade-in">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle>Step-by-Step Solution</CardTitle>
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           <CopyAllStepsButton result={result} />
           <Button variant="ghost" size="sm" onClick={() => setOpenAll((prev) => !prev)}>
             {openAll ? "Collapse steps" : "Show all steps"}
