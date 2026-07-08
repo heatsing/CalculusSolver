@@ -12,27 +12,33 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
-    default: "Calculus Solver | AI Math Solver",
+    default: "Calculus Solver | Step-by-Step Math Problems",
     template: "%s | Calculus Solver"
   },
   description:
-    "Solve calculus and algebra problems with one smart input. Get step-by-step solutions, LaTeX rendering, local verification, and interactive graphs.",
+    "Solve calculus and algebra problems with clear step-by-step explanations, LaTeX rendering, and interactive graphs.",
   keywords: [
     "calculus solver",
     "algebra solver",
-    "AI math solver",
-    "derivative",
-    "integral",
-    "limit",
+    "derivative calculator",
+    "integral calculator",
+    "limit calculator",
     "step by step math"
   ],
   authors: [{ name: "Calculus Solver" }],
   openGraph: {
     title: "Calculus Solver",
-    description: "One smart input for calculus and algebra problems.",
+    description: "Step-by-step solutions for calculus and algebra problems.",
     url: appUrl,
     siteName: "Calculus Solver",
-    type: "website"
+    type: "website",
+    images: [`${appUrl}/og-image.png`]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Calculus Solver",
+    description: "Step-by-step solutions for calculus and algebra problems.",
+    images: [`${appUrl}/og-image.png`]
   },
   robots: {
     index: true,
@@ -66,7 +72,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#6D3EF2"
+  themeColor: "#1E3A5F"
 };
 
 export default function RootLayout({
@@ -80,7 +86,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Math&display=swap"
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;600;700&display=swap"
           rel="stylesheet"
         />
         <Script
@@ -91,6 +97,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background font-sans text-heading antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-button focus:bg-primary focus:px-4 focus:py-2 focus:text-white"
+        >
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>

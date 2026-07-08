@@ -15,7 +15,7 @@ export default function TermsPage(): React.JSX.Element {
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-content px-4 py-10 sm:px-6 lg:px-8">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 py-10 sm:px-6 lg:px-8 focus-visible:outline-none">
         <h1 className="text-4xl font-bold tracking-tight text-heading">Terms of Service</h1>
         <p className="mt-2 text-sm text-body">Last updated: {lastUpdated}</p>
         <div className="prose mt-8 max-w-none text-body">

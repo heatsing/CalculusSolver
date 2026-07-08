@@ -22,7 +22,7 @@ export function useSolverHistory() {
       mode,
       result
     };
-    const next = [item, ...history].slice(0, 12);
+    const next = [item, ...history].slice(0, 50);
     setHistory(next);
     writeHistory(next);
   }

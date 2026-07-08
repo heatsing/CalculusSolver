@@ -115,7 +115,7 @@ export function CheckAnswer({ correctAnswer, correctLatex }: { correctAnswer: st
 
         {correctLatex && (
           <div className="rounded-lg border border-border bg-white p-3">
-            <p className="mb-1 text-xs text-body/70">Expected answer</p>
+            <p className="mb-1 text-xs text-body">Expected answer</p>
             <MathDisplay latex={correctLatex} display="block" />
           </div>
         )}

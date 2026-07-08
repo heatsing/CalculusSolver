@@ -1,5 +1,5 @@
 import { Keyboard, ListOrdered, LineChart } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const features = [
   {
@@ -28,7 +28,7 @@ export function FeatureStrip(): React.JSX.Element {
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-primary">
               <feature.icon className="h-5 w-5" />
             </div>
-            <CardTitle className="text-base font-semibold">{feature.title}</CardTitle>
+            <h2 className="text-base font-semibold text-heading">{feature.title}</h2>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-body">{feature.description}</p>

@@ -59,7 +59,7 @@ export function PracticePanel({ result }: { result: SolverResult }): React.JSX.E
         {current && (
           <div className="space-y-3 rounded-lg border border-border bg-secondary-background/40 p-4">
             <div>
-              <p className="text-xs font-medium text-body/70">Your problem</p>
+              <p className="text-xs font-medium text-body">Your problem</p>
               <p className="font-medium text-heading">{current.problem}</p>
             </div>
             <CheckAnswer correctAnswer={current.answer} correctLatex={current.latex} />

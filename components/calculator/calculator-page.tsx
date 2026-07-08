@@ -34,7 +34,7 @@ export function CalculatorPage({
     <>
       <StructuredData data={faqPageStructuredData(faqs)} />
       <Header />
-      <main className="mx-auto w-full max-w-content overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content overflow-hidden px-4 py-10 sm:px-6 lg:px-8 focus-visible:outline-none">
         <nav className="mb-6 text-sm text-body">
           <a href="/" className="hover:text-heading">Home</a>
           <span className="mx-2">/</span>

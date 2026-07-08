@@ -46,12 +46,12 @@ export function ProblemRecognition({
       </CardHeader>
       <CardContent className="space-y-3">
         <div>
-          <p className="text-xs font-medium text-body/70">Original input</p>
+          <p className="text-xs font-medium text-body">Original input</p>
           <p className="text-sm text-heading">{originalInput}</p>
         </div>
         {result.interpretedLatex && (
           <div>
-            <p className="text-xs font-medium text-body/70">Interpreted as</p>
+            <p className="text-xs font-medium text-body">Interpreted as</p>
             <div className="rounded-lg border border-border bg-white p-3">
               <MathDisplay latex={result.interpretedLatex} display="block" />
             </div>

@@ -174,7 +174,7 @@ function SymbolButton({
       type="button"
       onClick={() => onInsert(value)}
       className={cn(
-        "inline-flex h-9 min-w-[2.25rem] items-center justify-center rounded-md border border-border bg-white px-2",
+        "inline-flex h-11 min-w-[2.75rem] items-center justify-center rounded-md border border-border bg-white px-2",
         "text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary hover:shadow-sm",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
       )}
@@ -195,7 +195,7 @@ function CategorySection({
 }): React.JSX.Element {
   return (
     <div>
-      <p className="mb-1.5 text-xs font-medium text-body/60">{category.name}</p>
+      <p className="mb-1.5 text-xs font-medium text-body">{category.name}</p>
       <div className="flex flex-wrap gap-1">
         {category.symbols.map((symbol) => (
           <SymbolButton

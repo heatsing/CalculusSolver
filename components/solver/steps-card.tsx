@@ -11,12 +11,21 @@ import type { SolverResult, SolverStep } from "@/types/solver";
 function StepExplanation({ input, step }: { input: string; step: SolverStep }): React.JSX.Element {
   const { result, loading, error, explain } = useExplainStep();
   const [expanded, setExpanded] = React.useState(false);
+  const explanationRef = React.useRef<HTMLDivElement>(null);
 
   function handleToggle(): void {
     if (!expanded && !result && !loading) {
       void explain(input, step);
     }
-    setExpanded((prev) => !prev);
+    setExpanded((prev) => {
+      const next = !prev;
+      if (next) {
+        requestAnimationFrame(() => {
+          explanationRef.current?.focus();
+        });
+      }
+      return next;
+    });
   }
 
   return (
@@ -33,7 +42,12 @@ function StepExplanation({ input, step }: { input: string; step: SolverStep }): 
       </Button>
 
       {expanded && (
-        <div className="mt-2 rounded-lg bg-primary-soft/50 p-3 text-sm text-body">
+        <div
+          ref={explanationRef}
+          tabIndex={-1}
+          aria-live="polite"
+          className="mt-2 rounded-lg bg-primary-soft/50 p-3 text-sm text-body outline-none"
+        >
           {error && <p className="text-error">{error}</p>}
           {!error && !result && !loading && <p>Click above to get a deeper explanation.</p>}
           {result && (
@@ -72,13 +86,13 @@ function StepRow({
           <div className="grid gap-3 sm:grid-cols-2">
             {step.latexBefore && (
               <div className="rounded-lg border border-border bg-white p-3">
-                <p className="mb-1 text-xs text-body/70">Before</p>
+                <p className="mb-1 text-xs text-body">Before</p>
                 <MathDisplay latex={step.latexBefore} display="block" />
               </div>
             )}
             {step.latexAfter && (
               <div className="rounded-lg border border-border bg-white p-3">
-                <p className="mb-1 text-xs text-body/70">After</p>
+                <p className="mb-1 text-xs text-body">After</p>
                 <MathDisplay latex={step.latexAfter} display="block" />
               </div>
             )}
@@ -104,7 +118,7 @@ export function StepsCard({
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="text-base">Step-by-step solution</CardTitle>
-        <span className="text-xs text-body/70">{result.steps.length} steps</span>
+        <span className="text-xs text-body">{result.steps.length} steps</span>
       </CardHeader>
       <CardContent className="pt-0">
         {result.steps.map((step) => (

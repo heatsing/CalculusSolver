@@ -84,7 +84,7 @@ export function MathDisplay({
     }
 
     return (
-      <div className={containerClass}>
+      <div className={cn("overflow-x-auto", containerClass)}>
         <BlockMath math={cleanLatex} renderError={() => errorFallback} />
         {showCopy && <CopyButton latex={cleanLatex} />}
       </div>

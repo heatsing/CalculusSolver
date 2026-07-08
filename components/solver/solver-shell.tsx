@@ -41,40 +41,43 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
 
   const inputValue = watch("input");
   const { state, solve, cancel, reset } = useSolver();
-  const { history, add, remove, clear } = useSolverHistory();
+  const { add } = useSolverHistory();
+
+  const onSubmit = React.useCallback(
+    async (values: SolverFormValues): Promise<void> => {
+      await solve(values.input, mode);
+    },
+    [mode, solve]
+  );
 
   React.useEffect(() => {
     if (exampleId) {
       const example = examplesData.find((e) => e.id === exampleId);
       if (example) {
         setValue("input", example.problem);
-        const element = document.getElementById("solver-input");
-        element?.scrollIntoView({ behavior: "smooth", block: "center" });
+        void solve(example.problem, mode);
       }
     }
-  }, [exampleId, setValue]);
+  }, [exampleId, setValue, mode, solve]);
 
   React.useEffect(() => {
     if (queryInput) {
-      setValue("input", decodeURIComponent(queryInput));
-      const element = document.getElementById("solver-input");
-      const textarea = element?.querySelector("textarea");
-      textarea?.focus();
-      element?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const decoded = decodeURIComponent(queryInput);
+      setValue("input", decoded);
+      void solve(decoded.trim(), mode);
     }
-  }, [queryInput, setValue]);
-
-  async function onSubmit(values: SolverFormValues): Promise<void> {
-    await solve(values.input, mode);
-  }
+  }, [queryInput, setValue, mode, solve]);
 
   React.useEffect(() => {
+    const resultRegion = document.getElementById("solver-result");
     if (state.status === "success") {
       add(inputValue.trim(), mode, state.result);
-      document.getElementById("solver-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultRegion?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultRegion?.focus({ preventScroll: true });
     }
     if (state.status === "error") {
-      document.getElementById("solver-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultRegion?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultRegion?.focus({ preventScroll: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status === "success", state.status === "error"]);
@@ -117,16 +120,29 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
       <QuickExamples onSelect={handleSelectExample} />
 
       <div className="mt-4 flex justify-end">
-        <HistoryDrawer history={history} onClear={clear} onSelect={handleSelectExample} onRemove={remove} />
+        <HistoryDrawer onSelect={handleSelectExample} />
       </div>
 
-      <div id="solver-result" aria-live="polite" aria-busy={state.status === "loading"}>
-        {state.status === "loading" && <SolverLoading onCancel={cancel} />}
-        {state.status === "error" && <SolverError message={state.message} onRetry={() => solve(inputValue.trim(), mode)} />}
+      <div
+        id="solver-result"
+        tabIndex={-1}
+        aria-live="polite"
+        aria-busy={state.status === "loading"}
+        className="mt-6 overflow-x-hidden focus-visible:outline-none"
+      >
+        {state.status === "loading" && (
+          <>
+            <SolverLoading onCancel={cancel} />
+            <p className="sr-only">Solving your problem</p>
+          </>
+        )}
+        {state.status === "error" && (
+          <SolverError message={state.message} onRetry={() => solve(inputValue.trim(), mode)} />
+        )}
 
         {state.status === "success" && (
-          <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <div className="space-y-5">
+          <div className="mt-8 grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-2">
+            <div className="min-w-0 space-y-5">
               <ProblemRecognition
                 result={state.result}
                 originalInput={inputValue.trim()}
@@ -138,7 +154,7 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
               <PracticePanel result={state.result} />
               <RelatedExamples result={state.result} onSelect={handleSelectExample} />
             </div>
-            <div className="space-y-5">
+            <div className="min-w-0 space-y-5">
               <StepsCard result={state.result} input={inputValue.trim()} />
               <GraphCard result={state.result} />
             </div>

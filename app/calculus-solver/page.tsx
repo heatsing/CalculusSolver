@@ -31,7 +31,7 @@ export default function CalculusSolverPage(): React.JSX.Element {
     <>
       <StructuredData data={faqPageStructuredData(calculusFaqs)} />
       <Header />
-      <main className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8 focus-visible:outline-none">
         <Hero
           title="Calculus problems solved clearly"
           subtitle="Derivatives, integrals, limits, and more. Each step explained so you can follow the logic."

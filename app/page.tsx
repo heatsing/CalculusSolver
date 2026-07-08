@@ -30,7 +30,7 @@ export default function HomePage(): React.JSX.Element {
     <>
       <StructuredData data={faqPageStructuredData(generalFaqs)} />
       <Header />
-      <main className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8 focus-visible:outline-none">
         <Hero
           title="Solve math problems step by step"
           subtitle="Type an expression, equation, or word problem. Get the answer and a clear path to it."

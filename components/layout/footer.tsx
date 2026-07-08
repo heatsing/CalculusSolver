@@ -11,15 +11,8 @@ const productLinks = [
 ];
 
 const resourceLinks = [
-  { label: "Help", href: "/" },
-  { label: "Blog", href: "/" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" }
-];
-
-const companyLinks = [
-  { label: "About", href: "/" },
-  { label: "Contact", href: "/" }
 ];
 
 export function Footer(): React.JSX.Element {
@@ -28,7 +21,7 @@ export function Footer(): React.JSX.Element {
   return (
     <footer className="mt-20 border-t border-border bg-secondary-background">
       <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <Link href="/" className="flex items-center gap-2 text-lg font-bold text-heading">
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-sm text-white">∫</span>
@@ -40,7 +33,7 @@ export function Footer(): React.JSX.Element {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-heading">Product</h4>
+            <h3 className="text-sm font-semibold text-heading">Product</h3>
             <ul className="mt-4 space-y-2">
               {productLinks.map((link) => (
                 <li key={link.href}>
@@ -53,22 +46,9 @@ export function Footer(): React.JSX.Element {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-heading">Resources</h4>
+            <h3 className="text-sm font-semibold text-heading">Legal</h3>
             <ul className="mt-4 space-y-2">
               {resourceLinks.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-body hover:text-heading">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-semibold text-heading">Company</h4>
-            <ul className="mt-4 space-y-2">
-              {companyLinks.map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-sm text-body hover:text-heading">
                     {link.label}

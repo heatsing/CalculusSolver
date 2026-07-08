@@ -19,7 +19,7 @@ export function useSolver() {
     };
   }, []);
 
-  async function solve(input: string, mode: string): Promise<void> {
+  const solve = React.useCallback(async (input: string, mode: string): Promise<void> => {
     abortControllerRef.current?.abort();
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -70,7 +70,7 @@ export function useSolver() {
         abortControllerRef.current = null;
       }
     }
-  }
+  }, []);
 
   function cancel(): void {
     abortControllerRef.current?.abort();

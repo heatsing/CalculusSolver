@@ -32,8 +32,8 @@ export default function DerivativeCalculatorPage(): React.JSX.Element {
           description: "Type any expression you want to differentiate."
         },
         {
-          step: "AI recognizes the problem",
-          description: "We identify the operation and the independent variable."
+          step: "Identify the operation",
+          description: "The solver detects the function and the independent variable."
         },
         {
           step: "Get the derivative",

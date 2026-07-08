@@ -25,14 +25,15 @@ function MathFieldInternal({ value, onChange, placeholder, disabled }: MathField
 
       if (!mounted || !ref.current) return;
 
+      const isMobile = window.innerWidth <= 640;
       const mathField = document.createElement("math-field") as MathfieldElement;
       mathField.value = value;
       mathField.placeholder = placeholder ?? "Type a formula...";
       mathField.disabled = disabled ?? false;
-      mathField.setAttribute("virtual-keyboard-mode", "onfocus");
+      mathField.setAttribute("virtual-keyboard-mode", isMobile ? "off" : "onfocus");
       mathField.setAttribute("virtual-keyboard-theme", "material");
       mathField.style.cssText =
-        "width: 100%; min-height: 100px; border: none; background: transparent; font-size: 1rem; --hue: 265;";
+        "width: 100%; min-height: 100px; border: none; background: transparent; font-size: 1rem;";
 
       mathField.addEventListener("input", () => {
         onChange(mathField.value);
@@ -43,7 +44,7 @@ function MathFieldInternal({ value, onChange, placeholder, disabled }: MathField
       mathFieldRef.current = mathField;
     }
 
-    init();
+    void init();
 
     return () => {
       mounted = false;
@@ -64,7 +65,12 @@ function MathFieldInternal({ value, onChange, placeholder, disabled }: MathField
     }
   }, [disabled]);
 
-  return <div ref={ref} className="w-full px-4 pt-4 pb-14" />;
+  return (
+    <div
+      ref={ref}
+      className="w-full px-4 pt-4 pb-14 focus-within:outline-none [&_math-field:focus-visible]:ring-2 [&_math-field:focus-visible]:ring-primary/20"
+    />
+  );
 }
 
 export const MathFieldInput = dynamic(() => Promise.resolve(MathFieldInternal), {

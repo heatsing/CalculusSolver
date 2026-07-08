@@ -31,7 +31,7 @@ export default function AlgebraSolverPage(): React.JSX.Element {
     <>
       <StructuredData data={faqPageStructuredData(algebraFaqs)} />
       <Header />
-      <main className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8 focus-visible:outline-none">
         <Hero
           title="Algebra problems made simple"
           subtitle="Equations, expressions, polynomials, and systems. See the steps and learn the method."

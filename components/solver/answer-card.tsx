@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Copy, Check, Sparkles } from "lucide-react";
+import { Copy, Check, RotateCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MathDisplay } from "@/components/math/math-display";
@@ -46,18 +46,18 @@ export function AnswerCard({
   }
 
   return (
-    <Card className="relative animate-fade-in border-primary/20 bg-gradient-to-br from-primary-soft/60 to-white">
+    <Card className="relative border-border bg-white">
       <CardHeader>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-white">
             {answerType}
           </span>
-          <span className="text-xs text-body/70">Final answer</span>
+          <span className="text-xs text-body">Final answer</span>
         </div>
         <CardTitle className="sr-only">Final Answer</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-xl border border-primary/10 bg-white p-4 shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-border bg-secondary-background/50 p-4">
           <MathDisplay latex={answerLatex} display="block" />
         </div>
 
@@ -68,7 +68,7 @@ export function AnswerCard({
           </Button>
           <ShareButton input={input} mode={mode} />
           <Button variant="secondary" size="sm" onClick={onNewProblem} className="gap-1.5">
-            <Sparkles className="h-3.5 w-3.5" />
+            <RotateCcw className="h-3.5 w-3.5" />
             New problem
           </Button>
         </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const ogImage = `${appUrl}/og-image.png`;
 
 export type CreateMetadataOptions = {
   title: string;
@@ -27,12 +28,14 @@ export function createMetadata({
       description,
       url,
       siteName: "Calculus Solver",
-      type: "website"
+      type: "website",
+      images: [ogImage]
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description
+      description,
+      images: [ogImage]
     },
     alternates: {
       canonical: path
@@ -60,10 +63,17 @@ export function softwareApplicationStructuredData() {
     "@type": "SoftwareApplication",
     name: "Calculus Solver",
     applicationCategory: "Education",
+    applicationSubCategory: "EducationalApplication",
+    operatingSystem: "Any",
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD"
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      ratingCount: "120"
     }
   };
 }

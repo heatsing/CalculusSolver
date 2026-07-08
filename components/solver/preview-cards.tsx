@@ -1,5 +1,5 @@
 import { CheckCircle2, ListOrdered, TrendingUp } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LatexBlock } from "@/components/solver/latex-render";
 
 export function PreviewCards(): React.JSX.Element {
@@ -7,10 +7,10 @@ export function PreviewCards(): React.JSX.Element {
     <div className="mt-10 grid gap-5 md:grid-cols-3">
       <Card className="border-border/80">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base font-semibold">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
             <CheckCircle2 className="h-5 w-5 text-primary" />
             Answer
-          </CardTitle>
+          </h2>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl bg-secondary-background p-4 text-center">
@@ -21,10 +21,10 @@ export function PreviewCards(): React.JSX.Element {
 
       <Card className="border-border/80">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base font-semibold">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
             <ListOrdered className="h-5 w-5 text-primary" />
             Steps
-          </CardTitle>
+          </h2>
         </CardHeader>
         <CardContent>
           <ol className="space-y-3 text-sm text-body">
@@ -52,10 +52,10 @@ export function PreviewCards(): React.JSX.Element {
 
       <Card className="border-border/80">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base font-semibold">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-heading">
             <TrendingUp className="h-5 w-5 text-primary" />
             Graph
-          </CardTitle>
+          </h2>
         </CardHeader>
         <CardContent>
           <svg viewBox="0 0 200 120" className="h-28 w-full">
