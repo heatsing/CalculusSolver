@@ -8,17 +8,19 @@ import { z } from "zod";
 import { SmartInput } from "@/components/solver/smart-input";
 import { QuickExamples } from "@/components/solver/quick-examples";
 import { SolverLoading } from "@/components/solver/solver-loading";
-import { InterpretedProblem } from "@/components/solver/interpreted-problem";
+import { ProblemRecognition } from "@/components/solver/problem-recognition";
 import { AnswerCard } from "@/components/solver/answer-card";
 import { VerificationCard } from "@/components/solver/verification-card";
 import { StepsCard } from "@/components/solver/steps-card";
 import { GraphCard } from "@/components/solver/graph-card";
+import { RelatedExamples } from "@/components/solver/related-examples";
 import { SolverError } from "@/components/solver/solver-error";
 import { PreviewCards } from "@/components/solver/preview-cards";
 import { HistoryDrawer } from "@/components/solver/history-drawer";
 import { useSolver } from "@/hooks/use-solver";
 import { useSolverHistory } from "@/hooks/use-solver-history";
 import { examplesData } from "@/data/examples";
+import type { SolverStep } from "@/types/solver";
 
 const solverFormSchema = z.object({
   input: z.string().trim().min(1, "Please enter a math problem")
@@ -31,7 +33,7 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
   const exampleId = searchParams.get("example");
   const queryInput = searchParams.get("q");
 
-  const { register, handleSubmit, setValue, watch, reset: resetForm } = useForm<SolverFormValues>({
+  const { handleSubmit, setValue, watch, reset: resetForm } = useForm<SolverFormValues>({
     resolver: zodResolver(solverFormSchema),
     defaultValues: { input: "" }
   });
@@ -89,12 +91,22 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
     focusInput();
   }
 
+  function handleEditProblem(): void {
+    focusInput();
+  }
+
   function handleSelectExample(value: string): void {
     setValue("input", value);
     reset();
     const element = document.getElementById("solver-input");
     const textarea = element?.querySelector("textarea");
     textarea?.focus();
+  }
+
+  function handleExplainStep(step: SolverStep): void {
+    // Placeholder for Phase 4 AI explanation integration.
+    // eslint-disable-next-line no-console
+    console.log("Explain step", step.number);
   }
 
   return (
@@ -120,12 +132,17 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
         {state.status === "success" && (
           <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
             <div className="space-y-5">
-              <InterpretedProblem result={state.result} />
+              <ProblemRecognition
+                result={state.result}
+                originalInput={inputValue.trim()}
+                onEdit={handleEditProblem}
+              />
               <AnswerCard result={state.result} input={inputValue.trim()} mode={mode} onNewProblem={handleNewProblem} />
               <VerificationCard result={state.result} />
+              <RelatedExamples result={state.result} onSelect={handleSelectExample} />
             </div>
             <div className="space-y-5">
-              <StepsCard result={state.result} />
+              <StepsCard result={state.result} onExplainStep={handleExplainStep} />
               <GraphCard result={state.result} />
             </div>
           </div>
