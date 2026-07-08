@@ -41,4 +41,34 @@ describe("solverResultSchema", () => {
     expect(parsed.operation).toBe("derivative");
     expect(parsed.steps).toHaveLength(1);
   });
+
+  it("accepts steps with rule, latex_before, and latex_after", () => {
+    const result = {
+      operation: "integral",
+      interpreted_problem: "integral of 2x",
+      interpreted_latex: "\\int 2x \\, dx",
+      answer: "x^2 + C",
+      answer_latex: "x^2 + C",
+      answer_type: "exact",
+      steps: [
+        {
+          number: 1,
+          title: "Apply power rule",
+          explanation: "Raise the exponent and divide by it.",
+          rule: "Power rule",
+          latex_before: "\\int 2x \\, dx",
+          latex_after: "x^2 + C"
+        }
+      ],
+      verification: { status: "verified", explanation: "Differentiated the result." },
+      graph: { available: false, expression: null, variable: null, domain: null },
+      warnings: []
+    };
+
+    const parsed = solverResultSchema.parse(result);
+    const step = parsed.steps[0];
+    expect(step.rule).toBe("Power rule");
+    expect(step.latexBefore).toBe("\\int 2x \\, dx");
+    expect(step.latexAfter).toBe("x^2 + C");
+  });
 });

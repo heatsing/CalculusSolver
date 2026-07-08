@@ -34,7 +34,7 @@ export function toMachineExpression(input: string): string {
   // Convert common Unicode math operators.
   normalized = normalized.replace(/\u00D7/g, "*").replace(/\u00F7/g, "/");
 
-  return normalized;
+  return normalized.replace(/\s+/g, "");
 }
 
 const equationKeywords = ["solve", "=", "find x", "find y", "root"];

@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { normalizeInput, detectOperation, detectPrimaryVariable } from "@/lib/math-parser";
+import {
+  normalizeInput,
+  toMachineExpression,
+  detectOperation,
+  detectPrimaryVariable
+} from "@/lib/math-parser";
 
 describe("normalizeInput", () => {
   it("converts unicode superscripts to caret notation", () => {
@@ -20,6 +25,28 @@ describe("normalizeInput", () => {
 
   it("collapses whitespace and trims", () => {
     expect(normalizeInput("  x  +    y ")).toBe("x + y");
+  });
+});
+
+describe("toMachineExpression", () => {
+  it("inserts multiplication between a number and a variable", () => {
+    expect(toMachineExpression("2x + 3")).toBe("2*x+3");
+  });
+
+  it("inserts multiplication between a number and a parenthesis", () => {
+    expect(toMachineExpression("2(x+1)")).toBe("2*(x+1)");
+  });
+
+  it("preserves variable products without extra operators", () => {
+    expect(toMachineExpression("xy")).toBe("xy");
+  });
+
+  it("converts multiplication and division unicode symbols", () => {
+    expect(toMachineExpression("6 × 2 ÷ 3")).toBe("6*2/3");
+  });
+
+  it("normalizes superscripts for machine evaluation", () => {
+    expect(toMachineExpression("x²")).toBe("x^2");
   });
 });
 

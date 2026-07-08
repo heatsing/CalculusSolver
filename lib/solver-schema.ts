@@ -37,14 +37,23 @@ export const solverResultSchema = z.object({
   answer_latex: z.string(),
   answer_type: z.enum(["exact", "approximate", "conditional", "no_closed_form", "unknown"]),
   steps: z.array(
-    z.object({
-      number: z.number(),
-      title: z.string(),
-      explanation: z.string(),
-      rule: z.string().optional(),
-      latex_before: z.string().optional(),
-      latex_after: z.string().optional()
-    })
+    z
+      .object({
+        number: z.number(),
+        title: z.string(),
+        explanation: z.string(),
+        rule: z.string().optional(),
+        latex_before: z.string().optional(),
+        latex_after: z.string().optional()
+      })
+      .transform((step) => ({
+        number: step.number,
+        title: step.title,
+        explanation: step.explanation,
+        rule: step.rule,
+        latexBefore: step.latex_before,
+        latexAfter: step.latex_after
+      }))
   ),
   verification: z.object({
     status: z.enum(["verified", "uncertain"]),
