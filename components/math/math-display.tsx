@@ -4,6 +4,7 @@ import * as React from "react";
 import { InlineMath, BlockMath } from "react-katex";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sanitizeLatex } from "@/lib/latex-utils";
 import "katex/dist/katex.min.css";
 
 export interface MathDisplayProps {
@@ -52,7 +53,8 @@ export function MathDisplay({
   showCopy = display === "block",
   fallback = null
 }: MathDisplayProps): React.JSX.Element {
-  if (!latex || latex.trim().length === 0) {
+  const cleanLatex = sanitizeLatex(latex);
+  if (!cleanLatex || cleanLatex.length === 0) {
     return <>{fallback}</>;
   }
 
@@ -76,15 +78,15 @@ export function MathDisplay({
     if (display === "inline") {
       return (
         <span className={containerClass}>
-          <InlineMath math={latex} renderError={() => errorFallback} />
+          <InlineMath math={cleanLatex} renderError={() => errorFallback} />
         </span>
       );
     }
 
     return (
       <div className={containerClass}>
-        <BlockMath math={latex} renderError={() => errorFallback} />
-        {showCopy && <CopyButton latex={latex} />}
+        <BlockMath math={cleanLatex} renderError={() => errorFallback} />
+        {showCopy && <CopyButton latex={cleanLatex} />}
       </div>
     );
   } catch {
