@@ -8,8 +8,8 @@ import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/s
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Calculus", href: "/calculus-solver" },
-  { label: "Algebra", href: "/algebra-solver" },
+  { label: "Calculus Solver", href: "/calculus-solver" },
+  { label: "Algebra Solver", href: "/algebra-solver" },
   { label: "Examples", href: "/examples" }
 ];
 

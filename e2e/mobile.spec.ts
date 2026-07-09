@@ -95,8 +95,8 @@ test.describe("Mobile user", () => {
     await page.getByRole("button", { name: "Open menu" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("link", { name: "Calculus" })).toBeVisible();
-    await expect(dialog.getByRole("link", { name: "Algebra" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Calculus Solver" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Algebra Solver" })).toBeVisible();
     await expect(dialog.getByRole("link", { name: "Examples" })).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Solve now" })).toBeVisible();
   });
