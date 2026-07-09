@@ -22,7 +22,7 @@ test.describe("Mobile user", () => {
     await mockSolveRoute(page);
     await page.setViewportSize({ width: 320, height: 568 });
 
-    const idleRoutes = ["/", "/calculus-solver", "/algebra-solver", "/calculus-calculator", "/derivative-calculator", "/examples"];
+    const idleRoutes = ["/", "/calculus-solver", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/examples"];
     for (const route of idleRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(500);

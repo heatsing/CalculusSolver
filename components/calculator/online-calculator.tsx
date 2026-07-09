@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Delete, Equal } from "lucide-react";
+import { Equal, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MathDisplay } from "@/components/math/math-display";
-import { normalizeInput, detectOperation } from "@/lib/math-parser";
+import { evaluateExpression, kindLabel, type CalcResult } from "@/lib/calculator-engine";
 
 type CalcButton = {
   label: string;
@@ -74,11 +74,19 @@ const variantClasses: Record<NonNullable<CalcButton["variant"]>, string> = {
 
 export function OnlineCalculator(): React.JSX.Element {
   const [expression, setExpression] = React.useState("");
-  const [result, setResult] = React.useState<string | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [result, setResult] = React.useState<CalcResult | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
+  // Refs so the global keydown listener always sees the latest handlers/state
+  // without needing to re-bind on every keystroke.
+  const expressionRef = React.useRef(expression);
+  expressionRef.current = expression;
+  const loadingRef = React.useRef(loading);
+  loadingRef.current = loading;
 
   function handleInput(value: string): void {
-    setError(null);
+    if (loading) return;
+    setResult(null);
     if (value === "CLEAR") {
       setExpression("");
       setResult(null);
@@ -91,43 +99,118 @@ export function OnlineCalculator(): React.JSX.Element {
     setExpression((prev) => prev + value);
   }
 
-  function handleEvaluate(): void {
-    if (!expression.trim()) {
-      setError("Please enter an expression");
+  async function handleEvaluate(): Promise<void> {
+    const current = expressionRef.current.trim();
+    if (!current) {
+      setResult({ ok: false, value: "", error: "Please enter an expression" });
       return;
     }
-    setError(null);
+    if (loading) return;
+    setLoading(true);
     try {
-      const normalized = normalizeInput(expression);
-      const operation = detectOperation(expression);
-      setResult(`${normalized}\n[Detected: ${operation}]`);
+      const res = await evaluateExpression(current);
+      setResult(res);
     } catch {
-      setError("Could not parse expression");
+      setResult({ ok: false, value: "", error: "Could not evaluate expression" });
+    } finally {
+      setLoading(false);
     }
   }
 
   function handleSolveFull(): void {
-    if (!expression.trim()) return;
+    if (!expression.trim() || loading) return;
     const encoded = encodeURIComponent(expression);
     window.location.href = `/?q=${encoded}`;
   }
+
+  // Physical keyboard support — makes the calculator feel like a real device.
+  React.useEffect(() => {
+    function onKeyDown(e: KeyboardEvent): void {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      if (loadingRef.current) return;
+
+      const key = e.key;
+      if (key === "Enter" || key === "=") {
+        e.preventDefault();
+        void handleEvaluate();
+        return;
+      }
+      if (key === "Backspace") {
+        e.preventDefault();
+        handleInput("BACKSPACE");
+        return;
+      }
+      if (key === "Escape") {
+        e.preventDefault();
+        handleInput("CLEAR");
+        return;
+      }
+      if (/^[0-9.+\-*/^(),xe]$/.test(key)) {
+        e.preventDefault();
+        handleInput(key);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="mx-auto w-full max-w-2xl">
       <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
         {/* Display */}
         <div className="border-b border-border bg-secondary-background/50 p-5">
-          <div className="min-h-[3rem] break-all text-right font-mono text-2xl text-heading">
+          <div
+            className="min-h-[3rem] break-all text-right font-mono text-2xl text-heading"
+            aria-live="polite"
+          >
             {expression || <span className="text-body/40">0</span>}
           </div>
-          {result && (
-            <div className="mt-2 break-all text-right text-sm text-body">
-              {result.split("\n").map((line, i) => (
-                <div key={i}>{line}</div>
-              ))}
+
+          {/* Result */}
+          {loading && (
+            <div className="mt-3 flex items-center justify-end gap-2 text-sm text-body">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Computing…
             </div>
           )}
-          {error && <div className="mt-2 text-right text-sm text-error">{error}</div>}
+          {!loading && result && result.ok && (
+            <div className="mt-3 border-t border-border/60 pt-3">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-xs font-medium uppercase tracking-wide text-body/70">
+                  {kindLabel(result.kind)}
+                </span>
+              </div>
+              {result.latex ? (
+                <div className="mt-1 overflow-x-auto text-right">
+                  <MathDisplay latex={result.latex} display="block" showCopy={false} />
+                </div>
+              ) : (
+                <div className="mt-1 break-all text-right font-mono text-xl font-semibold text-primary">
+                  {result.value}
+                </div>
+              )}
+              {result.latex && result.value && (
+                <div className="mt-1 break-all text-right font-mono text-xs text-body">
+                  = {result.value}
+                </div>
+              )}
+            </div>
+          )}
+          {!loading && result && !result.ok && result.error && (
+            <div className="mt-2 text-right text-sm text-error" role="alert">
+              {result.error}
+            </div>
+          )}
         </div>
 
         {/* Button grid */}
@@ -139,9 +222,11 @@ export function OnlineCalculator(): React.JSX.Element {
                   key={`${rowIndex}-${button.label}`}
                   type="button"
                   onClick={() => handleInput(button.value)}
+                  disabled={loading}
                   className={cn(
                     "h-12 rounded-lg border text-sm font-semibold transition-colors",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+                    "disabled:cursor-not-allowed disabled:opacity-50",
                     variantClasses[button.variant ?? "default"],
                     button.span === 2 && "col-span-2"
                   )}
@@ -158,21 +243,28 @@ export function OnlineCalculator(): React.JSX.Element {
         <div className="flex gap-2 border-t border-border p-3">
           <button
             type="button"
-            onClick={handleEvaluate}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            onClick={() => void handleEvaluate()}
+            disabled={loading}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Equal className="h-4 w-4" />
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Equal className="h-4 w-4" />}
             Evaluate
           </button>
           <button
             type="button"
             onClick={handleSolveFull}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm font-semibold text-heading transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            disabled={loading || !expression.trim()}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm font-semibold text-heading transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Solve step-by-step
           </button>
         </div>
       </div>
+
+      {/* Hint */}
+      <p className="mt-3 text-center text-xs text-body">
+        Tip: use your keyboard — digits, + − × ÷, <kbd className="rounded border border-border bg-white px-1">Enter</kbd> to evaluate, <kbd className="rounded border border-border bg-white px-1">⌫</kbd> to delete, <kbd className="rounded border border-border bg-white px-1">Esc</kbd> to clear.
+      </p>
 
       {/* Preview */}
       {expression && (

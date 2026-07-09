@@ -4,6 +4,8 @@ const routes = [
   "/",
   "/calculus-solver",
   "/algebra-solver",
+  "/calculus-calculator",
+  "/daily-challenge",
   "/derivative-calculator",
   "/integral-calculator",
   "/limit-calculator",
