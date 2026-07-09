@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/",
     "/calculus-solver",
     "/algebra-solver",
+    "/calculus-calculator",
     "/derivative-calculator",
     "/integral-calculator",
     "/limit-calculator",

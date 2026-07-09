@@ -3,6 +3,7 @@ import Link from "next/link";
 const productLinks = [
   { label: "Calculus Solver", href: "/calculus-solver" },
   { label: "Algebra Solver", href: "/algebra-solver" },
+  { label: "Calculus Calculator", href: "/calculus-calculator" },
   { label: "Derivative Calculator", href: "/derivative-calculator" },
   { label: "Integral Calculator", href: "/integral-calculator" },
   { label: "Limit Calculator", href: "/limit-calculator" },

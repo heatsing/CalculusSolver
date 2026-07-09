@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "Calculus Solver", href: "/calculus-solver" },
   { label: "Algebra Solver", href: "/algebra-solver" },
+  { label: "Calculus Calculator", href: "/calculus-calculator" },
   { label: "Examples", href: "/examples" }
 ];
 

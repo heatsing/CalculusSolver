@@ -15,7 +15,7 @@ const routes = [
   "/terms"
 ];
 
-const sampleRoutes = ["/", "/calculus-solver", "/derivative-calculator"];
+const sampleRoutes = ["/", "/calculus-solver", "/calculus-calculator", "/derivative-calculator"];
 
 async function getMetaContent(page: import("@playwright/test").Page, name: string): Promise<string | null> {
   return page.evaluate((n) => {
