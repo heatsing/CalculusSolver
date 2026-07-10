@@ -28,7 +28,7 @@ export function Header(): React.JSX.Element {
   return (
     <header className="sticky top-0 z-40 h-16 w-full border-b border-border bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-full max-w-content items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex h-16 items-center gap-3 border-r border-border pr-6 text-base font-medium text-heading">
+        <Link href="/" className="flex min-h-11 items-center gap-3 border-r border-border pr-6 text-base font-medium text-heading md:h-16">
           <span className="flex h-8 w-8 items-center justify-center bg-heading font-mono text-lg text-white">∫</span>
           <span>Calculus Solver</span>
         </Link>

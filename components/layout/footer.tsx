@@ -19,7 +19,7 @@ export function Footer(): React.JSX.Element {
       <div className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <Link href="/" className="flex items-center gap-3 text-lg font-medium text-white">
+            <Link href="/" className="flex min-h-11 items-center gap-3 text-lg font-medium text-white">
               <span className="flex h-8 w-8 items-center justify-center bg-white font-mono text-heading">∫</span>
               Calculus Solver
             </Link>
@@ -28,13 +28,13 @@ export function Footer(): React.JSX.Element {
           <div>
             <h3 className="text-sm font-medium text-white">Product</h3>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {productLinks.map((link) => <li key={link.href}><Link href={link.href} className="text-sm text-[#c6c6c6] hover:text-white">{link.label}</Link></li>)}
+              {productLinks.map((link) => <li key={link.href}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm text-[#c6c6c6] hover:text-white sm:min-h-0">{link.label}</Link></li>)}
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-medium text-white">Legal</h3>
             <ul className="mt-4 space-y-2">
-              {resourceLinks.map((link) => <li key={link.label}><Link href={link.href} className="text-sm text-[#c6c6c6] hover:text-white">{link.label}</Link></li>)}
+              {resourceLinks.map((link) => <li key={link.label}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm text-[#c6c6c6] hover:text-white sm:min-h-0">{link.label}</Link></li>)}
             </ul>
           </div>
         </div>
