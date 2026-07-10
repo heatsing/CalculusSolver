@@ -79,10 +79,25 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
 
   function handleInsertSymbol(symbol: string): void {
     const textarea = textareaRef.current;
+    if (symbol === "__clear__") {
+      onChange("");
+      requestAnimationFrame(() => textarea?.focus());
+      return;
+    }
     if (!textarea) return;
 
     const start = textarea.selectionStart ?? value.length;
     const end = textarea.selectionEnd ?? value.length;
+    if (symbol === "__backspace__") {
+      const deleteFrom = start === end ? Math.max(0, start - 1) : start;
+      const nextValue = value.slice(0, deleteFrom) + value.slice(end);
+      onChange(nextValue);
+      requestAnimationFrame(() => {
+        textarea.focus();
+        textarea.setSelectionRange(deleteFrom, deleteFrom);
+      });
+      return;
+    }
     const nextValue = value.slice(0, start) + symbol + value.slice(end);
     onChange(nextValue);
 

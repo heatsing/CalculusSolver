@@ -77,6 +77,23 @@ test.describe("Mobile user", () => {
     }
   });
 
+  test("redesigned math keyboard switches categories and edits input", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const toggle = page.getByRole("button", { name: /Math keyboard/i });
+    await toggle.click();
+
+    await page.getByRole("tab", { name: "Calculus" }).click();
+    await page.getByRole("button", { name: "Insert integral" }).click();
+    await expect(page.locator("#math-problem-input")).toHaveValue("integrate(");
+
+    await page.getByRole("tab", { name: "Basic" }).click();
+    await page.getByRole("button", { name: "Delete previous character" }).click();
+    await expect(page.locator("#math-problem-input")).toHaveValue("integrate");
+    await page.getByRole("button", { name: "Clear expression" }).click();
+    await expect(page.locator("#math-problem-input")).toHaveValue("");
+  });
+
   test("history drawer works on touch", async ({ page }) => {
     await page.goto("/");
     await page.evaluate(({ key, item }: { key: string; item: unknown }) => {

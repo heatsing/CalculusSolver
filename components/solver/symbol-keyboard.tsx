@@ -1,270 +1,142 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Delete, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const keyboardGroups = [
+type KeyDefinition = {
+  label: string;
+  value: string;
+  hint?: string;
+  tone?: "default" | "accent" | "utility";
+};
+
+const keyboardSections = [
   {
-    title: "Basic",
-    categories: [
-      {
-        name: "Operators",
-        symbols: [
-          { label: "+", value: "+" },
-          { label: "−", value: "-" },
-          { label: "×", value: "*" },
-          { label: "÷", value: "/" },
-          { label: "=", value: "=" },
-          { label: "≠", value: "!=" },
-          { label: "<", value: "<" },
-          { label: ">", value: ">" },
-          { label: "≤", value: "<=" },
-          { label: "≥", value: ">=" }
-        ]
-      },
-      {
-        name: "Power & Fractions",
-        symbols: [
-          { label: "x²", value: "^2" },
-          { label: "x³", value: "^3" },
-          { label: "xⁿ", value: "^" },
-          { label: "√", value: "sqrt(" },
-          { label: "∛", value: "cbrt(" },
-          { label: "a/b", value: "/" },
-          { label: "½", value: "1/2" },
-          { label: "|x|", value: "abs(" },
-          { label: "%", value: "%" }
-        ]
-      },
-      {
-        name: "Constants & Brackets",
-        symbols: [
-          { label: "π", value: "pi" },
-          { label: "e", value: "e" },
-          { label: "∞", value: "Infinity" },
-          { label: "(", value: "(" },
-          { label: ")", value: ")" },
-          { label: "[", value: "[" },
-          { label: "]", value: "]" },
-          { label: "{", value: "{" },
-          { label: "}", value: "}" },
-          { label: "⌈⌉", value: "ceil(" },
-          { label: "⌊⌋", value: "floor(" }
-        ]
-      }
-    ]
+    id: "basic",
+    label: "Basic",
+    keys: [
+      { label: "+", value: "+" },
+      { label: "−", value: "-" },
+      { label: "×", value: "*" },
+      { label: "÷", value: "/" },
+      { label: "=", value: "=" },
+      { label: "(", value: "(" },
+      { label: ")", value: ")" },
+      { label: "π", value: "pi" },
+      { label: "e", value: "e" },
+      { label: "|x|", value: "abs(" },
+      { label: "Clear", value: "__clear__", tone: "utility" },
+      { label: "Delete", value: "__backspace__", tone: "utility" }
+    ] satisfies KeyDefinition[]
   },
   {
-    title: "Calculus",
-    categories: [
-      {
-        name: "Calculus",
-        symbols: [
-          { label: "∫", value: "integrate(" },
-          { label: "∬", value: "integrate(integrate(" },
-          { label: "∭", value: "integrate(integrate(integrate(" },
-          { label: "∮", value: "contour_integrate(" },
-          { label: "dx", value: " dx" },
-          { label: "dy", value: " dy" },
-          { label: "dz", value: " dz" },
-          { label: "d/dx", value: "derivative(" },
-          { label: "∂", value: "partial_derivative(" },
-          { label: "lim", value: "limit(" }
-        ]
-      },
-      {
-        name: "Functions",
-        symbols: [
-          { label: "sin", value: "sin(" },
-          { label: "cos", value: "cos(" },
-          { label: "tan", value: "tan(" },
-          { label: "asin", value: "asin(" },
-          { label: "acos", value: "acos(" },
-          { label: "atan", value: "atan(" }
-        ]
-      },
-      {
-        name: "More functions",
-        symbols: [
-          { label: "sinh", value: "sinh(" },
-          { label: "cosh", value: "cosh(" },
-          { label: "tanh", value: "tanh(" },
-          { label: "log", value: "log(" },
-          { label: "ln", value: "ln(" },
-          { label: "exp", value: "exp(" }
-        ]
-      }
-    ]
+    id: "powers",
+    label: "Powers",
+    keys: [
+      { label: "x²", value: "^2", hint: "square" },
+      { label: "x³", value: "^3", hint: "cube" },
+      { label: "xⁿ", value: "^", hint: "power" },
+      { label: "√x", value: "sqrt(", hint: "square root" },
+      { label: "∛x", value: "cbrt(", hint: "cube root" },
+      { label: "1/x", value: "1/(", hint: "reciprocal" },
+      { label: "a/b", value: "/", hint: "fraction" },
+      { label: "%", value: "%", hint: "percent" }
+    ] satisfies KeyDefinition[]
   },
   {
-    title: "Advanced",
-    categories: [
-      {
-        name: "Linear Algebra",
-        symbols: [
-          { label: "Matrix", value: "matrix(" },
-          { label: "Det", value: "det(" },
-          { label: "Inv", value: "inv(" },
-          { label: "Transpose", value: "transpose(" },
-          { label: "Rank", value: "rank(" }
-        ]
-      },
-      {
-        name: "Statistics",
-        symbols: [
-          { label: "Σ", value: "summation(" },
-          { label: "Π", value: "product(" },
-          { label: "Var", value: "var(" },
-          { label: "Mean", value: "mean(" }
-        ]
-      },
-      {
-        name: "Sets & Logic",
-        symbols: [
-          { label: "ℝ", value: "R" },
-          { label: "ℤ", value: "Z" },
-          { label: "ℕ", value: "N" },
-          { label: "ℂ", value: "C" },
-          { label: "∈", value: " in " },
-          { label: "∪", value: " union " },
-          { label: "∩", value: " intersect " },
-          { label: "∀", value: "for all " },
-          { label: "∃", value: "exists " },
-          { label: "⇒", value: "=>" },
-          { label: "⇔", value: "<=>" }
-        ]
-      },
-      {
-        name: "Greek",
-        symbols: [
-          { label: "α", value: "alpha" },
-          { label: "β", value: "beta" },
-          { label: "γ", value: "gamma" },
-          { label: "δ", value: "delta" },
-          { label: "ε", value: "epsilon" },
-          { label: "θ", value: "theta" },
-          { label: "λ", value: "lambda" },
-          { label: "μ", value: "mu" },
-          { label: "σ", value: "sigma" },
-          { label: "φ", value: "phi" },
-          { label: "ω", value: "omega" }
-        ]
-      }
-    ]
+    id: "functions",
+    label: "Functions",
+    keys: [
+      { label: "sin", value: "sin(" },
+      { label: "cos", value: "cos(" },
+      { label: "tan", value: "tan(" },
+      { label: "ln", value: "ln(" },
+      { label: "log", value: "log(" },
+      { label: "exp", value: "exp(" },
+      { label: "asin", value: "asin(" },
+      { label: "acos", value: "acos(" }
+    ] satisfies KeyDefinition[]
+  },
+  {
+    id: "calculus",
+    label: "Calculus",
+    keys: [
+      { label: "∫", value: "integrate(", hint: "integral", tone: "accent" },
+      { label: "d/dx", value: "derivative(", hint: "derivative", tone: "accent" },
+      { label: "lim", value: "limit(", hint: "limit", tone: "accent" },
+      { label: "Σ", value: "summation(", hint: "summation", tone: "accent" },
+      { label: "∂/∂x", value: "partial_derivative(", hint: "partial derivative" },
+      { label: "dx", value: " dx" },
+      { label: "dy", value: " dy" },
+      { label: "∞", value: "Infinity" }
+    ] satisfies KeyDefinition[]
   }
-];
+] as const;
 
 export type SymbolKeyboardProps = {
   onInsert: (value: string) => void;
   className?: string;
 };
 
-function SymbolButton({
-  label,
-  value,
-  onInsert
-}: {
-  label: string;
-  value: string;
-  onInsert: (value: string) => void;
-}): React.JSX.Element {
+function MathKey({ keyDefinition, onInsert }: { keyDefinition: KeyDefinition; onInsert: (value: string) => void }): React.JSX.Element {
+  const isClear = keyDefinition.value === "__clear__";
+  const isDelete = keyDefinition.value === "__backspace__";
   return (
     <button
       type="button"
-      onClick={() => onInsert(value)}
+      onClick={() => onInsert(keyDefinition.value)}
       className={cn(
-        "inline-flex h-11 min-w-[2.75rem] items-center justify-center rounded-md border border-border bg-white px-2",
-        "text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary hover:shadow-sm",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+        "group flex min-h-12 min-w-0 items-center justify-center border px-2 font-mono text-sm transition-colors",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        keyDefinition.tone === "accent"
+          ? "border-primary bg-primary-soft text-primary hover:bg-primary hover:text-white"
+          : keyDefinition.tone === "utility"
+            ? "border-border bg-secondary-background text-body hover:border-heading hover:text-heading"
+            : "border-border bg-white text-heading hover:border-primary hover:bg-primary-soft hover:text-primary"
       )}
-      aria-label={`Insert ${label}`}
-      title={`Insert ${label}`}
+      aria-label={isClear ? "Clear expression" : isDelete ? "Delete previous character" : `Insert ${keyDefinition.hint ?? keyDefinition.label}`}
+      title={keyDefinition.hint ?? keyDefinition.label}
     >
-      {label}
+      {isClear ? <RotateCcw className="h-4 w-4" /> : isDelete ? <Delete className="h-4 w-4" /> : keyDefinition.label}
+      {keyDefinition.hint && <span className="sr-only"> {keyDefinition.hint}</span>}
     </button>
   );
 }
 
-function CategorySection({
-  category,
-  onInsert
-}: {
-  category: (typeof keyboardGroups)[number]["categories"][number];
-  onInsert: (value: string) => void;
-}): React.JSX.Element {
+export function SymbolKeyboard({ onInsert, className }: SymbolKeyboardProps): React.JSX.Element {
+  const [activeSection, setActiveSection] = React.useState("basic");
+  const section = keyboardSections.find((item) => item.id === activeSection) ?? keyboardSections[0];
+
   return (
-    <div>
-      <p className="mb-1.5 text-xs font-medium text-body">{category.name}</p>
-      <div className="flex flex-wrap gap-1">
-        {category.symbols.map((symbol) => (
-          <SymbolButton
-            key={`${category.name}-${symbol.label}`}
-            label={symbol.label}
-            value={symbol.value}
-            onInsert={onInsert}
-          />
+    <div className={cn("border border-border bg-secondary-background", className)}>
+      <div className="flex overflow-x-auto border-b border-border bg-white" role="tablist" aria-label="Math keyboard categories">
+        {keyboardSections.map((item) => {
+          const active = item.id === activeSection;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              aria-controls={`math-keyboard-panel-${item.id}`}
+              onClick={() => setActiveSection(item.id)}
+              className={cn(
+                "min-h-12 flex-1 whitespace-nowrap border-b-2 px-4 text-sm transition-colors",
+                active ? "border-primary bg-primary-soft font-medium text-primary" : "border-transparent text-body hover:bg-secondary-background hover:text-heading"
+              )}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div id={`math-keyboard-panel-${section.id}`} role="tabpanel" className="grid grid-cols-4 gap-2 p-3 sm:grid-cols-6">
+        {section.keys.map((keyDefinition) => (
+          <MathKey key={`${section.id}-${keyDefinition.label}`} keyDefinition={keyDefinition} onInsert={onInsert} />
         ))}
       </div>
-    </div>
-  );
-}
-
-function GroupPanel({
-  group,
-  expanded,
-  onToggle,
-  onInsert
-}: {
-  group: (typeof keyboardGroups)[number];
-  expanded: boolean;
-  onToggle: () => void;
-  onInsert: (value: string) => void;
-}): React.JSX.Element {
-  return (
-    <div className="rounded-lg border border-border bg-white">
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between px-3 py-2.5 text-left text-sm font-semibold text-heading hover:bg-secondary-background/40"
-        aria-expanded={expanded}
-      >
-        {group.title}
-        {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-      </button>
-      {expanded && (
-        <div className="space-y-3 border-t border-border px-3 pb-3 pt-2">
-          {group.categories.map((category) => (
-            <CategorySection key={category.name} category={category} onInsert={onInsert} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function SymbolKeyboard({ onInsert, className }: SymbolKeyboardProps): React.JSX.Element {
-  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
-    Basic: true,
-    Calculus: false,
-    Advanced: false
-  });
-
-  function toggleGroup(title: string): void {
-    setExpandedGroups((prev) => ({ ...prev, [title]: !prev[title] }));
-  }
-
-  return (
-    <div className={cn("space-y-2", className)}>
-      {keyboardGroups.map((group) => (
-        <GroupPanel
-          key={group.title}
-          group={group}
-          expanded={expandedGroups[group.title] ?? false}
-          onToggle={() => toggleGroup(group.title)}
-          onInsert={onInsert}
-        />
-      ))}
     </div>
   );
 }
