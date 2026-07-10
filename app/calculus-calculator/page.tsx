@@ -1,132 +1,34 @@
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import Link from "next/link";
+import { ArrowRight, Infinity, Sigma, SquareFunction, Waves } from "lucide-react";
 import { OnlineCalculator } from "@/components/calculator/online-calculator";
+import { CalculatorBenefits, CalculatorFooter, CalculatorHeader, calculatorSection } from "@/components/calculator/calculator-layout";
+import { MathDisplay } from "@/components/math/math-display";
 import { StructuredData } from "@/components/seo/structured-data";
 import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
-export const metadata = createMetadata({
-  title: "Free Online Calculus Calculator | Calculus Solver",
-  description:
-    "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.",
-  path: "/calculus-calculator",
-  keywords: [
-    "calculus calculator",
-    "online calculus calculator",
-    "derivative calculator",
-    "integral calculator",
-    "limit calculator",
-    "free math calculator"
-  ]
-});
+export const metadata = createMetadata({ title: "Free Online Calculus Calculator | Calculus Solver", description: "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.", path: "/calculus-calculator", keywords: ["calculus calculator", "online calculus calculator", "derivative calculator", "integral calculator", "limit calculator", "free math calculator"] });
 
 const faqs = [
-  {
-    question: "What can the Calculus Calculator do?",
-    answer:
-      "It computes derivatives, integrals, limits, and general expressions. Use the button grid to build expressions, then evaluate or solve step-by-step."
-  },
-  {
-    question: "Is this calculus calculator free?",
-    answer: "Yes. It is completely free with no account required."
-  },
-  {
-    question: "Can I get step-by-step solutions?",
-    answer:
-      'Yes. Click "Solve step-by-step" after entering your expression to get a full breakdown with rules and an interactive graph.'
-  },
-  {
-    question: "Does it work on mobile?",
-    answer: "Yes. The calculator is fully responsive and works on phones, tablets, and desktops."
-  }
+  { question: "Is this calculus calculator free to use?", answer: "Yes. It is completely free and does not require an account." },
+  { question: "Can I see the steps for every solution?", answer: "Supported calculations include a clear step-by-step explanation alongside the final answer." },
+  { question: "Which topics are supported?", answer: "You can calculate derivatives, integrals, limits, series, and many common calculus expressions." },
+  { question: "Can I use it on mobile devices?", answer: "Yes. The calculator adapts to phones, tablets, laptops, and desktop screens." },
+  { question: "Is there a limit to how many calculations I can do?", answer: "No account or daily calculation limit is required for normal use." }
 ];
-
-const relatedTools = [
-  ["Derivative Calculator", "/derivative-calculator"],
-  ["Integral Calculator", "/integral-calculator"],
-  ["Limit Calculator", "/limit-calculator"],
-  ["Equation Solver", "/equation-solver"],
-  ["Algebra Calculator", "/algebra-solver"],
-  ["Graphing Calculator", "/graphing-calculator"],
-  ["Quadratic Calculator", "/quadratic-solver"],
-  ["Factor Calculator", "/factoring-calculator"],
-  ["Fraction Calculator", "/fraction-calculator"],
-  ["Matrix Calculator", "/matrix-calculator"]
-] as const;
+const relatedTools = [["Algebra Calculator", "/algebra-solver"], ["Matrix Calculator", "/matrix-calculator"], ["Graphing Calculator", "/graphing-calculator"], ["Equation Solver", "/equation-solver"], ["Quadratic Calculator", "/quadratic-solver"], ["Factor Calculator", "/factoring-calculator"]] as const;
 
 export default function CalculusCalculatorPage(): React.JSX.Element {
-  return (
-    <>
-      <StructuredData data={faqPageStructuredData(faqs)} />
-      <Header />
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 py-10 sm:px-6 lg:px-8 focus-visible:outline-none">
-        <nav className="mb-8 border-b border-border pb-4 text-sm text-body">
-          <a href="/" className="hover:text-heading">Home</a>
-          <span className="mx-2">/</span>
-          <span className="text-heading">Calculus Calculator</span>
-        </nav>
-
-        <div className="grid gap-8 border-b border-border pb-10 lg:grid-cols-12">
-          <div className="lg:col-span-8"><p className="mb-4 font-mono text-xs text-body">CALCULATOR / CALCULUS</p><h1 className="text-5xl font-light leading-tight tracking-[-0.025em] text-heading sm:text-6xl">Calculus Calculator</h1></div>
-          <p className="self-end text-lg leading-relaxed text-body lg:col-span-4">Solve derivatives, integrals, limits and calculus expressions online with step-by-step solutions.</p>
-        </div>
-
-        <div className="mt-10 border border-border bg-white p-4 sm:p-8">
-          <OnlineCalculator />
-        </div>
-
-        <section className="mt-16 border-y border-border bg-secondary-background px-6 py-10 sm:px-8">
-          <h2 className="text-3xl font-normal text-heading">What Can This Calculus Calculator Solve?</h2>
-          <p className="mt-4 max-w-3xl leading-relaxed text-body">Calculate derivatives, antiderivatives, limits, infinite series, and common calculus expressions. Results are computed with symbolic math tools, then presented with a formula and concise steps.</p>
-          <div className="mt-6 grid gap-px border border-border bg-border sm:grid-cols-4">
-            {['Derivatives', 'Integrals', 'Limits', 'Series'].map((operation) => <div key={operation} className="bg-white p-5 font-mono text-sm text-heading">{operation}</div>)}
-          </div>
-        </section>
-
-        <section className="mt-16">
-          <h2 className="text-3xl font-normal text-heading">How to Use the Calculus Calculator</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-3">
-            <div className="rounded-card border border-border bg-white p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">1</span>
-              <h3 className="mt-3 font-semibold text-heading">Enter expression</h3>
-              <p className="mt-1 text-sm text-body">Type standard math notation or a natural-language calculus request.</p>
-            </div>
-            <div className="rounded-card border border-border bg-white p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">2</span>
-              <h3 className="mt-3 font-semibold text-heading">Select operation</h3>
-              <p className="mt-1 text-sm text-body">Use Auto Detect or choose Derivative, Integral, Limit, or Series.</p>
-            </div>
-            <div className="rounded-card border border-border bg-white p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">3</span>
-              <h3 className="mt-3 font-semibold text-heading">View result</h3>
-              <p className="mt-1 text-sm text-body">Review the formula, calculation steps, and an optional function graph.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold text-heading">Frequently asked questions</h2>
-          <div className="mt-6 space-y-4">
-            {faqs.map((faq, index) => (
-              <details key={index} className="rounded-card border border-border bg-white p-4">
-                <summary className="cursor-pointer font-medium text-heading">{faq.question}</summary>
-                <p className="mt-2 text-sm text-body">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold text-heading">Related tools</h2>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {relatedTools.map(([label, href]) => (
-              <a key={href} href={href} className="inline-flex min-h-11 items-center border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:bg-primary-soft hover:text-primary">
-                {label}
-              </a>
-            ))}
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
-  );
+  const productRule = String.raw`\frac{d}{dx}[u(x)v(x)]=u'(x)v(x)+u(x)v'(x)`;
+  const operations = [[SquareFunction, "Derivatives", "Find derivatives using product, quotient, chain, and other rules.", "bg-blue-600"], [Waves, "Integrals", "Compute indefinite and definite integrals with guided solutions.", "bg-violet-600"], [Infinity, "Limits", "Evaluate limits at a point or infinity, one-sided or two-sided.", "bg-cyan-700"], [Sigma, "Series", "Work with sequences, series, sums, and convergence.", "bg-orange-500"]] as const;
+  return <div className="min-h-screen bg-[#f6f9fe] text-[#0a234f]"><StructuredData data={faqPageStructuredData(faqs)} /><CalculatorHeader />
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
+      <header className="mx-auto mb-8 max-w-3xl text-center"><h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Calculus Calculator</h1><p className="mt-3 text-base text-[#637392]">Solve derivatives, integrals, limits, and more with clear step-by-step explanations.</p></header>
+      <OnlineCalculator /><div className="mt-6"><CalculatorBenefits /></div>
+      <section className={`${calculatorSection} mt-8`}><h2 className="text-2xl font-bold">What Can This Calculus Calculator Solve?</h2><div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{operations.map(([Icon, title, text, color]) => <div key={title} className="rounded-xl border border-[#dbe6f6] p-5"><div className="flex items-center gap-3"><span className={`flex h-11 w-11 items-center justify-center rounded-lg text-white ${color}`}><Icon className="h-6 w-6" /></span><h3 className="font-bold">{title}</h3></div><p className="mt-4 text-sm leading-6 text-[#637392]">{text}</p></div>)}</div></section>
+      <section className={`${calculatorSection} mt-6`}><h2 className="text-2xl font-bold">How to Use the Calculus Calculator</h2><div className="mt-7 grid gap-5 sm:grid-cols-3">{[["Choose a topic", "Select Derivative, Integral, Limit, or Series."], ["Enter your function", "Type your expression using the editor or math buttons."], ["Calculate & learn", "Get the answer with step-by-step explanations."]].map(([title, text], index) => <div key={title} className="relative text-center"><span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#0967ed] font-bold text-white">{index + 1}</span><h3 className="mt-4 font-bold">{title}</h3><p className="mx-auto mt-2 max-w-[220px] text-sm leading-6 text-[#637392]">{text}</p>{index < 2 && <ArrowRight className="absolute -right-4 top-3 hidden text-[#9dafcb] sm:block" />}</div>)}</div></section>
+      <section className={`${calculatorSection} mt-6 overflow-hidden`}><h2 className="text-2xl font-bold">Common Calculus Examples</h2><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[680px] border-collapse text-left text-sm"><thead><tr className="bg-[#f6f9fe]"><th className="border border-[#dbe6f6] p-3">Problem</th><th className="border border-[#dbe6f6] p-3">Input</th><th className="border border-[#dbe6f6] p-3">Result</th></tr></thead><tbody>{[["Derivative", "d/dx (x² + 3x)", "2x + 3"], ["Integral", "∫ sin(x) dx", "−cos(x) + C"], ["Limit", "lim x→0 sin(x)/x", "1"], ["Product rule", "d/dx (eˣ ln x)", "eˣ ln x + eˣ/x"]].map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell} className="border border-[#dbe6f6] p-3 font-mono text-[#314567]">{cell}</td>)}</tr>)}</tbody></table></div></section>
+      <section className={`${calculatorSection} mt-6 grid gap-8 lg:grid-cols-2 lg:items-center`}><div><h2 className="text-2xl font-bold">Understand Calculus, Not Just the Answer</h2><p className="mt-4 text-sm leading-7 text-[#637392]">Calculus helps us understand how things change and accumulate. The calculator does more than return an answer—it shows the reasoning, rules, and intermediate steps that get you there.</p><p className="mt-3 text-sm leading-7 text-[#637392]"><strong className="text-[#0a234f]">Derivatives</strong> measure rates of change. <strong className="text-[#0a234f]">Integrals</strong> measure accumulation. <strong className="text-[#0a234f]">Limits</strong> describe behavior near a point.</p></div><div className="rounded-xl border border-[#dbe6f6] bg-[#fbfdff] p-6 text-center"><h3 className="font-bold">Product Rule (for derivatives)</h3><div className="mt-5 overflow-x-auto text-lg"><MathDisplay latex={productRule} display="block" /></div></div></section>
+      <section className={`${calculatorSection} mt-6`}><h2 className="text-2xl font-bold">Frequently Asked Questions</h2><div className="mt-5 divide-y divide-[#dbe6f6] rounded-xl border border-[#dbe6f6]">{faqs.map((faq) => <details key={faq.question} className="px-4 py-3"><summary className="cursor-pointer list-none font-semibold after:float-right after:content-['⌄']">{faq.question}</summary><p className="mt-3 text-sm leading-6 text-[#637392]">{faq.answer}</p></details>)}</div></section>
+      <section className="mt-9 text-center"><h2 className="text-2xl font-bold">More Calculators</h2><div className="mt-5 flex flex-wrap justify-center gap-2">{relatedTools.map(([label, href]) => <Link key={href} href={href} className="rounded-lg border border-[#cbd9ed] bg-white px-4 py-3 text-sm font-semibold text-[#203b67] hover:border-[#0967ed] hover:text-[#0967ed]">{label}</Link>)}</div></section>
+    </main><CalculatorFooter /></div>;
 }
