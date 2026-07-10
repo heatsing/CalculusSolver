@@ -30,6 +30,7 @@ const solverFormSchema = z.object({
 type SolverFormValues = z.infer<typeof solverFormSchema>;
 
 export function SolverShell({ mode, operationHint }: { mode: string; operationHint?: string }): React.JSX.Element {
+  const context = mode === "algebra" ? "algebra" : "calculus";
   const searchParams = useSearchParams();
   const exampleId = searchParams.get("example");
   const queryInput = searchParams.get("q");
@@ -115,9 +116,10 @@ export function SolverShell({ mode, operationHint }: { mode: string; operationHi
           onChange={(value) => setValue("input", value, { shouldValidate: true })}
           onSubmit={handleSubmit(onSubmit)}
           loading={state.status === "loading"}
+          context={context}
         />
       </form>
-      <QuickExamples onSelect={handleSelectExample} />
+      <QuickExamples onSelect={handleSelectExample} context={context} />
 
       <div className="mt-4 flex justify-end">
         <HistoryDrawer onSelect={handleSelectExample} />

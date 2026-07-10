@@ -7,10 +7,15 @@ const quickExamples = [
   { icon: Equal, label: "x Solve equation", value: "Solve 2x + 5 = 17" }
 ];
 
-export function QuickExamples({ onSelect }: { onSelect: (value: string) => void }): React.JSX.Element {
+export function QuickExamples({ onSelect, context = "calculus" }: { onSelect: (value: string) => void; context?: "calculus" | "algebra" }): React.JSX.Element {
+  const examples = context === "algebra" ? [
+    { icon: Equal, label: "x Solve equation", value: "Solve 2x + 5 = 17" },
+    { icon: FunctionSquare, label: "Factor polynomial", value: "Factor x^2 - 5x + 6" },
+    { icon: Sigma, label: "Simplify expression", value: "Simplify 3x + 2x - 4" }
+  ] : quickExamples;
   return (
     <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-      {quickExamples.map((example) => (
+      {examples.map((example) => (
         <Button
           key={example.label}
           variant="outline"

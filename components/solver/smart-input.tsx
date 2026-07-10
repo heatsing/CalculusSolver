@@ -25,6 +25,7 @@ export type SmartInputProps = {
   onChange: (value: string) => void;
   onSubmit: () => void;
   loading?: boolean;
+  context?: "calculus" | "algebra";
 };
 
 const modes: { id: InputMode; label: string; icon: React.ElementType }[] = [
@@ -39,7 +40,7 @@ const popularShortcuts = [
   { label: "√ Simplify", value: "simplify " }
 ];
 
-export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputProps): React.JSX.Element {
+export function SmartInput({ value, onChange, onSubmit, loading, context = "calculus" }: SmartInputProps): React.JSX.Element {
   const [mode, setMode] = React.useState<InputMode>("natural");
   const [keyboardOpen, setKeyboardOpen] = React.useState(false);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -145,7 +146,7 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a math problem, e.g. integrate x^2 sin(x)"
+            placeholder={context === "algebra" ? "Type an algebra problem, e.g. solve 2x + 5 = 17" : "Type a math problem, e.g. integrate x^2 sin(x)"}
             disabled={loading}
             className="min-h-[120px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/90 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
@@ -191,7 +192,12 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
         <div className="mx-auto max-w-solver-input space-y-3 px-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium text-body">Popular:</span>
-            {popularShortcuts.map((shortcut) => (
+            {(context === "algebra" ? [
+              { label: "x Solve", value: "solve " },
+              { label: "(x − a) Factor", value: "factor " },
+              { label: "a + b Simplify", value: "simplify " },
+              { label: "x² Quadratic", value: "solve quadratic " }
+            ] : popularShortcuts).map((shortcut) => (
               <button
                 key={shortcut.label}
                 type="button"
