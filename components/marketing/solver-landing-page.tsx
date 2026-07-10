@@ -43,7 +43,7 @@ export function SolverLandingPage({ variant }: { variant: Variant }): React.JSX.
   const tools = algebra ? algebraTools : calculusTools;
   const examples = algebra ? ["2x + 5 = 17", "x² − 5x + 6 = 0", "factor x² − 9", "simplify 3x + 2x − 4", "2x + y = 7, x − y = 2", "(x² − 1)/(x − 1)"] : ["∫ x² cos(x) dx", "lim x→∞ (1 + 1/x)ˣ", "d/dx (x³ sin(x))", "d/dx ln(x)", "lim x→0 sin(x)/x", "∫ eˣ cos(x) dx"];
   const faqs = algebra ? ["Is the Algebra Solver free to use?", "Can it show every algebra step?", "Can it solve quadratic equations?", "Does it simplify and factor expressions?", "Can I use it for homework practice?"] : ["Is Calculus Solver free to use?", "Do I need to create an account?", "Can I upload a photo of my problem?", "What types of calculus problems can it solve?", "Are the solutions suitable for homework and exams?"];
-  const heroTitle = algebra ? "Solve Algebra Problems\nStep by Step" : "Solve Calculus Problems\nStep by Step";
+  const heroTitle = algebra ? "Solve Algebra Problems\nStep by Step" : "Calculus Solve Problems\nStep by Step";
   const heroText = algebra ? "Enter an equation, expression, polynomial, or system and get a clear solution with every algebra step explained." : "Enter a derivative, integral, limit, or series problem and get a clear solution with every step explained.";
   return <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,#ffffff_0%,#f8fbff_50%,#f1f6fd_100%)] text-[#071f4a]"><EditorialHeader active={variant} />
     <main id="main-content" tabIndex={-1} className="focus-visible:outline-none">
