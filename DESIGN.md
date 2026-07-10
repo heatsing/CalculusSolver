@@ -2,7 +2,7 @@
 
 ## Direction
 
-Calculus Solver is a precise mathematical workbench: calm, technical, and trustworthy. The interface uses an adapted Carbon-style visual language with a strict four-pixel grid, flat surfaces, IBM Plex typography, and one confident blue accent.
+Calculus Solver is a precise mathematical workbench: calm, technical, and trustworthy. The interface uses an adapted Carbon-style visual language with a strict four-pixel grid, flat surfaces, Roboto typography, and one confident blue accent.
 
 ## Tokens
 
@@ -10,7 +10,7 @@ Calculus Solver is a precise mathematical workbench: calm, technical, and trustw
 - Ink: `#161616`; muted ink: `#525252`; subtle ink: `#8d8d8d`.
 - Primary: `#0f62fe`; hover: `#0050e6`; pressed: `#002d9c`.
 - Success: `#24a148`; warning: `#f1c21b`; error: `#da1e28`.
-- IBM Plex Sans is used for interface and display text. IBM Plex Mono is reserved for mathematical input, tokens, and technical labels.
+- Roboto is used for interface and display text. Roboto Mono or the system monospace stack is reserved for mathematical input, tokens, and technical labels.
 - Display text is light (300), body is regular (400), emphasis is semibold (600).
 - Components are square, use one-pixel hairlines, and have no drop shadows.
 

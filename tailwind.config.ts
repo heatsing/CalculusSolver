@@ -42,9 +42,9 @@ const config: Config = {
         "solver-input": "760px"
       },
       fontFamily: {
-        sans: ['"IBM Plex Sans"', '"Noto Sans Math"', "system-ui", "sans-serif"],
-        serif: ['"IBM Plex Sans"', "system-ui", "sans-serif"],
-        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "monospace"]
+        sans: ["var(--font-roboto)", '"Roboto"', '"Noto Sans Math"', "system-ui", "sans-serif"],
+        serif: ["var(--font-roboto)", '"Roboto"', "system-ui", "sans-serif"],
+        mono: ['"Roboto Mono"', "ui-monospace", "SFMono-Regular", "monospace"]
       },
       keyframes: {
         shimmer: {

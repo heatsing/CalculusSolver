@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
@@ -8,6 +9,13 @@ import {
 } from "@/lib/seo";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-roboto",
+  display: "swap"
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -79,7 +87,7 @@ export default function RootLayout({
   children
 }: Readonly<{ children: React.ReactNode }>): React.JSX.Element {
   return (
-    <html lang="en">
+    <html lang="en" className={roboto.variable}>
       <head>
         <StructuredData data={websiteStructuredData()} />
         <StructuredData data={softwareApplicationStructuredData()} />

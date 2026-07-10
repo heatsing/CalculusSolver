@@ -6,9 +6,9 @@
 @import "mathlive/static.css";
 
 :root {
-  --font-sans: "IBM Plex Sans", "Noto Sans Math", system-ui, sans-serif;
-  --font-serif: "IBM Plex Sans", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-roboto), "Roboto", "Noto Sans Math", system-ui, sans-serif;
+  --font-serif: var(--font-roboto), "Roboto", system-ui, sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
