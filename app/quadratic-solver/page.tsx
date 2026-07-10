@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Quadratic Solver | Free Step-by-Step Equation Solver",
+  title: "Free Online Quadratic Calculator | Calculus Solver",
   description:
     "Free quadratic equation solver with step-by-step solutions. Solve ax² + bx + c = 0 by factoring, completing the square, or the quadratic formula.",
   path: "/quadratic-solver",

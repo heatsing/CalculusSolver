@@ -11,7 +11,7 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Algebra Solver | Step-by-Step Equations, Factors & Simplification",
+  title: "Free Online Algebra Calculator | Calculus Solver",
   description:
     "Solve equations, simplify expressions, factor polynomials, and view clear algebra steps.",
   path: "/algebra-solver",

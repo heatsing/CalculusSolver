@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Fraction Calculator | Add, Subtract, Multiply, Divide",
+  title: "Free Online Fraction Calculator | Calculus Solver",
   description: "Free fraction calculator. Add, subtract, multiply, and divide fractions with step-by-step solutions and simplification.",
   path: "/fraction-calculator",
   keywords: [

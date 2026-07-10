@@ -5,7 +5,7 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Calculus Calculator | Free Online Derivatives, Integrals & Limits",
+  title: "Free Online Calculus Calculator | Calculus Solver",
   description:
     "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.",
   path: "/calculus-calculator",

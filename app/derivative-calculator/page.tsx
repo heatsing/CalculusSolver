@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Derivative Calculator | Free Step-by-Step Math Solver",
+  title: "Free Online Derivative Calculator | Calculus Solver",
   description:
     "Free derivative calculator with step-by-step solutions. Compute derivatives of polynomials, trigonometric, exponential, and logarithmic functions instantly.",
   path: "/derivative-calculator",

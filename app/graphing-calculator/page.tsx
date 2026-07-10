@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Graphing Calculator | Free Online Function Grapher",
+  title: "Free Online Graphing Calculator | Calculus Solver",
   description:
     "Free online graphing calculator. Plot functions and explore their curves with an interactive graph and step-by-step analysis.",
   path: "/graphing-calculator",

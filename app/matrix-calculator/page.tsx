@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Matrix Calculator | Determinant, Inverse, Multiplication",
+  title: "Free Online Matrix Calculator | Calculus Solver",
   description: "Free matrix calculator. Compute determinants, inverses, products, sums, and transpose of matrices with step-by-step solutions.",
   path: "/matrix-calculator",
   keywords: [
