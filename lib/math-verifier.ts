@@ -1,7 +1,8 @@
-import { normalizeInput } from "@/lib/math-parser";
+import { normalizeInput, toMachineExpression } from "@/lib/math-parser";
 import type { SolverMachine, SolverResultResponse } from "@/lib/solver-schema";
 import type { VerificationStatus } from "@/types/solver";
 import type nerdamerType from "nerdamer";
+import { evaluate as mathEvaluate, format as mathFormat } from "mathjs";
 
 let nerdamerModule: typeof nerdamerType | null = null;
 
@@ -355,7 +356,64 @@ export async function verifyResult(result: SolverResultResponse): Promise<{
 
 export async function computeLocalAnswer(input: string, operation: string, variable: string): Promise<string> {
   const nerdamer = await loadNerdamer();
-  const normalized = safeNormalize(input);
+  const text = normalizeInput(input).trim();
+
+  const numbers = (text.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+  const formatNumber = (value: number): string => mathFormat(value, { precision: 12 });
+  const expressionAfter = (pattern: RegExp): string => text.replace(pattern, "").trim();
+
+  if (/^calculate the average of\b/i.test(text)) {
+    if (numbers.length === 0) throw new Error("Enter at least one number for the average");
+    return formatNumber(numbers.reduce((sum, value) => sum + value, 0) / numbers.length);
+  }
+  if (/^calculate the percentage\b/i.test(text)) {
+    const match = text.match(/(-?\d+(?:\.\d+)?)\s*%\s*(?:of|\*)\s*(-?\d+(?:\.\d+)?)/i);
+    if (!match) throw new Error("Use a percentage such as 20% of 150");
+    return formatNumber((Number(match[1]) / 100) * Number(match[2]));
+  }
+  if (/^calculate the probability\b/i.test(text)) {
+    const match = text.match(/(-?\d+(?:\.\d+)?)\s*(?:out of|\/|of)\s*(-?\d+(?:\.\d+)?)/i);
+    if (!match || Number(match[2]) === 0) throw new Error("Use probability as favorable outcomes out of total outcomes");
+    return formatNumber(Number(match[1]) / Number(match[2]));
+  }
+  if (/^find the least common multiple of\b/i.test(text)) {
+    if (numbers.length < 2) throw new Error("Enter at least two integers for the LCM");
+    const gcd = (a: number, b: number): number => b === 0 ? Math.abs(a) : gcd(b, a % b);
+    const lcm = (a: number, b: number): number => Math.abs(a * b) / gcd(a, b);
+    return String(numbers.reduce(lcm));
+  }
+  if (/^find the gradient of\b/i.test(text)) {
+    const expression = safeNormalize(expressionAfter(/^find the gradient of\s*/i));
+    const variables = [...new Set((expression.match(/[a-zA-Z]/g) ?? []).filter((name) => !["e", "i"].includes(name)))];
+    return `[${(variables.length ? variables : [variable]).map((name) => nerdamer.diff(expression, name).toString()).join(", ")}]`;
+  }
+
+  const utilityPrefixes = /^(?:evaluate the exponent expression|calculate the fraction expression|calculate the root|evaluate the logarithm|calculate the matrix expression|calculate)\s*/i;
+  if (utilityPrefixes.test(text)) {
+    const expression = expressionAfter(utilityPrefixes);
+    const value = mathEvaluate(toMachineExpression(expression));
+    return typeof value === "number" ? formatNumber(value) : String(value);
+  }
+
+  let source = text;
+  if (operation === "derivative") source = expressionAfter(/^(?:differentiate|find the derivative of|derivative of)\s*/i);
+  if (operation === "integral") source = expressionAfter(/^(?:integrate|find the integral of|integral of)\s*/i).replace(/\s*d[a-z]\s*$/i, "");
+  if (operation === "factor") source = expressionAfter(/^(?:factor|factorise)\s*/i);
+  if (operation === "expand") source = expressionAfter(/^expand\s*/i);
+  if (operation === "simplify") source = expressionAfter(/^(?:simplify|reduce)\s*/i);
+  if (operation === "graph") source = expressionAfter(/^(?:graph|plot|draw)\s*/i);
+  if (operation === "solve_equation") source = expressionAfter(/^(?:solve|find [xy])\s*/i);
+
+  if (operation === "limit") {
+    const match = text.match(/(?:evaluate the )?limit\s+(.+?)\s+(?:as\s+)?([a-z])\s*(?:approaches|->)\s*([^\s]+)/i);
+    if (match) {
+      const expression = safeNormalize(match[1]);
+      return nerdamer(`limit(${expression},${match[2]},${match[3]})`).toString();
+    }
+    source = expressionAfter(/^(?:evaluate the )?limit\s*/i);
+  }
+
+  const normalized = safeNormalize(source);
 
   switch (operation) {
     case "derivative":
@@ -370,7 +428,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
     case "limit":
       return nerdamer(`limit(${normalized},${variable},0)`).toString();
     case "factor":
-      return nerdamer(normalized).factor().toString();
+      return nerdamer(`factor(${normalized})`).toString();
     case "expand":
       return nerdamer(normalized).expand().toString();
     case "graph":

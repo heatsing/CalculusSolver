@@ -71,13 +71,19 @@ export function detectOperation(input: string): string {
 }
 
 export function detectPrimaryVariable(input: string): string {
-  const normalized = normalizeInput(input);
+  const normalized = normalizeInput(input)
+    .replace(/\b(?:differentiate|derivative|integrate|integral|evaluate|limit|approaches|solve|factor|factorise|expand|simplify|reduce|graph|plot|draw|calculate|average|percentage|probability|matrix|expression|exponent|root|logarithm|least|common|multiple|find|the|of|as)\b/gi, " ")
+    .replace(/\b(?:sin|cos|tan|sec|csc|cot|sqrt|log|ln|exp|pi|infinity)\b/gi, " ");
+  const preferred = normalized.match(/[xyztqn]/i);
+  if (preferred) return preferred[0].toLowerCase();
+
   const matches = normalized.match(/[a-zA-Z]/g);
   if (!matches) return "x";
 
-  const excluded = new Set(["i", "e", "C"]);
+  const excluded = new Set(["i", "e", "c"]);
   for (const char of matches) {
-    if (!excluded.has(char)) return char;
+    const lower = char.toLowerCase();
+    if (!excluded.has(lower)) return lower;
   }
   return "x";
 }

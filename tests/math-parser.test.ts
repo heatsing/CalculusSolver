@@ -104,4 +104,13 @@ describe("detectPrimaryVariable", () => {
   it("defaults to x when no letters are present", () => {
     expect(detectPrimaryVariable("2 + 3")).toBe("x");
   });
+
+  it.each([
+    ["Differentiate x^3 + 2*x", "x"],
+    ["Integrate sin(x)", "x"],
+    ["Solve 2*x + 5 = 17", "x"],
+    ["Find the derivative of q^2", "q"]
+  ])("ignores command words in %s", (input, expected) => {
+    expect(detectPrimaryVariable(input)).toBe(expected);
+  });
 });

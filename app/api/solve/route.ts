@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildDeepSeekMessages, buildRepairMessages, callDeepSeek, estimateDeepSeekCost } from "@/lib/deepseek";
 import { parseSolverAiResponse } from "@/lib/ai-response";
-import { detectOperation, detectPrimaryVariable } from "@/lib/math-parser";
+import { detectOperation, detectPrimaryVariable, normalizeInput, toMachineExpression } from "@/lib/math-parser";
 import { computeLocalAnswer, verifyResult } from "@/lib/math-verifier";
 import { checkResultConsistency } from "@/lib/result-consistency";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -69,6 +69,25 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
   const operation = detectOperation(input);
   const variable = detectPrimaryVariable(input);
   const localAnswer = await computeLocalAnswer(input, operation, variable);
+  let sourceExpression = normalizeInput(input);
+  const prefixes: Partial<Record<string, RegExp>> = {
+    derivative: /^(?:differentiate|find the derivative of|derivative of)\s*/i,
+    integral: /^(?:integrate|find the integral of|integral of)\s*/i,
+    solve_equation: /^(?:solve|find [xy])\s*/i,
+    factor: /^(?:factor|factorise)\s*/i,
+    expand: /^expand\s*/i,
+    simplify: /^(?:simplify|reduce)\s*/i,
+    graph: /^(?:graph|plot|draw)\s*/i
+  };
+  if (prefixes[operation]) sourceExpression = sourceExpression.replace(prefixes[operation]!, "").trim();
+  if (operation === "integral") sourceExpression = sourceExpression.replace(/\s*d[a-z]\s*$/i, "").trim();
+  if (operation === "limit") {
+    const limitMatch = sourceExpression.match(/(?:evaluate the )?limit\s+(.+?)\s+(?:as\s+)?[a-z]\s*(?:approaches|->)\s*[^\s]+/i);
+    if (limitMatch) sourceExpression = limitMatch[1];
+  }
+  const machineSource = toMachineExpression(sourceExpression);
+  const equationParts = operation === "solve_equation" ? machineSource.split("=") : [];
+  const solutions = operation === "solve_equation" ? localAnswer.split(",").map((value) => value.trim()).filter(Boolean) : [];
 
   return {
     operation: operation as SolverResultResponse["operation"],
@@ -106,12 +125,12 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
       domain: [-10, 10]
     },
     machine: {
-      source_expression: operation !== "graph" ? input : null,
-      answer_expression: operation !== "graph" ? localAnswer : null,
+      source_expression: operation !== "graph" ? machineSource : null,
+      answer_expression: operation !== "graph" ? localAnswer.replace(/\s*\+\s*C\s*$/i, "") : null,
       variable,
-      equation_left: null,
-      equation_right: null,
-      solutions: [],
+      equation_left: equationParts.length === 2 ? equationParts[0] : null,
+      equation_right: equationParts.length === 2 ? equationParts[1] : null,
+      solutions,
       lower_bound: null,
       upper_bound: null,
       limit_point: null,

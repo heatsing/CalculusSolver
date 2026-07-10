@@ -45,6 +45,27 @@ describe("computeLocalAnswer", () => {
     expect(answer).toContain("x^2");
     expect(answer).toContain("6");
   });
+
+  it.each([
+    ["Differentiate x^3 + 2*x", "derivative", "x", "2+3*x^2"],
+    ["Integrate sin(x)", "integral", "x", "-cos(x) + C"],
+    ["Evaluate the limit sin(x)/x as x approaches 0", "limit", "x", "1"],
+    ["Solve 2*x + 5 = 17", "solve_equation", "x", "6"],
+    ["Factor x^2 - 5*x + 6", "factor", "x", "(-2+x)*(-3+x)"],
+    ["Simplify 3*x + 2*x - 4", "simplify", "x", "-4+5*x"],
+    ["Calculate the average of 4, 8, 12", "simplify", "x", "8"],
+    ["Calculate the fraction expression 1/2 + 1/3", "simplify", "x", "0.833333333333"],
+    ["Evaluate the exponent expression 2^10", "simplify", "x", "1024"],
+    ["Calculate the root sqrt(144)", "solve_equation", "x", "12"],
+    ["Evaluate the logarithm log(100,10)", "simplify", "x", "2"],
+    ["Find the least common multiple of 12 and 18", "simplify", "x", "36"],
+    ["Calculate the percentage 20% of 150", "simplify", "x", "30"],
+    ["Calculate the probability 3 out of 10", "simplify", "x", "0.3"],
+    ["Calculate the matrix expression [[1,2],[3,4]] * [[2],[1]]", "simplify", "x", "[[4], [10]]"],
+    ["Find the gradient of x^2 + y^2", "simplify", "x", "[2*x, 2*y]"]
+  ])("returns an exact local answer for %s", async (input, operation, variable, expected) => {
+    await expect(computeLocalAnswer(input, operation, variable)).resolves.toBe(expected);
+  });
 });
 
 describe("verifyResult", () => {
