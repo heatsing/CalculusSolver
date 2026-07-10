@@ -5,7 +5,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Next.js dev compilation and Plotly are memory-heavy; unbounded local
+  // workers make navigation tests time out under load rather than expose
+  // real product failures.
+  workers: process.env.CI ? 1 : 2,
   reporter: "list",
   use: {
     baseURL: "http://localhost:3000",

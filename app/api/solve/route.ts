@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { buildDeepSeekMessages, callDeepSeek, estimateDeepSeekCost } from "@/lib/deepseek";
+import { buildDeepSeekMessages, buildRepairMessages, callDeepSeek, estimateDeepSeekCost } from "@/lib/deepseek";
+import { parseSolverAiResponse } from "@/lib/ai-response";
 import { detectOperation, detectPrimaryVariable } from "@/lib/math-parser";
 import { computeLocalAnswer, verifyResult } from "@/lib/math-verifier";
 import { checkResultConsistency } from "@/lib/result-consistency";
@@ -190,24 +191,18 @@ export async function POST(request: Request): Promise<NextResponse> {
       return createErrorResponse("INVALID_AI_RESPONSE", "AI returned an empty response.", requestId, 502);
     }
 
-    let parsedAi: unknown;
-    try {
-      parsedAi = JSON.parse(content.trim());
-    } catch {
-      const match = content.match(/\{[\s\S]*\}/);
-      if (!match) {
-        return createErrorResponse("INVALID_AI_RESPONSE", "AI response was not valid JSON.", requestId, 502);
-      }
-      try {
-        parsedAi = JSON.parse(match[0]);
-      } catch {
-        return createErrorResponse("INVALID_AI_RESPONSE", "AI response was not valid JSON.", requestId, 502);
-      }
-    }
-
-    const parsedAiResult = solverResultSchema.safeParse(parsedAi);
+    let parsedAiResult = parseSolverAiResponse(content);
     if (!parsedAiResult.success) {
-      return createErrorResponse("INVALID_AI_RESPONSE", "AI response did not match the expected format.", requestId, 502);
+      const repairResponse = await callDeepSeek(buildRepairMessages(content, parsedAiResult.error));
+      const repairChoices = (repairResponse as { choices?: Array<{ message?: { content?: string } }> }).choices;
+      const repairedContent = repairChoices?.[0]?.message?.content;
+      if (!repairedContent) {
+        return createErrorResponse("INVALID_AI_RESPONSE", "The solver returned an invalid response. Please try again.", requestId, 502);
+      }
+      parsedAiResult = parseSolverAiResponse(repairedContent);
+      if (!parsedAiResult.success) {
+        return createErrorResponse("INVALID_AI_RESPONSE", "The solver returned an invalid response. Please try again.", requestId, 502);
+      }
     }
 
     const aiResult = parsedAiResult.data;

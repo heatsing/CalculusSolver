@@ -69,7 +69,7 @@ test.describe("Daily Challenge", () => {
     await expect(page.locator("#daily-guess-input")).toBeVisible({ timeout: 10000 });
 
     await expect(page.getByText(/Next challenge in/)).toBeVisible();
-    await expect(page.locator("span.font-mono")).toHaveText(/\d{2}:\d{2}:\d{2}/);
+    await expect(page.getByTestId("daily-countdown")).toHaveText(/\d{2}:\d{2}:\d{2}/);
   });
 
   test("streak and wins are displayed", async ({ page }) => {

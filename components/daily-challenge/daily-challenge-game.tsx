@@ -225,7 +225,7 @@ export function DailyChallengeGame(): React.JSX.Element {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm text-body">
           <Clock className="h-4 w-4" />
-          <span>Next challenge in <span className="font-mono font-semibold text-heading">{countdown}</span></span>
+          <span>Next challenge in <span data-testid="daily-countdown" className="font-mono font-semibold text-heading">{countdown}</span></span>
         </div>
         <div className="flex items-center gap-2">
           {shareText && (

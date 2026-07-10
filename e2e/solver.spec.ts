@@ -6,7 +6,7 @@ const HISTORY_KEY = "calculus-solver-history-v2";
 test.describe("Calculus Solver", () => {
   test("home page loads and shows the solver", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Solve math problems step by step/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /See every step\. Understand every result\./ })).toBeVisible();
     await expect(page.locator("#math-problem-input")).toBeVisible();
   });
 
