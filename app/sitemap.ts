@@ -14,6 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/equation-solver",
     "/quadratic-solver",
     "/factoring-calculator",
+    "/graphing-calculator",
+    "/fraction-calculator",
+    "/matrix-calculator",
     "/examples",
     "/privacy",
     "/terms"

@@ -101,7 +101,13 @@ export default function CalculusCalculatorPage(): React.JSX.Element {
             <a href="/derivative-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Derivative Calculator</a>
             <a href="/integral-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Integral Calculator</a>
             <a href="/limit-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Limit Calculator</a>
-            <a href="/calculus-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Calculus Solver</a>
+            <a href="/equation-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Equation Solver</a>
+            <a href="/algebra-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Algebra Calculator</a>
+            <a href="/graphing-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Graphing Calculator</a>
+            <a href="/quadratic-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Quadratic Calculator</a>
+            <a href="/factoring-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Factor Calculator</a>
+            <a href="/fraction-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Fraction Calculator</a>
+            <a href="/matrix-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Matrix Calculator</a>
           </div>
         </section>
       </main>
