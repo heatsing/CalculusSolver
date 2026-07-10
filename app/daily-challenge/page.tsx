@@ -1,103 +1,32 @@
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import Link from "next/link";
+import { ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Upload } from "lucide-react";
 import { DailyChallengeGame } from "@/components/daily-challenge/daily-challenge-game";
+import { EditorialFooter, EditorialHeader } from "@/components/marketing/solver-landing-page";
+import { SolverShell } from "@/components/solver/solver-shell";
 import { StructuredData } from "@/components/seo/structured-data";
 import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
-export const metadata = createMetadata({
-  title: "Daily Math Challenge | Free Calculus & Algebra Puzzles",
-  description:
-    "A new math challenge every day. Solve derivatives, integrals, limits, and algebra problems with progressive hints. Track your streak and share your results.",
-  path: "/daily-challenge",
-  keywords: [
-    "daily math challenge",
-    "calculus challenge",
-    "math puzzle",
-    "daily math problem",
-    "math streak",
-    "free math challenge"
-  ]
-});
-
+export const metadata = createMetadata({ title: "Daily Math Challenge | Free Calculus & Algebra Puzzles", description: "A new math challenge every day. Solve derivatives, integrals, limits, and algebra problems with progressive hints. Track your streak and share your results.", path: "/daily-challenge", keywords: ["daily math challenge", "calculus challenge", "math puzzle", "daily math problem", "math streak"] });
 const faqs = [
-  {
-    question: "What is the Daily Math Challenge?",
-    answer:
-      "Every day a new math problem is selected — covering derivatives, integrals, limits, and algebra. You get up to 6 progressive hints and must guess the correct answer."
-  },
-  {
-    question: "When does the challenge reset?",
-    answer: "The challenge resets at midnight UTC. A new problem appears every day, and the countdown shows the exact time remaining."
-  },
-  {
-    question: "How does scoring work?",
-    answer: "You start with 100 points. Each wrong guess or hint skip reduces your score. The fewer hints you use, the higher your final score."
-  },
-  {
-    question: "Does my progress persist if I refresh?",
-    answer: "Yes. Your hints, guesses, and completion state are saved locally. Refreshing the page restores your current session."
-  },
-  {
-    question: "What is the streak?",
-    answer: "Your streak counts consecutive days you solve the challenge. Miss a day or lose, and the streak resets to zero."
-  }
+  { question: "What is the Daily Math Challenge?", answer: "Every day brings a new derivative, integral, limit, or algebra problem with progressive hints." },
+  { question: "When does the challenge reset?", answer: "The challenge resets at midnight UTC and the page shows the time remaining." },
+  { question: "How does scoring work?", answer: "You start with 100 points. Hints and incorrect attempts reduce the available score." },
+  { question: "Does my progress persist if I refresh?", answer: "Yes. Your current challenge progress and completion state are saved locally." },
+  { question: "What is the streak?", answer: "Your streak counts consecutive days on which you solve the daily challenge." }
 ];
+const tools = [["Derivative Solver", "/derivative-calculator", "d/dx"], ["Integral Solver", "/integral-calculator", "∫"], ["Limit Solver", "/limit-calculator", "lim"], ["Series Solver", "/calculus-calculator", "Σ"], ["Equation Solver", "/equation-solver", "y″"], ["Algebra Solver", "/algebra-solver", "x"]] as const;
+const examples = ["∫ x² cos(x) dx", "lim x→∞ (1 + 1/x)ˣ", "d/dx (x³ sin(x))", "d/dx ln(x)", "lim x→0 sin(x)/x", "∫ eˣ cos(x) dx"];
 
 export default function DailyChallengePage(): React.JSX.Element {
-  return (
-    <>
-      <StructuredData data={faqPageStructuredData(faqs)} />
-      <Header />
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 py-10 sm:px-6 lg:px-8 focus-visible:outline-none">
-        <nav className="mb-6 text-sm text-body" aria-label="Breadcrumb">
-          <a href="/" className="hover:text-heading">Home</a>
-          <span className="mx-2">/</span>
-          <span className="text-heading">Daily Challenge</span>
-        </nav>
-
-        <h1 className="text-4xl font-bold tracking-tight text-heading sm:text-5xl">Daily Math Challenge</h1>
-        <p className="mt-4 max-w-2xl text-lg text-body">
-          A new problem every day. Use progressive hints, test your skills, and build your streak.
-        </p>
-
-        <div className="mt-10">
-          <DailyChallengeGame />
-        </div>
-
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold text-heading">How it works</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-3">
-            <div className="rounded-card border border-border bg-white p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">1</span>
-              <h3 className="mt-3 font-semibold text-heading">Read the problem</h3>
-              <p className="mt-1 text-sm text-body">Each day brings a new calculus or algebra problem across different categories and difficulties.</p>
-            </div>
-            <div className="rounded-card border border-border bg-white p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">2</span>
-              <h3 className="mt-3 font-semibold text-heading">Guess and get hints</h3>
-              <p className="mt-1 text-sm text-body">Wrong guesses reveal a new hint. You can also skip to reveal a hint at a higher score cost.</p>
-            </div>
-            <div className="rounded-card border border-border bg-white p-5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">3</span>
-              <h3 className="mt-3 font-semibold text-heading">Win and share</h3>
-              <p className="mt-1 text-sm text-body">Solve the problem to earn points, extend your streak, and share your result without spoiling the answer.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-16">
-          <h2 className="text-2xl font-bold text-heading">Frequently asked questions</h2>
-          <div className="mt-6 space-y-4">
-            {faqs.map((faq, index) => (
-              <details key={index} className="rounded-card border border-border bg-white p-4">
-                <summary className="cursor-pointer font-medium text-heading">{faq.question}</summary>
-                <p className="mt-2 text-sm text-body">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
-  );
+  return <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,#fff_0%,#f8fbff_52%,#f1f6fd_100%)] text-[#071f4a]"><StructuredData data={faqPageStructuredData(faqs)} /><EditorialHeader active="calculus" />
+    <main id="main-content" tabIndex={-1} className="focus-visible:outline-none">
+      <section className="mx-auto max-w-[1240px] px-4 pb-8 pt-8 text-center sm:px-6 lg:px-8"><h1 className="font-serif text-4xl leading-none sm:text-5xl">Solve Calculus Problems<br />Step by Step</h1><p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#5f6f8d]">Enter a derivative, integral, limit, or series problem and get a clear solution with every step explained.</p><p className="mt-2 text-sm font-medium text-[#0967ed]">Free &nbsp;•&nbsp; No sign-up &nbsp;•&nbsp; Instant results</p><div className="mt-6 rounded-2xl border border-[#d9e4f3] bg-white p-3 text-left shadow-[0_14px_40px_rgba(35,74,132,.11)] sm:p-5"><SolverShell mode="auto" /></div></section>
+      <section className="mx-auto max-w-[1140px] px-4 py-4"><DailyChallengeGame /></section>
+      <section className="mt-8 border-y border-[#e0e9f5] bg-white/70"><div className="mx-auto grid max-w-[1080px] gap-7 px-4 py-10 md:grid-cols-[240px_1fr]"><div><h2 className="font-serif text-3xl">Clear answers, not just final answers</h2><p className="mt-4 text-sm leading-6 text-[#5f6f8d]">See every step so you can learn and understand.</p></div><div className="rounded-xl border border-[#d9e4f3] bg-white p-6"><p className="font-bold">Example: <span className="font-mono font-normal">∫ x² · cos(x) dx</span></p><ol className="mt-4 space-y-3 text-sm text-[#314567]">{["Choose integration by parts.", "Apply the rule and integrate again.", "Simplify and include the constant C."].map((step, i) => <li key={step} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0967ed] text-xs font-bold text-white">{i + 1}</span>{step}</li>)}</ol></div></div></section>
+      <section className="mx-auto max-w-[1140px] px-4 py-10"><h2 className="text-center font-serif text-3xl">Choose What You Want to Solve</h2><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tools.map(([title, href, symbol]) => <Link key={title} href={href} className="flex items-center gap-4 rounded-xl border border-[#d9e4f3] bg-white p-5 shadow-sm hover:border-[#82aff5]"><span className="w-10 text-center font-serif text-3xl text-[#0967ed]">{symbol}</span><strong>{title}</strong><ArrowRight className="ml-auto h-4 w-4 text-[#0967ed]" /></Link>)}</div></section>
+      <section className="border-y border-[#e0e9f5] bg-white/75"><div className="mx-auto max-w-[1080px] px-4 py-9"><h2 className="text-center font-serif text-3xl">How Calculus Solver Works</h2><div className="mt-7 grid gap-7 sm:grid-cols-3">{[[Upload, "Enter your problem", "Type or use the math keyboard."], [FileText, "Review each step", "Get a clear, detailed solution."], [Lightbulb, "Understand the result", "Apply the method with confidence."]].map(([Icon, title, text], i) => { const I = Icon as typeof Upload; return <div key={title as string} className="flex gap-4"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 font-bold text-[#0967ed]">{i + 1}</span><I className="h-6 w-6 shrink-0 text-[#0967ed]" /><div><h3 className="font-bold">{title as string}</h3><p className="mt-1 text-xs text-[#5f6f8d]">{text as string}</p></div></div>})}</div></div></section>
+      <section className="mx-auto max-w-[1080px] px-4 py-10"><h2 className="text-center font-serif text-3xl">Popular Calculus Examples</h2><div className="mt-6 grid overflow-hidden rounded-xl border border-[#d9e4f3] bg-white sm:grid-cols-2">{examples.map((example) => <Link key={example} href={`/calculus-solver?q=${encodeURIComponent(example)}`} className="flex justify-between border-b border-[#d9e4f3] p-4 font-mono text-sm">{example}<ArrowRight className="h-4 w-4" /></Link>)}</div></section>
+      <section className="border-y border-[#e0e9f5] bg-white/70"><div className="mx-auto grid max-w-[1080px] gap-8 px-4 py-10 md:grid-cols-2"><div><h2 className="font-serif text-3xl">Built for Learning, Homework, and Verification</h2><p className="mt-4 text-sm leading-7 text-[#5f6f8d]">Each solution is broken into clear steps so you can learn, verify your work, and prepare with confidence.</p><p className="mt-4 flex items-center gap-2 text-sm font-semibold text-[#0967ed]"><CheckCircle2 className="h-4 w-4" /> Daily practice that builds understanding</p></div><div className="rounded-xl border border-[#d9e4f3] bg-[#f8fbff] p-7 text-center"><BookOpen className="mx-auto h-8 w-8 text-[#0967ed]" /><p className="mt-4 font-serif text-2xl">One thoughtful problem every day</p></div></div></section>
+      <section className="mx-auto max-w-[1080px] px-4 py-10"><h2 className="text-center font-serif text-3xl">Frequently Asked Questions</h2><div className="mt-6 divide-y divide-[#d9e4f3] rounded-xl border border-[#d9e4f3] bg-white">{faqs.map((faq) => <details key={faq.question} className="px-5 py-4"><summary className="cursor-pointer list-none text-sm font-semibold after:float-right after:content-['›']">{faq.question}</summary><p className="mt-3 text-sm leading-6 text-[#5f6f8d]">{faq.answer}</p></details>)}</div></section>
+    </main><EditorialFooter /></div>;
 }

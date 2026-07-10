@@ -87,7 +87,7 @@ export function DailyChallengeGame(): React.JSX.Element {
   const guessesLeft = MAX_GUESSES - progress.guesses.length;
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full rounded-2xl border border-[#82aff5] bg-white p-5 shadow-[0_14px_40px_rgba(35,74,132,.10)] sm:p-7">
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -109,7 +109,7 @@ export function DailyChallengeGame(): React.JSX.Element {
       </div>
 
       {/* Problem card */}
-      <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-[#d9e4f3] bg-[#f8fbff] p-5">
         <div className="mb-4 flex items-center gap-2">
           <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-lg font-bold text-primary">
             {challenge.symbol}
@@ -162,13 +162,13 @@ export function DailyChallengeGame(): React.JSX.Element {
           <label htmlFor="daily-guess-input" className="mb-2 block text-sm font-medium text-heading">
             Your answer
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <input
               id="daily-guess-input"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="e.g. 2*x, cos(x), x^2/2..."
+              placeholder="Enter your final answer..."
               autoComplete="off"
               className="flex-1 rounded-lg border border-border bg-white px-4 py-3 text-sm text-heading placeholder:text-body/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               aria-label="Enter your answer"
@@ -177,7 +177,7 @@ export function DailyChallengeGame(): React.JSX.Element {
               type="submit"
               className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
             >
-              Check
+              Submit Answer
             </button>
           </div>
           <div className="mt-2 flex items-center justify-between text-xs text-body">
