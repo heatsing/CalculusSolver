@@ -17,10 +17,13 @@ export function createMetadata({
   keywords
 }: CreateMetadataOptions): Metadata {
   const url = `${appUrl}${path}`;
+  const pageTitle = title.endsWith(" | Calculus Solver")
+    ? { absolute: title }
+    : title;
 
   return {
     metadataBase: new URL(appUrl),
-    title,
+    title: pageTitle,
     description,
     ...(keywords ? { keywords } : {}),
     openGraph: {
