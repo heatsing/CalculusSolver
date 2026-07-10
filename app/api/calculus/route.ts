@@ -66,13 +66,45 @@ function buildMachineInput(input: string, operation: CalcKind): { machineInput: 
   return { machineInput: toMachineExpression(normalized), graphExpression: normalized };
 }
 
-function buildSteps(operation: CalcKind, input: string, answer: string): string[] {
-  const rule = operation === "derivative" ? "Apply the appropriate differentiation rule."
-    : operation === "integral" ? "Apply the appropriate integration rule."
-    : operation === "limit" ? "Evaluate the behavior as the variable approaches the target."
-    : operation === "series" ? "Identify and evaluate the infinite summation."
+function buildSteps(operation: CalcKind, input: string, answer: string, normalized: string): string[] {
+  const power = normalized.match(/^derivative\(x\^(\d+),x\)$/);
+  if (operation === "derivative" && power) {
+    const exponent = Number(power[1]);
+    return [
+      `Identify the function f(x) = x^${exponent}.`,
+      "Apply the power rule: d/dx[x^n] = n*x^(n-1).",
+      `Substitute n = ${exponent} and simplify to ${answer}.`
+    ];
+  }
+  if (operation === "integral" && /^integrate\(sin\(x\),x\)$/.test(normalized)) {
+    return [
+      "Recognize that the derivative of -cos(x) is sin(x).",
+      "Use the reverse derivative rule to obtain -cos(x).",
+      `Add the constant of integration: ${answer}.`
+    ];
+  }
+  if (operation === "limit" && /limit\(sin\(x\)\/x,x->0\)/.test(normalized)) {
+    return [
+      "Recognize the standard trigonometric limit lim[x→0] sin(x)/x.",
+      "Near zero, sin(x) and x have the same first-order behavior.",
+      `Therefore the exact limit is ${answer}.`
+    ];
+  }
+  if (operation === "series" && /series\(1\/n\^2,n\)/.test(normalized)) {
+    return [
+      "Identify the convergent p-series Σ(1/n²).",
+      "Use Euler's Basel problem result for the sum from n = 1 to infinity.",
+      `The exact sum is ${answer}.`
+    ];
+  }
+
+  const article = operation === "integral" ? "an" : "a";
+  const rule = operation === "derivative" ? "Apply the matching differentiation rule to each term."
+    : operation === "integral" ? "Find an antiderivative term by term and include the integration constant."
+    : operation === "limit" ? "Evaluate the expression symbolically at the stated approach point."
+    : operation === "series" ? "Test convergence, then evaluate the summation when a closed form is available."
     : "Normalize and simplify the expression.";
-  return [`Interpret the input as a ${operation} problem: ${input}`, rule, `Simplify and verify the result: ${answer}`];
+  return [`Interpret the input as ${article} ${operation} problem: ${input}`, rule, `Simplify and verify the result: ${answer}`];
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -96,7 +128,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       normalized: machineInput,
       answer,
       latex,
-      steps: buildSteps(result.kind ?? operation, input, answer),
+      steps: buildSteps(result.kind ?? operation, input, answer, machineInput),
       graph: graphable ? { expression: graphExpression, variable: "x", domain: [-10, 10] } : null
     });
   } catch {

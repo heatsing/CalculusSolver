@@ -4,6 +4,7 @@ import { SolverShell } from "@/components/solver/solver-shell";
 import { MathDisplay } from "@/components/math/math-display";
 import { StructuredData } from "@/components/seo/structured-data";
 import { faqPageStructuredData } from "@/lib/seo";
+import { toSolverMode } from "@/lib/calculator-mode";
 
 export type CalculatorPageProps = {
   title: string;
@@ -49,7 +50,7 @@ export function CalculatorPage({
         </div>
 
         <div className="mt-10 border border-border bg-white p-4 sm:p-8">
-          <SolverShell mode={mode} />
+          <SolverShell mode={toSolverMode(mode)} operationHint={mode} />
         </div>
 
         <section className="mt-16">

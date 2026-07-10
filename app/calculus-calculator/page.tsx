@@ -40,6 +40,19 @@ const faqs = [
   }
 ];
 
+const relatedTools = [
+  ["Derivative Calculator", "/derivative-calculator"],
+  ["Integral Calculator", "/integral-calculator"],
+  ["Limit Calculator", "/limit-calculator"],
+  ["Equation Solver", "/equation-solver"],
+  ["Algebra Calculator", "/algebra-solver"],
+  ["Graphing Calculator", "/graphing-calculator"],
+  ["Quadratic Calculator", "/quadratic-solver"],
+  ["Factor Calculator", "/factoring-calculator"],
+  ["Fraction Calculator", "/fraction-calculator"],
+  ["Matrix Calculator", "/matrix-calculator"]
+] as const;
+
 export default function CalculusCalculatorPage(): React.JSX.Element {
   return (
     <>
@@ -105,16 +118,11 @@ export default function CalculusCalculatorPage(): React.JSX.Element {
         <section className="mt-16">
           <h2 className="text-2xl font-bold text-heading">Related tools</h2>
           <div className="mt-6 flex flex-wrap gap-3">
-            <a href="/derivative-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Derivative Calculator</a>
-            <a href="/integral-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Integral Calculator</a>
-            <a href="/limit-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Limit Calculator</a>
-            <a href="/equation-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Equation Solver</a>
-            <a href="/algebra-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Algebra Calculator</a>
-            <a href="/graphing-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Graphing Calculator</a>
-            <a href="/quadratic-solver" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Quadratic Calculator</a>
-            <a href="/factoring-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Factor Calculator</a>
-            <a href="/fraction-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Fraction Calculator</a>
-            <a href="/matrix-calculator" className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary">Matrix Calculator</a>
+            {relatedTools.map(([label, href]) => (
+              <a key={href} href={href} className="inline-flex min-h-11 items-center border border-border bg-white px-4 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:bg-primary-soft hover:text-primary">
+                {label}
+              </a>
+            ))}
           </div>
         </section>
       </main>

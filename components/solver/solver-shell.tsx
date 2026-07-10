@@ -17,11 +17,11 @@ import { RelatedExamples } from "@/components/solver/related-examples";
 import { CheckAnswer } from "@/components/solver/check-answer";
 import { PracticePanel } from "@/components/solver/practice-panel";
 import { SolverError } from "@/components/solver/solver-error";
-import { PreviewCards } from "@/components/solver/preview-cards";
 import { HistoryDrawer } from "@/components/solver/history-drawer";
 import { useSolver } from "@/hooks/use-solver";
 import { useSolverHistory } from "@/hooks/use-solver-history";
 import { examplesData } from "@/data/examples";
+import { withOperationHint } from "@/lib/calculator-mode";
 
 const solverFormSchema = z.object({
   input: z.string().trim().min(1, "Please enter a math problem")
@@ -29,7 +29,7 @@ const solverFormSchema = z.object({
 
 type SolverFormValues = z.infer<typeof solverFormSchema>;
 
-export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
+export function SolverShell({ mode, operationHint }: { mode: string; operationHint?: string }): React.JSX.Element {
   const searchParams = useSearchParams();
   const exampleId = searchParams.get("example");
   const queryInput = searchParams.get("q");
@@ -45,9 +45,9 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
 
   const onSubmit = React.useCallback(
     async (values: SolverFormValues): Promise<void> => {
-      await solve(values.input, mode);
+      await solve(withOperationHint(values.input, operationHint), mode);
     },
-    [mode, solve]
+    [mode, operationHint, solve]
   );
 
   React.useEffect(() => {
@@ -55,18 +55,18 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
       const example = examplesData.find((e) => e.id === exampleId);
       if (example) {
         setValue("input", example.problem);
-        void solve(example.problem, mode);
+        void solve(withOperationHint(example.problem, operationHint), mode);
       }
     }
-  }, [exampleId, setValue, mode, solve]);
+  }, [exampleId, setValue, mode, operationHint, solve]);
 
   React.useEffect(() => {
     if (queryInput) {
       const decoded = decodeURIComponent(queryInput);
       setValue("input", decoded);
-      void solve(decoded.trim(), mode);
+      void solve(withOperationHint(decoded.trim(), operationHint), mode);
     }
-  }, [queryInput, setValue, mode, solve]);
+  }, [queryInput, setValue, mode, operationHint, solve]);
 
   React.useEffect(() => {
     const resultRegion = document.getElementById("solver-result");
@@ -137,7 +137,7 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
           </>
         )}
         {state.status === "error" && (
-          <SolverError message={state.message} onRetry={() => solve(inputValue.trim(), mode)} />
+          <SolverError message={state.message} onRetry={() => solve(withOperationHint(inputValue.trim(), operationHint), mode)} />
         )}
 
         {state.status === "success" && (
@@ -162,7 +162,6 @@ export function SolverShell({ mode }: { mode: string }): React.JSX.Element {
         )}
       </div>
 
-      {state.status === "idle" && <PreviewCards />}
     </section>
   );
 }

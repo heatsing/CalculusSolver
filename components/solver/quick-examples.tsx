@@ -16,7 +16,7 @@ export function QuickExamples({ onSelect }: { onSelect: (value: string) => void 
           variant="outline"
           size="sm"
           onClick={() => onSelect(example.value)}
-          className="rounded-full border-border bg-white text-body hover:bg-primary-soft hover:text-primary"
+          className="min-h-11 border-border bg-white px-4 text-body hover:bg-primary-soft hover:text-primary"
         >
           <example.icon className="mr-1.5 h-4 w-4" />
           {example.label}

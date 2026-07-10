@@ -1,13 +1,22 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { ArrowRight, Loader2, MessageCircle, Code2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { MathFieldInput } from "@/components/solver/math-field-input";
-import { SymbolKeyboard } from "@/components/solver/symbol-keyboard";
 import { cn } from "@/lib/utils";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+
+const MathFieldInput = dynamic(
+  () => import("@/components/solver/math-field-input").then((module) => module.MathFieldInput),
+  { ssr: false, loading: () => <div className="min-h-[120px] bg-secondary-background" /> }
+);
+
+const SymbolKeyboard = dynamic(
+  () => import("@/components/solver/symbol-keyboard").then((module) => module.SymbolKeyboard),
+  { ssr: false, loading: () => <div className="h-24 animate-pulse bg-secondary-background" /> }
+);
 
 export type InputMode = "natural" | "formula";
 
@@ -32,10 +41,7 @@ const popularShortcuts = [
 
 export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputProps): React.JSX.Element {
   const [mode, setMode] = React.useState<InputMode>("natural");
-  const [keyboardOpen, setKeyboardOpen] = React.useState(() => {
-    if (typeof window === "undefined") return true;
-    return window.innerWidth > 640;
-  });
+  const [keyboardOpen, setKeyboardOpen] = React.useState(false);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   React.useEffect(() => {
@@ -153,10 +159,10 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
               type="button"
               onClick={() => handleModeChange(m.id)}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                "inline-flex min-h-11 items-center gap-1.5 border px-4 py-2 text-sm font-medium transition-colors",
                 active
-                  ? "bg-primary text-white"
-                  : "bg-white text-body hover:bg-primary-soft hover:text-primary"
+                  ? "border-primary bg-primary text-white"
+                  : "border-border bg-white text-body hover:bg-primary-soft hover:text-primary"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -175,7 +181,7 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
                 key={shortcut.label}
                 type="button"
                 onClick={() => handleShortcut(shortcut.value)}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2.5 py-1 text-xs font-medium text-heading transition-colors hover:border-primary hover:text-primary"
+                className="inline-flex min-h-11 items-center gap-1 border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary"
               >
                 {shortcut.label}
               </button>
@@ -184,7 +190,7 @@ export function SmartInput({ value, onChange, onSubmit, loading }: SmartInputPro
           <button
             type="button"
             onClick={() => setKeyboardOpen((prev) => !prev)}
-            className="flex w-full items-center justify-between rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:bg-primary-soft/30"
+            className="flex min-h-11 w-full items-center justify-between border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:bg-primary-soft/30"
           >
             <span>Math keyboard</span>
             <span className="text-xs text-body">{keyboardOpen ? "Hide" : "Show"}</span>

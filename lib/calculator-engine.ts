@@ -155,7 +155,7 @@ export async function evaluateExpression(input: string): Promise<CalcResult> {
   // 3. Limit: limit(expr, var->value)
   const limitArg = extractCallArg(expr, "limit");
   if (limitArg !== null) {
-    return evalLimit(limitArg);
+    return await evalLimit(limitArg);
   }
 
   // 4. Infinite series: series(expr, variable)
@@ -214,7 +214,7 @@ async function symbolicSimplify(expr: string): Promise<CalcResult> {
   }
 }
 
-function evalLimit(args: string): CalcResult {
+async function evalLimit(args: string): Promise<CalcResult> {
   const m = args.match(/^(.+),\s*([a-zA-Z])\s*->\s*(.+)$/);
   if (!m) {
     return {
@@ -225,6 +225,24 @@ function evalLimit(args: string): CalcResult {
   }
   const [, target, variable, valueStr] = m;
   try {
+    try {
+      const nerdamer = await loadNerdamer();
+      const symbolic = (nerdamer as unknown as {
+        limit: (expression: string, variable: string, value: string) => ReturnType<typeof nerdamer>;
+      }).limit(target, variable, valueStr);
+      const symbolicValue = symbolic.toString();
+      if (symbolicValue && !symbolicValue.includes("limit(")) {
+        return {
+          ok: true,
+          kind: "limit",
+          value: symbolicValue,
+          latex: safeToTeX(symbolic)
+        };
+      }
+    } catch {
+      // Fall back to numeric estimation for unsupported symbolic limits.
+    }
+
     const val = evaluate(valueStr);
     if (typeof val !== "number" || Number.isNaN(val)) {
       return { ok: false, value: "", error: "Limit target must be a number" };
