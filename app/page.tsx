@@ -12,8 +12,7 @@ import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
 export const metadata = createMetadata({
   title: "Calculus Solver | Step-by-Step Math Problems",
-  description:
-    "Solve calculus, algebra, derivatives, integrals, limits, and equations with clear step-by-step explanations and graphs.",
+  description: "Free Calculus Solver & Algebra Solver Online | CalculusSolver.net",
   path: "/",
   keywords: [
     "calculus solver",
