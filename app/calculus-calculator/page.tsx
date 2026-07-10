@@ -54,30 +54,38 @@ export default function CalculusCalculatorPage(): React.JSX.Element {
 
         <div className="grid gap-8 border-b border-border pb-10 lg:grid-cols-12">
           <div className="lg:col-span-8"><p className="mb-4 font-mono text-xs text-body">CALCULATOR / CALCULUS</p><h1 className="text-5xl font-light leading-tight tracking-[-0.025em] text-heading sm:text-6xl">Calculus Calculator</h1></div>
-          <p className="self-end text-lg leading-relaxed text-body lg:col-span-4">An interactive calculator for derivatives, integrals, limits, and expressions. Build your problem, evaluate it, and inspect every step.</p>
+          <p className="self-end text-lg leading-relaxed text-body lg:col-span-4">Solve derivatives, integrals, limits and calculus expressions online with step-by-step solutions.</p>
         </div>
 
         <div className="mt-10 border border-border bg-white p-4 sm:p-8">
           <OnlineCalculator />
         </div>
 
+        <section className="mt-16 border-y border-border bg-secondary-background px-6 py-10 sm:px-8">
+          <h2 className="text-3xl font-normal text-heading">What Can This Calculus Calculator Solve?</h2>
+          <p className="mt-4 max-w-3xl leading-relaxed text-body">Calculate derivatives, antiderivatives, limits, infinite series, and common calculus expressions. Results are computed with symbolic math tools, then presented with a formula and concise steps.</p>
+          <div className="mt-6 grid gap-px border border-border bg-border sm:grid-cols-4">
+            {['Derivatives', 'Integrals', 'Limits', 'Series'].map((operation) => <div key={operation} className="bg-white p-5 font-mono text-sm text-heading">{operation}</div>)}
+          </div>
+        </section>
+
         <section className="mt-16">
-          <h2 className="text-2xl font-bold text-heading">How to use</h2>
+          <h2 className="text-3xl font-normal text-heading">How to Use the Calculus Calculator</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-3">
             <div className="rounded-card border border-border bg-white p-5">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">1</span>
-              <h3 className="mt-3 font-semibold text-heading">Build your expression</h3>
-              <p className="mt-1 text-sm text-body">Tap the calculus, function, and number buttons to construct any expression.</p>
+              <h3 className="mt-3 font-semibold text-heading">Enter expression</h3>
+              <p className="mt-1 text-sm text-body">Type standard math notation or a natural-language calculus request.</p>
             </div>
             <div className="rounded-card border border-border bg-white p-5">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">2</span>
-              <h3 className="mt-3 font-semibold text-heading">Evaluate or solve</h3>
-              <p className="mt-1 text-sm text-body">Quick-evaluate to normalize and detect the operation, or solve step-by-step for a full breakdown.</p>
+              <h3 className="mt-3 font-semibold text-heading">Select operation</h3>
+              <p className="mt-1 text-sm text-body">Use Auto Detect or choose Derivative, Integral, Limit, or Series.</p>
             </div>
             <div className="rounded-card border border-border bg-white p-5">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">3</span>
-              <h3 className="mt-3 font-semibold text-heading">Get the answer</h3>
-              <p className="mt-1 text-sm text-body">View the LaTeX-rendered result, interactive graph, and rule-by-rule explanation.</p>
+              <h3 className="mt-3 font-semibold text-heading">View result</h3>
+              <p className="mt-1 text-sm text-body">Review the formula, calculation steps, and an optional function graph.</p>
             </div>
           </div>
         </section>

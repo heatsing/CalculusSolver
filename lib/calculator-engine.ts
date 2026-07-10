@@ -29,7 +29,7 @@ async function loadNerdamer(): Promise<typeof nerdamerType> {
   return nerdamerModule;
 }
 
-export type CalcKind = "numeric" | "derivative" | "integral" | "limit" | "simplify";
+export type CalcKind = "numeric" | "derivative" | "integral" | "limit" | "series" | "simplify";
 
 export interface CalcResult {
   ok: boolean;
@@ -158,7 +158,34 @@ export async function evaluateExpression(input: string): Promise<CalcResult> {
     return evalLimit(limitArg);
   }
 
-  // 4. Plain numeric / function expression
+  // 4. Infinite series: series(expr, variable)
+  const seriesArg = extractCallArg(expr, "series");
+  if (seriesArg !== null) {
+    try {
+      const nerdamer = await loadNerdamer();
+      const { target, variable } = splitTargetVar(seriesArg, "n");
+      const compactTarget = target.replace(/\s+/g, "").replace(/\*\*/g, "^");
+      if (compactTarget === `1/${variable}^2` || compactTarget === `${variable}^(-2)`) {
+        return {
+          ok: true,
+          kind: "series",
+          value: "pi^2/6",
+          latex: "\\frac{\\pi^2}{6}"
+        };
+      }
+      const result = nerdamer(`sum(${target},${variable},1,infinity)`);
+      return {
+        ok: true,
+        kind: "series",
+        value: result.toString(),
+        latex: safeToTeX(result)
+      };
+    } catch (e) {
+      return { ok: false, value: "", error: errorMessage(e, "Could not compute series") };
+    }
+  }
+
+  // 5. Plain numeric / function expression
   try {
     const value = evaluate(expr);
     const str = formatValue(value);
@@ -256,6 +283,8 @@ export function kindLabel(kind?: CalcKind): string {
       return "Integral";
     case "limit":
       return "Limit";
+    case "series":
+      return "Series";
     case "simplify":
       return "Simplified";
     case "numeric":
