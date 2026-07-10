@@ -2,12 +2,11 @@ import Link from "next/link";
 import { CheckCircle2, Gift, Menu, Zap } from "lucide-react";
 
 const nav = [
-  ["Calculus Calculator", "/calculus-calculator"],
-  ["Derivative Calculator", "/derivative-calculator"],
-  ["Integral Calculator", "/integral-calculator"],
-  ["Limit Calculator", "/limit-calculator"],
+  ["Calculus Solver", "/calculus-solver"],
   ["Algebra Solver", "/algebra-solver"],
-  ["Examples", "/examples"]
+  ["Calculators", "/calculators"],
+  ["Examples", "/examples"],
+  ["Guides", "/guides"]
 ] as const;
 
 export function CalculatorHeader(): React.JSX.Element {
@@ -19,15 +18,15 @@ export function CalculatorHeader(): React.JSX.Element {
           <span className="hidden sm:inline">Calculus Calculator</span>
         </Link>
         <nav className="hidden min-w-0 flex-1 items-stretch justify-center self-stretch lg:flex" aria-label="Calculator navigation">
-          {nav.map(([label, href], index) => (
-            <Link key={href} href={href} className={`flex items-center border-b-2 px-3 text-xs font-medium transition-colors ${index === 0 ? "border-[#0967ed] text-[#0967ed]" : "border-transparent text-[#314567] hover:border-[#a8c9fa] hover:text-[#0967ed]"}`}>{label}</Link>
+          {nav.map(([label, href]) => (
+            <Link key={label} href={href} className={`flex items-center border-b-2 px-4 text-xs font-medium transition-colors ${label === "Calculators" ? "border-[#0967ed] text-[#0967ed]" : "border-transparent text-[#314567] hover:border-[#a8c9fa] hover:text-[#0967ed]"}`}>{label}</Link>
           ))}
         </nav>
         <Link href="/about" className="ml-auto hidden rounded-lg border border-[#90b9f8] px-4 py-2 text-xs font-medium text-[#0967ed] hover:bg-[#eff6ff] sm:inline-flex">About</Link>
         <details className="relative ml-auto lg:hidden">
           <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-lg border border-[#dbe6f6] text-[#0a234f]" aria-label="Open calculator menu"><Menu className="h-5 w-5" /></summary>
           <nav className="absolute right-0 top-12 w-64 rounded-xl border border-[#dbe6f6] bg-white p-2 shadow-xl" aria-label="Mobile calculator navigation">
-            {nav.map(([label, href]) => <Link key={href} href={href} className="block rounded-lg px-3 py-3 text-sm text-[#314567] hover:bg-[#eff6ff] hover:text-[#0967ed]">{label}</Link>)}
+            {nav.map(([label, href]) => <Link key={label} href={href} className="block rounded-lg px-3 py-3 text-sm text-[#314567] hover:bg-[#eff6ff] hover:text-[#0967ed]">{label}</Link>)}
           </nav>
         </details>
       </div>

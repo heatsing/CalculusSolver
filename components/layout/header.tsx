@@ -9,9 +9,9 @@ import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/s
 const navLinks = [
   { label: "Calculus Solver", href: "/calculus-solver" },
   { label: "Algebra Solver", href: "/algebra-solver" },
-  { label: "Calculus Calculator", href: "/calculus-calculator" },
-  { label: "Daily Challenge", href: "/daily-challenge" },
-  { label: "Examples", href: "/examples" }
+  { label: "Calculators", href: "/calculators" },
+  { label: "Examples", href: "/examples" },
+  { label: "Guides", href: "/guides" }
 ];
 
 export function Header(): React.JSX.Element {
