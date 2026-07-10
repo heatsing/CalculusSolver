@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2, Gift, Menu, Zap } from "lucide-react";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const nav = [
   ["Calculus Solver", "/calculus-solver"],
@@ -13,10 +14,7 @@ export function CalculatorHeader(): React.JSX.Element {
   return (
     <header className="sticky top-0 z-40 border-b border-[#dbe6f6] bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-[1240px] items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-3 font-bold text-[#0a234f]">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0967ed] font-serif text-xl text-white shadow-sm">∫</span>
-          <span className="hidden sm:inline">Calculus Calculator</span>
-        </Link>
+        <Link href="/" className="shrink-0"><BrandLogo compact /></Link>
         <nav className="hidden min-w-0 flex-1 items-stretch justify-center self-stretch lg:flex" aria-label="Calculator navigation">
           {nav.map(([label, href]) => (
             <Link key={label} href={href} className={`flex items-center border-b-2 px-4 text-xs font-medium transition-colors ${label === "Calculators" ? "border-[#0967ed] text-[#0967ed]" : "border-transparent text-[#314567] hover:border-[#a8c9fa] hover:text-[#0967ed]"}`}>{label}</Link>
@@ -47,7 +45,7 @@ export function CalculatorFooter(): React.JSX.Element {
   return (
     <footer className="mt-16 bg-[#06265a] text-white">
       <div className="mx-auto grid max-w-[1240px] gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
-        <div className="flex items-start gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1478ff] font-serif text-xl">∫</span><div><p className="font-bold">Calculus Calculator</p><p className="mt-1 max-w-xs text-xs leading-5 text-blue-100/75">Making calculus clear, simple, and accessible for everyone.</p></div></div>
+        <div><BrandLogo inverse compact /><p className="mt-2 max-w-xs text-xs leading-5 text-blue-100/75">Making calculus clear, simple, and accessible for everyone.</p></div>
         <div className="flex flex-wrap items-center gap-x-10 gap-y-3 text-sm text-blue-100"><Link href="/privacy">Privacy Policy</Link><Link href="/terms">Terms of Use</Link><Link href="/contact">Contact</Link></div>
       </div>
     </footer>

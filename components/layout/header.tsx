@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const navLinks = [
   { label: "Calculus Solver", href: "/calculus-solver" },
@@ -28,9 +29,8 @@ export function Header(): React.JSX.Element {
   return (
     <header className="sticky top-0 z-40 h-16 w-full border-b border-border bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-full max-w-content items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-h-11 items-center gap-3 border-r border-border pr-6 text-base font-medium text-heading md:h-16">
-          <span className="flex h-8 w-8 items-center justify-center bg-heading font-mono text-lg text-white">∫</span>
-          <span>Calculus Solver</span>
+        <Link href="/" className="flex min-h-11 items-center border-r border-border pr-6 md:h-16">
+          <BrandLogo compact />
         </Link>
 
         <nav className="hidden h-full items-center md:flex">

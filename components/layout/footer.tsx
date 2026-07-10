@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const productLinks = [
   { label: "Calculus Solver", href: "/calculus-solver" },
@@ -20,8 +21,7 @@ export function Footer(): React.JSX.Element {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <Link href="/" className="flex min-h-11 items-center gap-3 text-lg font-medium text-white">
-              <span className="flex h-8 w-8 items-center justify-center bg-white font-mono text-heading">∫</span>
-              Calculus Solver
+              <BrandLogo inverse compact />
             </Link>
             <p className="mt-4 max-w-xs text-sm text-[#c6c6c6]">Step-by-step math solutions for calculus, algebra, and more.</p>
           </div>
