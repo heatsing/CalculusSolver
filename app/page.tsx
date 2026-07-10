@@ -32,10 +32,16 @@ export default function HomePage(): React.JSX.Element {
       <Header />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8 focus-visible:outline-none">
         <Hero
-          title="Solve math problems step by step"
-          subtitle="Type an expression, equation, or word problem. Get the answer and a clear path to it."
+          title="See every step. Understand every result."
+          subtitle="Enter an expression, equation, or word problem. Calculus Solver turns it into a clear, verifiable path from question to answer."
         />
-        <SolverShell mode="auto" />
+        <section className="relative -mt-px border border-border bg-white p-4 sm:p-8 lg:p-12">
+          <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
+            <div><p className="font-mono text-xs text-body">WORKSPACE / 01</p><h2 className="mt-1 text-xl font-normal">Start a calculation</h2></div>
+            <span className="hidden text-sm text-body sm:block">Derivatives · Integrals · Limits · Algebra</span>
+          </div>
+          <SolverShell mode="auto" />
+        </section>
         <FeatureStrip />
         <AiProcess />
         <ExampleGrid />

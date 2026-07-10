@@ -13,38 +13,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#FAFAF8",
-        "secondary-background": "#F2F2EF",
+        background: "#FFFFFF",
+        "secondary-background": "#F4F4F4",
         primary: {
-          DEFAULT: "#1E3A5F",
-          hover: "#152A45",
-          soft: "#E8EDF2"
+          DEFAULT: "#0F62FE",
+          hover: "#0050E6",
+          soft: "#EDF5FF"
         },
         accent: {
           DEFAULT: "#D97706",
           hover: "#B45309",
           soft: "#FEF3C7"
         },
-        heading: "#111827",
-        body: "#57534E",
-        border: "#E7E5E4",
-        success: "#15803D",
-        warning: "#B45309",
-        error: "#B91C1C"
+        heading: "#161616",
+        body: "#525252",
+        border: "#E0E0E0",
+        success: "#24A148",
+        warning: "#F1C21B",
+        error: "#DA1E28"
       },
       borderRadius: {
-        card: "12px",
-        button: "8px",
-        input: "12px"
+        card: "0px",
+        button: "0px",
+        input: "0px"
       },
       maxWidth: {
-        content: "1100px",
+        content: "1312px",
         "solver-input": "760px"
       },
       fontFamily: {
-        sans: ['"Source Sans 3"', '"Noto Sans Math"', "system-ui", "sans-serif"],
-        serif: ['"Source Serif 4"', "Georgia", "serif"],
-        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"]
+        sans: ['"IBM Plex Sans"', '"Noto Sans Math"', "system-ui", "sans-serif"],
+        serif: ['"IBM Plex Sans"', "system-ui", "sans-serif"],
+        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "monospace"]
       },
       keyframes: {
         shimmer: {

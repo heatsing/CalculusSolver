@@ -46,19 +46,18 @@ export default function CalculusCalculatorPage(): React.JSX.Element {
       <StructuredData data={faqPageStructuredData(faqs)} />
       <Header />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-content px-4 py-10 sm:px-6 lg:px-8 focus-visible:outline-none">
-        <nav className="mb-6 text-sm text-body">
+        <nav className="mb-8 border-b border-border pb-4 text-sm text-body">
           <a href="/" className="hover:text-heading">Home</a>
           <span className="mx-2">/</span>
           <span className="text-heading">Calculus Calculator</span>
         </nav>
 
-        <h1 className="text-4xl font-bold tracking-tight text-heading sm:text-5xl">Calculus Calculator</h1>
-        <p className="mt-4 max-w-2xl text-lg text-body">
-          An interactive online calculator for derivatives, integrals, limits, and expressions.
-          Tap the buttons to build your problem, then evaluate or get a full step-by-step solution.
-        </p>
+        <div className="grid gap-8 border-b border-border pb-10 lg:grid-cols-12">
+          <div className="lg:col-span-8"><p className="mb-4 font-mono text-xs text-body">CALCULATOR / CALCULUS</p><h1 className="text-5xl font-light leading-tight tracking-[-0.025em] text-heading sm:text-6xl">Calculus Calculator</h1></div>
+          <p className="self-end text-lg leading-relaxed text-body lg:col-span-4">An interactive calculator for derivatives, integrals, limits, and expressions. Build your problem, evaluate it, and inspect every step.</p>
+        </div>
 
-        <div className="mt-10">
+        <div className="mt-10 border border-border bg-white p-4 sm:p-8">
           <OnlineCalculator />
         </div>
 

@@ -21,14 +21,15 @@ const features = [
 
 export function FeatureStrip(): React.JSX.Element {
   return (
-    <section className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {features.map((feature) => (
-        <Card key={feature.title} className="border-border bg-white shadow-none">
+    <section className="mt-24 border-l border-t border-border sm:grid sm:grid-cols-2 lg:grid-cols-3">
+      {features.map((feature, index) => (
+        <Card key={feature.title} className="group min-h-64 border-l-0 border-t-0 bg-white shadow-none">
           <CardHeader className="pb-2">
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft text-primary">
+            <div className="mb-10 flex h-12 w-12 items-center justify-center bg-secondary-background text-primary transition-colors group-hover:bg-primary group-hover:text-white">
               <feature.icon className="h-5 w-5" />
             </div>
-            <h2 className="text-base font-semibold text-heading">{feature.title}</h2>
+            <div className="font-mono text-xs text-body">0{index + 1}</div>
+            <h2 className="mt-2 text-2xl font-normal text-heading">{feature.title}</h2>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-body">{feature.description}</p>
