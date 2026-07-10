@@ -34,7 +34,7 @@ export function Footer(): React.JSX.Element {
           <div>
             <h3 className="text-sm font-medium text-white">Legal</h3>
             <ul className="mt-4 space-y-2">
-              {resourceLinks.map((link) => <li key={link.label}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm text-[#c6c6c6] hover:text-white sm:min-h-0">{link.label}</Link></li>)}
+              {resourceLinks.map((link) => <li key={link.label}><Link href={link.href} className="inline-flex min-h-11 min-w-11 items-center text-sm text-[#c6c6c6] hover:text-white sm:min-h-0 sm:min-w-0">{link.label}</Link></li>)}
             </ul>
           </div>
         </div>
