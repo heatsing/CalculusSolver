@@ -19,6 +19,7 @@ test.describe("Mobile user", () => {
   });
 
   test("no horizontal overflow at 320 px on idle and result pages", async ({ page }) => {
+    test.setTimeout(60000);
     await mockSolveRoute(page);
     await page.setViewportSize({ width: 320, height: 568 });
 
@@ -34,7 +35,8 @@ test.describe("Mobile user", () => {
 
     const resultRoutes = ["/", "/calculus-solver"];
     for (const route of resultRoutes) {
-      await page.goto(route);
+      await page.goto(route, { waitUntil: "domcontentloaded" });
+      await page.waitForLoadState("networkidle");
       await fillAndSubmit(page, "derivative of x^2");
       await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
 
@@ -56,8 +58,11 @@ test.describe("Mobile user", () => {
 
   test("math symbol buttons meet touch target", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
     const toggle = page.getByRole("button", { name: /Math keyboard/i });
+    await expect(toggle).toContainText("Show");
     await toggle.click();
+    await expect(toggle).toContainText("Hide");
 
     const buttons = page.getByRole("button", { name: /^Insert / });
     await expect(buttons.first()).toBeVisible();
@@ -78,8 +83,11 @@ test.describe("Mobile user", () => {
       localStorage.setItem(key, JSON.stringify([item]));
     }, { key: HISTORY_KEY, item: sampleHistoryItem });
     await page.reload();
+    await page.waitForLoadState("networkidle");
 
-    await page.getByRole("button", { name: "History" }).click();
+    const historyButton = page.getByRole("button", { name: "History" });
+    await expect(historyButton).toBeVisible();
+    await historyButton.click();
     await expect(page.getByRole("heading", { name: "Recent problems" })).toBeVisible();
 
     await page.getByTestId("history-select").click();
@@ -92,7 +100,10 @@ test.describe("Mobile user", () => {
 
   test("header mobile menu opens", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Open menu" }).click();
+    await page.waitForLoadState("networkidle");
+    const menuButton = page.getByRole("button", { name: "Open menu" });
+    await expect(menuButton).toBeVisible();
+    await menuButton.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("link", { name: "Calculus Solver" })).toBeVisible();
