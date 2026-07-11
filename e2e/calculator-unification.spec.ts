@@ -34,7 +34,9 @@ test.describe("Unified calculator pages", () => {
       await expect(page.getByText("Step-by-step solutions", { exact: true }), `Missing shared benefits on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: /How to Use the/ }), `Missing shared instructions on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: "Frequently Asked Questions" }), `Missing shared FAQ on ${route}`).toBeVisible();
-      await expect(page.getByRole("heading", { name: "More Calculators" }), `Missing related tools on ${route}`).toBeVisible();
+      const moreCalculators = page.getByRole("heading", { name: "More Calculators" }).locator("..");
+      await expect(moreCalculators, `Missing related tools on ${route}`).toBeVisible();
+      await expect(moreCalculators.getByRole("link"), `Incomplete More Calculators list on ${route}`).toHaveCount(calculatorRoutes.length);
       await expect(page.getByRole("contentinfo"), `Missing shared footer on ${route}`).toBeVisible();
     }
   });

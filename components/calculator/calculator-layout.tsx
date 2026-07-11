@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Gift, Zap } from "lucide-react";
 import { MathDisplay } from "@/components/math/math-display";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { allCalculatorTools } from "@/data/calculator-tools";
 
 export type CalculatorStep = { step: string; description: string };
 export type CalculatorFaq = { question: string; answer: string };
@@ -93,14 +94,14 @@ export function CalculatorFaqs({ faqs }: { faqs: CalculatorFaq[] }): React.JSX.E
   );
 }
 
-export function CalculatorRelatedTools({ tools }: { tools: readonly CalculatorToolLink[] }): React.JSX.Element {
+export function CalculatorRelatedTools({ tools: _tools }: { tools: readonly CalculatorToolLink[] }): React.JSX.Element {
   return (
-    <section className="mt-9 text-center">
+    <section className={`${calculatorSection} mt-6`}>
       <h2 className="text-2xl font-bold">More Calculators</h2>
-      <div className="mt-5 flex flex-wrap justify-center gap-2">
-        {tools.map((tool) => (
-          <Link key={tool.href} href={tool.href} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#cbd9ed] bg-white px-4 text-sm font-semibold text-[#203b67] transition hover:border-[#0967ed] hover:text-[#0967ed]">
-            <CheckCircle2 className="h-4 w-4 text-[#0967ed]" />{tool.label}
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {allCalculatorTools.map((tool) => (
+          <Link key={tool.href} href={tool.href} className="group flex min-h-20 items-center justify-between rounded-xl border border-[#dbe6f6] bg-white px-5 py-4 text-base font-semibold text-[#0a234f] shadow-sm transition hover:-translate-y-0.5 hover:border-[#82aff5] hover:shadow-md">
+            <span>{tool.label}</span><ArrowRight className="h-5 w-5 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" />
           </Link>
         ))}
       </div>
