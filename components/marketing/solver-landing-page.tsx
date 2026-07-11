@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Menu, Sigma, Upload, Variable } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Sigma, Upload, Variable } from "lucide-react";
 import { SolverShell } from "@/components/solver/solver-shell";
 import { MathDisplay } from "@/components/math/math-display";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { SiteHeader } from "@/components/layout/site-header";
 
 type Variant = "calculus" | "algebra";
 
@@ -23,15 +24,8 @@ const algebraTools = [
   ["Fraction Calculator", "Work with rational expressions.", "/fraction-calculator", "\\frac{a}{b}"],
 ] as const;
 
-export function EditorialHeader({ active }: { active: Variant }): React.JSX.Element {
-  const links = [
-    ["Calculus Solver", "/calculus-solver", "calculus"],
-    ["Algebra Solver", "/algebra-solver", "algebra"],
-    ["Calculators", "/calculators", ""],
-    ["Examples", "/examples", ""],
-    ["Guides", "/guides", ""]
-  ] as const;
-  return <header className="sticky top-0 z-40 border-b border-[#dbe5f4] bg-white/95 backdrop-blur"><div className="mx-auto flex h-16 max-w-[1240px] items-center px-4 sm:px-6 lg:px-8"><Link href="/"><BrandLogo compact /></Link><nav className="mx-auto hidden h-full items-center gap-9 md:flex" aria-label="Main navigation">{links.map(([label, href, section]) => <Link key={label} href={href} className={`flex h-full items-center border-b-2 text-sm ${section === active ? "border-[#0967ed] text-[#0967ed]" : "border-transparent text-[#314567]"}`}>{label}</Link>)}</nav><Link href="/about" className="hidden rounded-lg border border-[#82aff5] px-5 py-2 text-sm text-[#0967ed] sm:block">About</Link><details className="relative ml-auto md:hidden"><summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-lg border border-[#dbe5f4]"><Menu className="h-5 w-5" /></summary><div className="absolute right-0 top-12 w-56 rounded-xl border border-[#dbe5f4] bg-white p-2 shadow-xl">{links.map(([label, href]) => <Link key={label} className="block rounded-lg p-3" href={href}>{label}</Link>)}</div></details></div></header>;
+export function EditorialHeader({ active: _active }: { active: Variant }): React.JSX.Element {
+  return <SiteHeader />;
 }
 
 export function EditorialFooter(): React.JSX.Element {
