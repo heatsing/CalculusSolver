@@ -81,7 +81,7 @@ export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: 
       <div className="grid min-w-0 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
         <form onSubmit={(event) => { event.preventDefault(); void calculate(); }} className="min-w-0 border-b border-[#dbe6f6] p-5 lg:border-b-0 lg:border-r sm:p-6">
           <div className="flex items-center gap-2 overflow-x-auto border-b border-[#dbe6f6] pb-3">
-            <span className="rounded-md bg-[#eaf3ff] px-4 py-2 text-sm font-semibold text-[#0967ed]">{preset.label}</span>
+            <span className="rounded-md bg-[#eaf3ff] px-4 py-2 text-sm font-semibold text-[#075bc7]">{preset.label}</span>
             <span className="px-3 py-2 text-xs font-medium text-[#637392]">Exact answer</span>
             <span className="px-3 py-2 text-xs font-medium text-[#637392]">Step-by-step</span>
           </div>
