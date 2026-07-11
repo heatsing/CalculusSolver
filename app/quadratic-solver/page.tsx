@@ -22,7 +22,7 @@ export default function QuadraticSolverPage(): React.JSX.Element {
       title="Quadratic Solver"
       description="Free quadratic equation solver with step-by-step solutions."
       path="/quadratic-solver"
-      mode="algebra"
+      mode="equation"
       h1="Quadratic Equation Solver"
       subtitle="Solve any quadratic equation ax² + bx + c = 0 using factoring, completing the square, or the quadratic formula."
       exampleLatex="x^2 - 5x + 6 = 0 \\Rightarrow x = \\frac{5 \\pm \\sqrt{1}}{2} \\Rightarrow x = 2 \\text{ or } x = 3"

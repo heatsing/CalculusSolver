@@ -66,11 +66,12 @@ export function CalculatorHowTo({ title, steps }: { title: string; steps: Calcul
 }
 
 export function CalculatorExample({ latex }: { latex: string }): React.JSX.Element {
+  const normalizedLatex = latex.replace(/\\\\/g, "\\");
   return (
     <section className={`${calculatorSection} mt-6`}>
       <h2 className="text-2xl font-bold">Example</h2>
       <div className="mt-5 overflow-x-auto rounded-xl border border-[#dbe6f6] bg-[#f8fbff] p-6 text-center text-xl">
-        <MathDisplay latex={latex} display="block" />
+        <MathDisplay latex={normalizedLatex} display="block" />
       </div>
     </section>
   );

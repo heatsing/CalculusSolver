@@ -2,7 +2,7 @@ export type ApiSolverMode = "auto" | "calculus" | "algebra";
 
 export function toSolverMode(mode: string): ApiSolverMode {
   if (["derivative", "integral", "limit", "gradient", "calculus"].includes(mode)) return "calculus";
-  if (["algebra", "factor", "factoring", "equation", "quadratic"].includes(mode)) return "algebra";
+  if (["algebra", "factor", "factoring", "equation", "quadratic", "simplify"].includes(mode)) return "algebra";
   return "auto";
 }
 
@@ -17,6 +17,8 @@ export function withOperationHint(input: string, hint?: string): string {
     integral: "Integrate",
     limit: "Evaluate the limit",
     graph: "Graph",
+    equation: "Solve",
+    quadratic: "Solve",
     factoring: "Factor",
     simplify: "Simplify",
     average: "Calculate the average of",

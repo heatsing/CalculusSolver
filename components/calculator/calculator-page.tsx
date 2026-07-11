@@ -1,7 +1,6 @@
-import { SolverShell } from "@/components/solver/solver-shell";
+import { ToolCalculatorWorkspace } from "@/components/calculator/tool-calculator-workspace";
 import { StructuredData } from "@/components/seo/structured-data";
 import { faqPageStructuredData } from "@/lib/seo";
-import { toSolverMode } from "@/lib/calculator-mode";
 import {
   CalculatorBenefits,
   CalculatorExample,
@@ -36,9 +35,7 @@ export function CalculatorPage({ title, mode, h1, subtitle, exampleLatex, howItW
       <CalculatorHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
         <CalculatorHero h1={h1} subtitle={subtitle} />
-        <section className="rounded-2xl border border-[#dbe6f6] bg-white p-4 shadow-[0_12px_40px_rgba(42,88,155,.09)] sm:p-6">
-          <SolverShell mode={toSolverMode(mode)} operationHint={mode} />
-        </section>
+        <ToolCalculatorWorkspace title={title} mode={mode} />
         <div className="mt-6"><CalculatorBenefits /></div>
         <CalculatorHowTo title={title} steps={howItWorks} />
         <CalculatorExample latex={exampleLatex} />

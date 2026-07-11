@@ -22,7 +22,7 @@ export default function FactoringCalculatorPage(): React.JSX.Element {
       title="Factoring Calculator"
       description="Free factoring calculator with step-by-step solutions."
       path="/factoring-calculator"
-      mode="algebra"
+      mode="factoring"
       h1="Factoring Calculator"
       subtitle="Factor polynomials, quadratics, and expressions using GCF, grouping, difference of squares, and other methods."
       exampleLatex="x^2 - 5x + 6 = (x - 2)(x - 3)"

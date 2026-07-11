@@ -7,6 +7,7 @@ const calculatorRoutes = [
   "/limit-calculator",
   "/gradient-calculator",
   "/graphing-calculator",
+  "/algebra-solver",
   "/equation-solver",
   "/quadratic-solver",
   "/factoring-calculator",
@@ -42,6 +43,18 @@ test.describe("Unified calculator pages", () => {
     await page.goto("/calculators");
     for (const route of calculatorRoutes) {
       await expect(page.locator("#main-content").locator(`a[href="${route}"]`), `Missing directory link to ${route}`).toBeVisible();
+    }
+  });
+
+  test("specialized calculator workspaces return real answers", async ({ page }) => {
+    test.setTimeout(120000);
+    const representativeRoutes = calculatorRoutes.filter((route) => route !== "/calculus-calculator");
+
+    for (const route of representativeRoutes) {
+      await page.goto(route, { waitUntil: "domcontentloaded" });
+      await page.waitForLoadState("networkidle");
+      await page.getByRole("button", { name: "Calculate", exact: true }).click();
+      await expect(page.getByText("Solved", { exact: true }), `Calculator failed on ${route}`).toBeVisible({ timeout: 10000 });
     }
   });
 });

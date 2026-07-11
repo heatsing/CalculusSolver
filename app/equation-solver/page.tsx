@@ -22,7 +22,7 @@ export default function EquationSolverPage(): React.JSX.Element {
       title="Equation Solver"
       description="Free equation solver with step-by-step solutions."
       path="/equation-solver"
-      mode="algebra"
+      mode="equation"
       h1="Equation Solver"
       subtitle="Solve linear, quadratic, polynomial, and systems of equations with step-by-step explanations and verification."
       exampleLatex="x^2 - 5x + 6 = 0 \\Rightarrow x = 2 \\text{ or } x = 3"
