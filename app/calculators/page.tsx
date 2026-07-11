@@ -9,7 +9,7 @@ export const metadata = createMetadata({ title: "Free Online Math Calculators", 
 const groups = [
   ["Calculus", [["Calculus Calculator", "/calculus-calculator"], ["Derivative Calculator", "/derivative-calculator"], ["Integral Calculator", "/integral-calculator"], ["Limit Calculator", "/limit-calculator"], ["Gradient Calculator", "/gradient-calculator"], ["Graphing Calculator", "/graphing-calculator"]]],
   ["Algebra", [["Algebra Solver", "/algebra-solver"], ["Equation Solver", "/equation-solver"], ["Quadratic Solver", "/quadratic-solver"], ["Factoring Calculator", "/factoring-calculator"], ["Simplify Calculator", "/simplify-calculator"], ["Exponent Calculator", "/exponent-calculator"]]],
-  ["Everyday Math", [["Fraction Calculator", "/fraction-calculator"], ["Matrix Calculator", "/matrix-calculator"], ["Average Calculator", "/average-calculator"], ["Percentage Calculator", "/percentage-calculator"], ["Probability Calculator", "/probability-calculator"], ["Root Calculator", "/root-calculator"], ["Log Calculator", "/log-calculator"], ["LCM Calculator", "/lcm-calculator"]]]
+  ["Everyday Math", [["Math Calculator", "/math-calculator"], ["Fraction Calculator", "/fraction-calculator"], ["Matrix Calculator", "/matrix-calculator"], ["Average Calculator", "/average-calculator"], ["Percentage Calculator", "/percentage-calculator"], ["Probability Calculator", "/probability-calculator"], ["Root Calculator", "/root-calculator"], ["Log Calculator", "/log-calculator"], ["LCM Calculator", "/lcm-calculator"]]]
 ] as const;
 
 export default function CalculatorsPage(): React.JSX.Element {

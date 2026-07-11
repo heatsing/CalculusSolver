@@ -21,10 +21,17 @@
     font-family: var(--font-sans);
     letter-spacing: 0.01rem;
   }
-  h1, h2, h3, h4 {
+  h1, h3, h4 {
     font-family: var(--font-sans);
     font-weight: 400;
     letter-spacing: 0;
+  }
+  h2 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
   }
   button,
   [type="button"],
