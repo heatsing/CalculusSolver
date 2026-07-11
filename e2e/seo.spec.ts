@@ -13,6 +13,10 @@ const routes = [
   "/quadratic-solver",
   "/factoring-calculator",
   "/examples",
+  "/calculators",
+  "/guides",
+  "/about",
+  "/contact",
   "/privacy",
   "/terms"
 ];
@@ -49,6 +53,16 @@ async function waitForMetaTags(page: import("@playwright/test").Page): Promise<v
 }
 
 test.describe("SEO crawler", () => {
+  test("home page uses the approved title and description", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await waitForMetaTags(page);
+
+    await expect(page).toHaveTitle("Free Calculus Solver & Algebra Solver Online | CalculusSolver.net");
+    expect(await getMetaContent(page, "description")).toBe(
+      "Solve calculus and algebra problems online for free. Get step-by-step solutions for derivatives, integrals, equations, limits, and more with CalculusSolver.net."
+    );
+  });
+
   test("every route has a unique title and description", async ({ page }) => {
     test.setTimeout(120000);
     const seen = new Map<string, string>();
@@ -152,6 +166,6 @@ test.describe("SEO crawler", () => {
     expect(app).toHaveProperty("applicationSubCategory");
     expect(app).toHaveProperty("operatingSystem");
     expect(app).toHaveProperty("offers");
-    expect(app).toHaveProperty("aggregateRating");
+    expect(app).not.toHaveProperty("aggregateRating");
   });
 });

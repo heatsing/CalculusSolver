@@ -50,6 +50,7 @@ describe("computeLocalAnswer", () => {
     ["Differentiate x^3 + 2*x", "derivative", "x", "2+3*x^2"],
     ["Integrate sin(x)", "integral", "x", "-cos(x) + C"],
     ["Evaluate the limit sin(x)/x as x approaches 0", "limit", "x", "1"],
+    ["limit of sin(x)/x as x approaches 0", "limit", "x", "1"],
     ["Solve 2*x + 5 = 17", "solve_equation", "x", "6"],
     ["Factor x^2 - 5*x + 6", "factor", "x", "(-2+x)*(-3+x)"],
     ["Simplify 3*x + 2*x - 4", "simplify", "x", "-4+5*x"],
@@ -65,6 +66,14 @@ describe("computeLocalAnswer", () => {
     ["Find the gradient of x^2 + y^2", "simplify", "x", "[2*x, 2*y]"]
   ])("returns an exact local answer for %s", async (input, operation, variable, expected) => {
     await expect(computeLocalAnswer(input, operation, variable)).resolves.toBe(expected);
+  });
+
+  it("solves a two-variable system", async () => {
+    await expect(computeLocalAnswer("Solve x + y = 5 and x - y = 1", "solve_system", "x")).resolves.toBe("x = 3, y = 2");
+  });
+
+  it("evaluates a definite integral without adding C", async () => {
+    await expect(computeLocalAnswer("Integrate x^2 from 0 to 1", "integral", "x")).resolves.toBe("1/3");
   });
 });
 

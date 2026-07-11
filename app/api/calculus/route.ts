@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { evaluateExpression, type CalcKind } from "@/lib/calculator-engine";
 import { detectOperation, normalizeInput, toMachineExpression } from "@/lib/math-parser";
+import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +110,9 @@ function buildSteps(operation: CalcKind, input: string, answer: string, normaliz
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    if (isRateLimited(`calculus:${getClientKey(request)}`, 30)) {
+      return NextResponse.json({ error: "Too many requests. Please wait a minute and try again." }, { status: 429 });
+    }
     const parsed = requestSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: "Enter a valid calculus expression." }, { status: 400 });
 

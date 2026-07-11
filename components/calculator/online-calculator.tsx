@@ -32,8 +32,8 @@ export function OnlineCalculator(): React.JSX.Element {
 
   return (
     <section className="overflow-hidden rounded-2xl border border-[#dbe6f6] bg-white shadow-[0_12px_40px_rgba(42,88,155,.09)]">
-      <div className="grid lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
-        <div className="border-b border-[#dbe6f6] p-5 lg:border-b-0 lg:border-r sm:p-6">
+      <div className="grid min-w-0 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
+        <div className="min-w-0 border-b border-[#dbe6f6] p-5 lg:border-b-0 lg:border-r sm:p-6">
           <div className="flex gap-1 overflow-x-auto border-b border-[#dbe6f6]" role="tablist" aria-label="Calculation type">{tabs.map(([label, value]) => <button key={value} type="button" role="tab" aria-selected={operation === value} onClick={() => { setOperation(value); setResult(null); }} className={`min-w-fit border-b-2 px-4 pb-3 text-xs font-semibold ${operation === value ? "border-[#0967ed] text-[#0967ed]" : "border-transparent text-[#637392] hover:text-[#0a234f]"}`}>{label}</button>)}</div>
           <label htmlFor="calculus-expression" className="mt-5 block text-xs font-medium text-[#314567]">Enter your function</label>
           <textarea ref={inputRef} id="calculus-expression" value={input} onChange={(e) => { setInput(e.target.value); setResult(null); setError(""); }} onKeyDown={(e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") void calculate(); }} rows={3} className="mt-2 w-full resize-none rounded-lg border border-[#cbd9ed] bg-white px-4 py-4 font-mono text-base text-[#0a234f] outline-none focus:border-[#0967ed] focus:ring-2 focus:ring-blue-100" placeholder="Enter a function, for example x^3 * sin(x)" />
@@ -42,7 +42,7 @@ export function OnlineCalculator(): React.JSX.Element {
           <div className="mt-6 flex flex-wrap items-center gap-2"><span className="mr-1 text-xs text-[#637392]">Examples:</span>{examples.map((example) => <button key={example.label} type="button" onClick={() => { setInput(example.input); setOperation(example.operation); setResult(null); setError(""); }} className="rounded-md border border-[#b8d2f7] bg-[#f5f9ff] px-3 py-2 font-mono text-xs text-[#314567] hover:border-[#0967ed] hover:text-[#0967ed]">{example.label}</button>)}</div>
         </div>
 
-        <div className="min-h-[520px] bg-[#fbfdff] p-5 sm:p-6" aria-live="polite">
+        <div className="min-h-[520px] min-w-0 bg-[#fbfdff] p-5 sm:p-6" aria-live="polite">
           <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0a234f]">Solution</h2>{result && <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"><Check className="h-3.5 w-3.5" /> Solved</span>}</div>
           {error && <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">{error}</div>}
           {!result && !error && <div className="flex min-h-[430px] flex-col items-center justify-center text-center"><span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-[#0967ed]"><Sparkles className="h-7 w-7" /></span><h3 className="mt-5 font-bold text-[#0a234f]">Your solution will appear here</h3><p className="mt-2 max-w-sm text-sm leading-6 text-[#637392]">Choose a topic, enter a function, then click Calculate to see the answer and step-by-step explanation.</p></div>}

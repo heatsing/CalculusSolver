@@ -26,8 +26,9 @@ export default function PrivacyPage(): React.JSX.Element {
 
           <h2 className="mt-6 text-xl font-semibold text-heading">Information We Process</h2>
           <p>
-            When you submit a math problem, it is sent to our server-side API route and forwarded to
-            DeepSeek for processing. Your API key is never exposed to the browser.
+            When you submit a math problem, it is sent to our server-side API. Supported problems may
+            be computed locally. When AI explanations are enabled, the problem may also be sent to
+            our configured AI provider. Provider credentials are never exposed to the browser.
           </p>
 
           <h2 className="mt-6 text-xl font-semibold text-heading">Local Storage</h2>
@@ -50,10 +51,16 @@ export default function PrivacyPage(): React.JSX.Element {
             application.
           </p>
 
+          <h2 className="mt-6 text-xl font-semibold text-heading">Answer Feedback</h2>
+          <p>
+            If you rate an answer, we record the rating, operation type, and verification status.
+            The original math problem and answer are not included in that feedback event.
+          </p>
+
           <h2 className="mt-6 text-xl font-semibold text-heading">Third-Party Services</h2>
           <p>
-            We use DeepSeek for AI math reasoning. Please refer to DeepSeek&apos;s privacy policy for
-            information about how they handle API requests.
+            We may use DeepSeek for optional AI math explanations when that feature is configured.
+            Please refer to DeepSeek&apos;s privacy policy for information about how they handle API requests.
           </p>
 
           <h2 className="mt-6 text-xl font-semibold text-heading">Contact</h2>

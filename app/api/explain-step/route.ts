@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { callDeepSeek } from "@/lib/deepseek";
 import { EXPLAIN_STEP_PROMPT, buildExplainStepPrompt } from "@/lib/prompts";
+import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 
 const explainStepRequestSchema = z.object({
   input: z.string().trim().min(1).max(2000),
@@ -23,6 +24,18 @@ const explainStepResponseSchema = z.object({
 });
 
 export async function POST(request: Request): Promise<NextResponse> {
+  if (isRateLimited(`explain:${getClientKey(request)}`, 10)) {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMITED", message: "Too many explanation requests. Please wait a minute." } },
+      { status: 429 }
+    );
+  }
+  if (!process.env.DEEPSEEK_API_KEY) {
+    return NextResponse.json(
+      { error: { code: "AI_UNAVAILABLE", message: "AI step explanations are not available right now." } },
+      { status: 503 }
+    );
+  }
   try {
     const body = (await request.json()) as unknown;
     const parsed = explainStepRequestSchema.safeParse(body);
@@ -62,10 +75,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     return NextResponse.json({ explanation: validated.data });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to explain step.";
+  } catch {
     return NextResponse.json(
-      { error: { code: "EXPLAIN_FAILED", message } },
+      { error: { code: "EXPLAIN_FAILED", message: "Could not explain this step. Please try again later." } },
       { status: 500 }
     );
   }

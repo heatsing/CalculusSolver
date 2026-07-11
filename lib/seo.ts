@@ -17,7 +17,7 @@ export function createMetadata({
   keywords
 }: CreateMetadataOptions): Metadata {
   const url = `${appUrl}${path}`;
-  const pageTitle = title.endsWith(" | Calculus Solver")
+  const pageTitle = title.toLowerCase().includes("calculus solver")
     ? { absolute: title }
     : title;
 
@@ -72,11 +72,6 @@ export function softwareApplicationStructuredData() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD"
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      ratingCount: "120"
     }
   };
 }

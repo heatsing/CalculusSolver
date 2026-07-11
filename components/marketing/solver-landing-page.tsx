@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Sigma, Upload, Variable } from "lucide-react";
 import { SolverShell } from "@/components/solver/solver-shell";
 import { MathDisplay } from "@/components/math/math-display";
-import { BrandLogo } from "@/components/brand/brand-logo";
 import { SiteHeader } from "@/components/layout/site-header";
+import { Footer } from "@/components/layout/footer";
 
 type Variant = "calculus" | "algebra";
 
@@ -12,7 +12,7 @@ const calculusTools = [
   ["Integral Solver", "Compute indefinite and definite integrals.", "/integral-calculator", "\\int"],
   ["Limit Solver", "Evaluate limits and one-sided limits.", "/limit-calculator", "\\lim"],
   ["Series Solver", "Work with infinite series and sequences.", "/calculus-calculator", "\\sum"],
-  ["Equation Solver", "Solve differential and standard equations.", "/equation-solver", "y''"],
+  ["Equation Solver", "Solve linear and polynomial equations.", "/equation-solver", "y''"],
   ["Algebra Solver", "Solve equations and algebra problems.", "/algebra-solver", "x"],
 ] as const;
 const algebraTools = [
@@ -29,14 +29,26 @@ export function EditorialHeader({ active: _active }: { active: Variant }): React
 }
 
 export function EditorialFooter(): React.JSX.Element {
-  return <footer className="mt-16 bg-[#061f49] text-white"><div className="mx-auto grid max-w-[1240px] gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-5 lg:px-8"><div><BrandLogo inverse compact /><p className="mt-3 text-xs leading-5 text-blue-100/70">Solve math problems step by step and understand the process.</p></div>{[["Solvers", ["Derivative Solver", "Integral Solver", "Limit Solver"]], ["Guides", ["Calculus Basics", "Derivatives", "Integrals"]], ["Examples", ["Popular Examples", "Practice Problems", "By Topic"]], ["Legal", ["Terms of Use", "Privacy Policy", "Disclaimer"]]].map(([title, links]) => <div key={title as string}><h2 className="text-sm font-bold">{title}</h2><ul className="mt-3 space-y-2 text-xs text-blue-100/75">{(links as string[]).map((item) => <li key={item}>{item}</li>)}</ul></div>)}</div></footer>;
+  return <Footer />;
 }
 
 export function SolverLandingPage({ variant }: { variant: Variant }): React.JSX.Element {
   const algebra = variant === "algebra";
   const tools = algebra ? algebraTools : calculusTools;
   const examples = algebra ? ["2x + 5 = 17", "x² − 5x + 6 = 0", "factor x² − 9", "simplify 3x + 2x − 4", "2x + y = 7, x − y = 2", "(x² − 1)/(x − 1)"] : ["∫ x² cos(x) dx", "lim x→∞ (1 + 1/x)ˣ", "d/dx (x³ sin(x))", "d/dx ln(x)", "lim x→0 sin(x)/x", "∫ eˣ cos(x) dx"];
-  const faqs = algebra ? ["Is the Algebra Solver free to use?", "Can it show every algebra step?", "Can it solve quadratic equations?", "Does it simplify and factor expressions?", "Can I use it for homework practice?"] : ["Is Calculus Solver free to use?", "Do I need to create an account?", "Can I upload a photo of my problem?", "What types of calculus problems can it solve?", "Are the solutions suitable for homework and exams?"];
+  const faqs = algebra ? [
+    { question: "Is the Algebra Solver free to use?", answer: "Yes. You can solve supported algebra problems without creating an account." },
+    { question: "Can it show every algebra step?", answer: "It shows the operation, final answer, verification status, and available symbolic steps for supported equations and expressions." },
+    { question: "Can it solve systems and quadratic equations?", answer: "Yes. Enter two equations separated by 'and', or enter a quadratic equation in one variable." },
+    { question: "Does it simplify and factor expressions?", answer: "Yes. Use a focused calculator or begin the input with Simplify or Factor." },
+    { question: "Can I use it for homework practice?", answer: "Use it to check your method and answer, but review domains, assumptions, and course requirements yourself." }
+  ] : [
+    { question: "Is Calculus Solver free to use?", answer: "Yes. Supported local calculations are free and do not require an account." },
+    { question: "Do I need to create an account?", answer: "No. Recent history is stored locally in your browser and can be cleared at any time." },
+    { question: "Which calculus topics are supported?", answer: "The solver handles common derivatives, indefinite and definite integrals, limits, series, and graphable expressions." },
+    { question: "How are answers checked?", answer: "Where possible, answers are checked independently with symbolic substitution, differentiation, or expression comparison." },
+    { question: "Should I rely on it for exams?", answer: "Treat it as a learning and checking tool, not a formal proof system. Always review notation and assumptions." }
+  ];
   const heroTitle = algebra ? "Solve Algebra Problems\nStep by Step" : "Calculus Solve Problems\nStep by Step";
   const heroText = algebra ? "Enter an equation, expression, polynomial, or system and get a clear solution with every algebra step explained." : "Enter a derivative, integral, limit, or series problem and get a clear solution with every step explained.";
   return <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,#ffffff_0%,#f8fbff_50%,#f1f6fd_100%)] text-[#071f4a]"><EditorialHeader active={variant} />
@@ -47,6 +59,6 @@ export function SolverLandingPage({ variant }: { variant: Variant }): React.JSX.
       <section className="border-y border-[#e0e9f5] bg-white/75"><div className="mx-auto max-w-[1080px] px-4 py-10"><h2 className="text-center font-serif text-3xl">How {algebra ? "Algebra Solver" : "Calculus Solver"} Works</h2><div className="mt-8 grid gap-8 sm:grid-cols-3">{[[Upload, "Enter your problem", "Type, use the math keyboard, or upload a problem."], [FileText, "Review each step", "Get a clear solution explained in plain language."], [Lightbulb, "Understand the result", "Build confidence and apply the method again."]].map(([Icon, title, text], i) => { const StepIcon = Icon as typeof Upload; return <div key={title as string} className="flex gap-4"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 font-bold text-[#0967ed]">{i + 1}</span><StepIcon className="h-7 w-7 shrink-0 text-[#0967ed]" /><div><h3 className="font-bold">{title as string}</h3><p className="mt-2 text-xs leading-5 text-[#5f6f8d]">{text as string}</p></div></div>})}</div></div></section>
       <section className="mx-auto max-w-[1080px] px-4 py-12"><h2 className="text-center font-serif text-3xl">Popular {algebra ? "Algebra" : "Calculus"} Examples</h2><div className="mt-7 grid overflow-hidden rounded-xl border border-[#d9e4f3] bg-white sm:grid-cols-2">{examples.map((example) => <Link key={example} href={`/${algebra ? "algebra-solver" : "calculus-solver"}?q=${encodeURIComponent(example)}`} className="flex items-center justify-between border-b border-[#d9e4f3] p-4 font-mono text-sm last:border-b-0 sm:border-r"><span>{example}</span><ArrowRight className="h-4 w-4" /></Link>)}</div></section>
       <section className="border-y border-[#e0e9f5] bg-white/70"><div className="mx-auto grid max-w-[1080px] gap-8 px-4 py-10 md:grid-cols-2 md:items-center"><div><h2 className="font-serif text-3xl">Built for Learning, Homework, and Verification</h2><p className="mt-4 text-sm leading-7 text-[#5f6f8d]">Each solution is broken into clear steps so you can see the “why” behind every move. Use it to learn, verify your work, and prepare with confidence.</p><div className="mt-5 flex flex-wrap gap-4 text-xs font-semibold text-[#0967ed]"><span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4" /> Explainable</span><span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> Learning focused</span><span className="flex items-center gap-1"><Variable className="h-4 w-4" /> Symbolic math</span></div></div><div className="rounded-xl border border-[#d9e4f3] bg-[#f8fbff] p-7 text-center"><Sigma className="mx-auto h-8 w-8 text-[#0967ed]" /><p className="mt-4 font-serif text-2xl">{algebra ? "Method + reasoning = confidence" : "Rules + steps = understanding"}</p></div></div></section>
-      <section className="mx-auto max-w-[1080px] px-4 py-12"><h2 className="text-center font-serif text-3xl">Frequently Asked Questions</h2><div className="mt-6 divide-y divide-[#d9e4f3] rounded-xl border border-[#d9e4f3] bg-white">{faqs.map((faq) => <details key={faq} className="px-5 py-4"><summary className="cursor-pointer list-none text-sm font-semibold after:float-right after:content-['›']">{faq}</summary><p className="mt-3 text-sm leading-6 text-[#5f6f8d]">Yes. The solver is designed to provide clear, accessible help with detailed steps and no account required.</p></details>)}</div></section>
+      <section className="mx-auto max-w-[1080px] px-4 py-12"><h2 className="text-center font-serif text-3xl">Frequently Asked Questions</h2><div className="mt-6 divide-y divide-[#d9e4f3] rounded-xl border border-[#d9e4f3] bg-white">{faqs.map((faq) => <details key={faq.question} className="px-5 py-4"><summary className="cursor-pointer list-none text-sm font-semibold after:float-right after:content-['›']">{faq.question}</summary><p className="mt-3 text-sm leading-6 text-[#5f6f8d]">{faq.answer}</p></details>)}</div></section>
     </main><EditorialFooter /></div>;
 }

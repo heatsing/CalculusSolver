@@ -122,8 +122,15 @@ async function verifyDerivative(
 async function verifyIntegral(
   source: string,
   answer: string,
-  variable: string
+  variable: string,
+  machine?: SolverMachine
 ): Promise<{ status: VerificationStatus; explanation: string }> {
+  if (machine?.lower_bound !== null && machine?.lower_bound !== undefined && machine?.upper_bound !== null && machine?.upper_bound !== undefined) {
+    return {
+      status: "partially_verified",
+      explanation: "The definite integral was evaluated symbolically. Independent numerical verification is not yet available."
+    };
+  }
   try {
     const nerdamer = await loadNerdamer();
     const derivativeOfAnswer = nerdamer.diff(reformatExpression(answer.replace(/\+\s*C/gi, "")), variable).toString();
@@ -331,7 +338,7 @@ export async function verifyResult(result: SolverResultResponse): Promise<{
       case "derivative":
         return verifyDerivative(source, answer, variable);
       case "integral":
-        return verifyIntegral(source, answer, variable);
+        return verifyIntegral(source, answer, variable, result.machine);
       case "solve_equation":
         return verifyEquation(result, result.machine);
       case "solve_system":
@@ -361,6 +368,31 @@ export async function computeLocalAnswer(input: string, operation: string, varia
   const numbers = (text.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
   const formatNumber = (value: number): string => mathFormat(value, { precision: 12 });
   const expressionAfter = (pattern: RegExp): string => text.replace(pattern, "").trim();
+
+  if (operation === "solve_system") {
+    const source = expressionAfter(/^solve\s*/i);
+    const equations = source.split(/\s+(?:and|with)\s+|\s*;\s*/i).map((equation) => equation.trim()).filter(Boolean);
+    if (equations.length < 2 || equations.some((equation) => !equation.includes("="))) {
+      throw new Error("Enter at least two equations separated by 'and'");
+    }
+    const solveSystem = nerdamer.solveEquations as unknown as (items: string[]) => unknown;
+    const solved = solveSystem(equations);
+    if (!Array.isArray(solved) || solved.length === 0) throw new Error("Could not solve this system of equations");
+    return solved.map((entry) => {
+      if (Array.isArray(entry) && entry.length >= 2) return `${String(entry[0])} = ${String(entry[1])}`;
+      return String(entry);
+    }).join(", ");
+  }
+
+  if (operation === "integral") {
+    const definite = text.match(/^(?:integrate|find the integral of|integral of)\s+(.+?)\s+from\s+([^\s]+)\s+to\s+([^\s]+)\s*$/i);
+    if (definite) {
+      const expression = safeNormalize(definite[1]);
+      const lower = safeNormalize(definite[2]);
+      const upper = safeNormalize(definite[3]);
+      return nerdamer(`defint(${expression},${lower},${upper},${variable})`).toString();
+    }
+  }
 
   if (/^calculate the average of\b/i.test(text)) {
     if (numbers.length === 0) throw new Error("Enter at least one number for the average");
@@ -405,7 +437,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
   if (operation === "solve_equation") source = expressionAfter(/^(?:solve|find [xy])\s*/i);
 
   if (operation === "limit") {
-    const match = text.match(/(?:evaluate the )?limit\s+(.+?)\s+(?:as\s+)?([a-z])\s*(?:approaches|->)\s*([^\s]+)/i);
+    const match = text.match(/(?:evaluate\s+(?:the\s+)?)?limit(?:\s+of)?\s+(.+?)\s+(?:as\s+)?([a-z])\s*(?:approaches|->)\s*([^\s]+)/i);
     if (match) {
       const expression = safeNormalize(match[1]);
       return nerdamer(`limit(${expression},${match[2]},${match[3]})`).toString();

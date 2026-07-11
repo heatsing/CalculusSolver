@@ -85,6 +85,7 @@ describe("detectOperation", () => {
 
   it("detects systems of equations", () => {
     expect(detectOperation("x and y")).toBe("solve_system");
+    expect(detectOperation("Solve x + y = 5 and x - y = 1")).toBe("solve_system");
   });
 
   it("defaults to simplify", () => {

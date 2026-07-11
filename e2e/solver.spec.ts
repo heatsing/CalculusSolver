@@ -6,7 +6,7 @@ const HISTORY_KEY = "calculus-solver-history-v2";
 test.describe("Calculus Solver", () => {
   test("home page loads and shows the solver", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /See every step\. Understand every result\./ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Calculus Solve Problems\s+Step by Step/ })).toBeVisible();
     await expect(page.locator("#math-problem-input")).toBeVisible();
   });
 
@@ -47,15 +47,7 @@ test.describe("Calculus Solver", () => {
   test("examples page search filters the list", async ({ page }) => {
     await page.goto("/examples");
     const search = page.getByPlaceholder("Search examples...");
-    await search.click();
-    await search.evaluate((el: HTMLInputElement, val: string) => {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        "value"
-      )?.set;
-      setter?.call(el, val);
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-    }, "sin(x)");
+    await search.fill("sin(x)");
 
     await expect(page.getByText("Solve ∫ x² sin(x) dx")).toBeVisible({ timeout: 5000 });
     await expect(page.getByText("Solve 2x + 5 = 17")).toBeHidden({ timeout: 5000 });
@@ -76,7 +68,7 @@ test.describe("Calculus Solver", () => {
     }, { key: HISTORY_KEY, item: historyItem });
     await page.reload();
 
-    await page.getByRole("button", { name: "History" }).click();
+    await page.getByRole("button", { name: "Open history" }).click();
     await expect(page.getByRole("heading", { name: "Recent problems" })).toBeVisible();
     await page.getByTestId("history-select").click();
     await expect(page.locator("#math-problem-input")).toHaveValue("derivative of x^2");

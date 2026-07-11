@@ -1,15 +1,30 @@
-const requestTimestamps: number[] = [];
-const MAX_REQUESTS = 20;
-const WINDOW_MS = 60 * 1000;
+type Bucket = { timestamps: number[]; lastSeen: number };
 
-export function isRateLimited(): boolean {
+const buckets = new Map<string, Bucket>();
+const DEFAULT_LIMIT = 20;
+const DEFAULT_WINDOW_MS = 60 * 1000;
+
+export function getClientKey(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return request.headers.get("x-nf-client-connection-ip") ?? forwarded ?? "anonymous";
+}
+
+export function isRateLimited(key = "anonymous", limit = DEFAULT_LIMIT, windowMs = DEFAULT_WINDOW_MS): boolean {
   const now = Date.now();
-  while (requestTimestamps.length > 0 && requestTimestamps[0] < now - WINDOW_MS) {
-    requestTimestamps.shift();
+  if (buckets.size > 1000) {
+    for (const [bucketKey, bucket] of buckets) {
+      if (bucket.lastSeen < now - windowMs) buckets.delete(bucketKey);
+    }
   }
-  if (requestTimestamps.length >= MAX_REQUESTS) {
+
+  const bucket = buckets.get(key) ?? { timestamps: [], lastSeen: now };
+  bucket.timestamps = bucket.timestamps.filter((timestamp) => timestamp >= now - windowMs);
+  bucket.lastSeen = now;
+  if (bucket.timestamps.length >= limit) {
+    buckets.set(key, bucket);
     return true;
   }
-  requestTimestamps.push(now);
+  bucket.timestamps.push(now);
+  buckets.set(key, bucket);
   return false;
 }

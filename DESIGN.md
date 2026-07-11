@@ -2,25 +2,40 @@
 
 ## Direction
 
-Calculus Solver is a precise mathematical workbench: calm, technical, and trustworthy. The interface uses an adapted Carbon-style visual language with a strict four-pixel grid, flat surfaces, Roboto typography, and one confident blue accent.
+Calculus Solver is a calm, trustworthy mathematical learning workspace. The interface combines a white and pale-blue canvas, navy typography, a single bright-blue action color, and the permanent purple integral logo.
+
+## Brand
+
+- The shared `BrandLogo` component is the only approved logo implementation.
+- The mark is a purple rounded square with a white integral symbol.
+- The wordmark is `Calculus Solver` in bold Roboto.
+- Footer usage may switch the wordmark to white; the mark itself does not change.
 
 ## Tokens
 
-- Canvas: `#ffffff`; alternate surface: `#f4f4f4`; border: `#e0e0e0`.
-- Ink: `#161616`; muted ink: `#525252`; subtle ink: `#8d8d8d`.
-- Primary: `#0f62fe`; hover: `#0050e6`; pressed: `#002d9c`.
-- Success: `#24a148`; warning: `#f1c21b`; error: `#da1e28`.
-- Roboto is used for interface and display text. Roboto Mono or the system monospace stack is reserved for mathematical input, tokens, and technical labels.
-- Display text is light (300), body is regular (400), emphasis is semibold (600).
-- Components are square, use one-pixel hairlines, and have no drop shadows.
+- Canvas: `#ffffff`; page wash: `#f6f9fe`; soft surface: `#fbfdff`.
+- Navy ink: `#071f4a`; body ink: `#5f6f8d`; border: `#d9e4f3`.
+- Primary action: `#0967ed`; hover: `#0757c9`.
+- Success: green; warning: amber; error: red. Never communicate status by color alone.
+- Roboto is used for interface and headings. Roboto Mono is reserved for mathematical input and technical values.
 
-## Layout
+## Layout and components
 
-- Desktop pages use a wide 16-column-inspired grid with a `1312px` maximum.
-- Sections alternate between white and gray surfaces instead of relying on decorative cards.
-- Touch targets are at least 48px. Grids collapse to two columns on tablet and one on mobile.
-- Blue is reserved for actions, links, focus, and selected states.
+- Desktop content width is `1240px`; long reading content stays below `760px`.
+- Major tools use white panels with subtle blue borders, restrained shadows, and 12–16px radii.
+- Section spacing follows an 8px scale. Related content stays close; major sections use 40–64px separation.
+- All pages use `SiteHeader`, `BrandLogo`, and the shared deep-navy `Footer`.
+- Touch targets are at least 44px. Mobile text is at least 14px, with 16px preferred for body copy.
 
-## Signature
+## Voice
 
-The home page should feel like a mathematical instrument: oversized light-weight typography, coordinate-grid details, equation fragments, and a solver surface that anchors the composition. Avoid gradients, pills, soft shadows, and decorative illustration.
+- State exactly which operations are supported.
+- Never claim an answer is verified unless an independent check succeeded.
+- Use direct labels: `Calculate`, `Submit Answer`, `Show explanation`.
+- Avoid generic marketing claims and repeated filler FAQ answers.
+
+## Accessibility and motion
+
+- Preserve visible focus states and semantic headings.
+- Support keyboard-only solving and `prefers-reduced-motion`.
+- Avoid horizontal formula overflow; long math must scroll within its own container.

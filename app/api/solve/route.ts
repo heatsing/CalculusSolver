@@ -4,7 +4,7 @@ import { parseSolverAiResponse } from "@/lib/ai-response";
 import { detectOperation, detectPrimaryVariable, normalizeInput, toMachineExpression } from "@/lib/math-parser";
 import { computeLocalAnswer, verifyResult } from "@/lib/math-verifier";
 import { checkResultConsistency } from "@/lib/result-consistency";
-import { isRateLimited } from "@/lib/rate-limit";
+import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 import { solveCache } from "@/lib/request-cache";
 import { solveRequestSchema, solverResultSchema, type SolverResultResponse } from "@/lib/solver-schema";
 import { generateRequestId } from "@/lib/utils";
@@ -80,19 +80,31 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
     graph: /^(?:graph|plot|draw)\s*/i
   };
   if (prefixes[operation]) sourceExpression = sourceExpression.replace(prefixes[operation]!, "").trim();
+  if (operation === "solve_system") sourceExpression = sourceExpression.replace(/^solve\s*/i, "").trim();
   if (operation === "integral") sourceExpression = sourceExpression.replace(/\s*d[a-z]\s*$/i, "").trim();
+  const definiteIntegral = operation === "integral"
+    ? sourceExpression.match(/^(.+?)\s+from\s+([^\s]+)\s+to\s+([^\s]+)$/i)
+    : null;
+  if (definiteIntegral) sourceExpression = definiteIntegral[1].trim();
+  let limitMatch: RegExpMatchArray | null = null;
   if (operation === "limit") {
-    const limitMatch = sourceExpression.match(/(?:evaluate the )?limit\s+(.+?)\s+(?:as\s+)?[a-z]\s*(?:approaches|->)\s*[^\s]+/i);
+    limitMatch = sourceExpression.match(/(?:evaluate\s+(?:the\s+)?)?limit(?:\s+of)?\s+(.+?)\s+(?:as\s+)?([a-z])\s*(?:approaches|->)\s*([^\s]+)/i);
     if (limitMatch) sourceExpression = limitMatch[1];
   }
   const machineSource = toMachineExpression(sourceExpression);
   const equationParts = operation === "solve_equation" ? machineSource.split("=") : [];
-  const solutions = operation === "solve_equation" ? localAnswer.split(",").map((value) => value.trim()).filter(Boolean) : [];
+  const systemAssignments = operation === "solve_system"
+    ? localAnswer.split(",").map((assignment) => assignment.trim()).filter(Boolean)
+    : [];
+  const solutions = operation === "solve_equation"
+    ? localAnswer.split(",").map((value) => value.trim()).filter(Boolean)
+    : systemAssignments.map((assignment) => assignment.split("=")[1]?.trim()).filter((value): value is string => Boolean(value));
+  const systemVariables = systemAssignments.map((assignment) => assignment.split("=")[0]?.trim()).filter(Boolean);
 
   return {
     operation: operation as SolverResultResponse["operation"],
     interpreted_problem: input,
-    interpreted_latex: input,
+    interpreted_latex: operation === "solve_system" ? sourceExpression : input,
     answer: localAnswer,
     answer_latex: localAnswer,
     answer_type: "exact",
@@ -121,20 +133,20 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
     graph: {
       available: operation === "graph" || operation === "simplify",
       expression: operation === "graph" || operation === "simplify" ? localAnswer : null,
-      variable,
+      variable: operation === "solve_system" ? systemVariables.join(",") : variable,
       domain: [-10, 10]
     },
     machine: {
       source_expression: operation !== "graph" ? machineSource : null,
       answer_expression: operation !== "graph" ? localAnswer.replace(/\s*\+\s*C\s*$/i, "") : null,
-      variable,
+      variable: operation === "solve_system" ? systemVariables.join(",") : variable,
       equation_left: equationParts.length === 2 ? equationParts[0] : null,
       equation_right: equationParts.length === 2 ? equationParts[1] : null,
       solutions,
-      lower_bound: null,
-      upper_bound: null,
-      limit_point: null,
-      limit_direction: null
+      lower_bound: definiteIntegral?.[2] ?? null,
+      upper_bound: definiteIntegral?.[3] ?? null,
+      limit_point: limitMatch?.[3]?.replace(/[+-]$/, "") ?? null,
+      limit_direction: limitMatch?.[3]?.endsWith("+") ? "right" : limitMatch?.[3]?.endsWith("-") ? "left" : null
     },
     warnings: ["AI unavailable. Results are generated locally and may be limited."]
   };
@@ -168,7 +180,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       });
     }
 
-    if (isRateLimited()) {
+    if (isRateLimited(`solve:${getClientKey(request)}`, 20)) {
       return createErrorResponse("RATE_LIMITED", "Too many requests. Please slow down.", requestId, 429);
     }
 

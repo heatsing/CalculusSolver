@@ -20,7 +20,7 @@ const relatedTools = [["Algebra Calculator", "/algebra-solver"], ["Matrix Calcul
 export default function CalculusCalculatorPage(): React.JSX.Element {
   const productRule = String.raw`\frac{d}{dx}[u(x)v(x)]=u'(x)v(x)+u(x)v'(x)`;
   const operations = [[SquareFunction, "Derivatives", "Find derivatives using product, quotient, chain, and other rules.", "bg-blue-600"], [Waves, "Integrals", "Compute indefinite and definite integrals with guided solutions.", "bg-violet-600"], [Infinity, "Limits", "Evaluate limits at a point or infinity, one-sided or two-sided.", "bg-cyan-700"], [Sigma, "Series", "Work with sequences, series, sums, and convergence.", "bg-orange-500"]] as const;
-  return <div className="min-h-screen bg-[#f6f9fe] text-[#0a234f]"><StructuredData data={faqPageStructuredData(faqs)} /><CalculatorHeader />
+  return <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]"><StructuredData data={faqPageStructuredData(faqs)} /><CalculatorHeader />
     <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
       <header className="mx-auto mb-8 max-w-3xl text-center"><h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Calculus Calculator</h1><p className="mt-3 text-base text-[#637392]">Solve derivatives, integrals, limits, and more with clear step-by-step explanations.</p></header>
       <OnlineCalculator /><div className="mt-6"><CalculatorBenefits /></div>

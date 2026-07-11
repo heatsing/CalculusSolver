@@ -54,6 +54,9 @@ function containsAny(text: string, keywords: string[]): boolean {
 export function detectOperation(input: string): string {
   const normalized = normalizeInput(input).toLowerCase();
 
+  const equationCount = (normalized.match(/=/g) ?? []).length;
+  if (equationCount >= 2 && /\b(?:and|with)\b|;/.test(normalized)) return "solve_system";
+
   if (containsAny(normalized, limitKeywords)) return "limit";
   if (containsAny(normalized, integralKeywords)) return "integral";
   if (containsAny(normalized, derivativeKeywords)) return "derivative";

@@ -27,10 +27,18 @@ test.describe("Mobile user", () => {
     for (const route of idleRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(500);
-      const overflows = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+      const overflowDetails = await page.evaluate(() => {
+        const viewportWidth = document.documentElement.clientWidth;
+        if (document.documentElement.scrollWidth <= viewportWidth) return [];
+        return Array.from(document.querySelectorAll("body *"))
+          .map((element) => {
+            const rect = element.getBoundingClientRect();
+            return { tag: element.tagName, id: element.id, className: element.className.toString(), left: rect.left, right: rect.right, width: rect.width };
+          })
+          .filter(({ left, right }) => left < -0.5 || right > viewportWidth + 0.5)
+          .slice(0, 10);
       });
-      expect(overflows, `Horizontal overflow detected on ${route}`).toBe(false);
+      expect(overflowDetails, `Horizontal overflow detected on ${route}: ${JSON.stringify(overflowDetails)}`).toEqual([]);
     }
 
     const resultRoutes = ["/", "/calculus-solver"];
@@ -102,7 +110,7 @@ test.describe("Mobile user", () => {
     await page.reload();
     await page.waitForLoadState("networkidle");
 
-    const historyButton = page.getByRole("button", { name: "History" });
+    const historyButton = page.getByRole("button", { name: "Open history" });
     await expect(historyButton).toBeVisible();
     await historyButton.click();
     await expect(page.getByRole("heading", { name: "Recent problems" })).toBeVisible();
@@ -110,7 +118,7 @@ test.describe("Mobile user", () => {
     await page.getByTestId("history-select").click();
     await expect(page.locator("#math-problem-input")).toHaveValue("derivative of x^2");
 
-    await page.getByRole("button", { name: "History" }).click();
+    await page.getByRole("button", { name: "Open history" }).click();
     await page.getByTestId("history-delete").click();
     await expect(page.getByTestId("history-select")).not.toBeVisible();
   });
@@ -126,7 +134,8 @@ test.describe("Mobile user", () => {
     await expect(dialog.getByRole("link", { name: "Calculus Solver" })).toBeVisible();
     await expect(dialog.getByRole("link", { name: "Algebra Solver" })).toBeVisible();
     await expect(dialog.getByRole("link", { name: "Examples" })).toBeVisible();
-    await expect(dialog.getByRole("button", { name: "Solve now" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Calculators" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Guides" })).toBeVisible();
   });
 
   test("share URL auto-submits on mobile", async ({ page }) => {

@@ -84,22 +84,9 @@ export function mockSolveRoute(page: Page): Promise<Disposable> {
   });
 }
 
-/**
- * Fill the math input using React-compatible native value setter.
- * Works across chromium, webkit, and mobile browsers where `fill` alone
- * may not trigger React's onChange.
- */
 export async function fillInput(page: Page, text: string): Promise<void> {
   const input = page.locator("#math-problem-input");
-  await input.click();
-  await input.evaluate((el: HTMLTextAreaElement, val: string) => {
-    const setter = Object.getOwnPropertyDescriptor(
-      window.HTMLTextAreaElement.prototype,
-      "value"
-    )?.set;
-    setter?.call(el, val);
-    el.dispatchEvent(new Event("input", { bubbles: true }));
-  }, text);
+  await input.fill(text);
 }
 
 export async function submitProblem(page: Page): Promise<void> {

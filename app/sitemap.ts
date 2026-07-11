@@ -28,6 +28,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/root-calculator",
     "/simplify-calculator",
     "/examples",
+    "/calculators",
+    "/guides",
+    "/about",
+    "/contact",
     "/privacy",
     "/terms"
   ];

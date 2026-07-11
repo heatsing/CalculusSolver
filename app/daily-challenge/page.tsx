@@ -6,7 +6,7 @@ import { SolverShell } from "@/components/solver/solver-shell";
 import { StructuredData } from "@/components/seo/structured-data";
 import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
-export const metadata = createMetadata({ title: "Daily Math Challenge | Free Calculus & Algebra Puzzles", description: "A new math challenge every day. Solve derivatives, integrals, limits, and algebra problems with progressive hints. Track your streak and share your results.", path: "/daily-challenge", keywords: ["daily math challenge", "calculus challenge", "math puzzle", "daily math problem", "math streak"] });
+export const metadata = createMetadata({ title: "Daily Calculus Challenge", description: "Solve a new calculus or algebra challenge every day with progressive hints, scoring, and a locally saved streak.", path: "/daily-challenge", keywords: ["daily math challenge", "calculus challenge", "math puzzle", "daily math problem", "math streak"] });
 const faqs = [
   { question: "What is the Daily Math Challenge?", answer: "Every day brings a new derivative, integral, limit, or algebra problem with progressive hints." },
   { question: "When does the challenge reset?", answer: "The challenge resets at midnight UTC and the page shows the time remaining." },

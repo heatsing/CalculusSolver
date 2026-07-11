@@ -1,45 +1,13 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand/brand-logo";
 
-const productLinks = [
-  { label: "Calculus Solver", href: "/calculus-solver" },
-  { label: "Algebra Solver", href: "/algebra-solver" },
-  { label: "Calculus Calculator", href: "/calculus-calculator" },
-  { label: "Derivative Calculator", href: "/derivative-calculator" },
-  { label: "Integral Calculator", href: "/integral-calculator" },
-  { label: "Limit Calculator", href: "/limit-calculator" },
-  { label: "Equation Solver", href: "/equation-solver" },
-  { label: "Examples", href: "/examples" }
-];
-
-const resourceLinks = [{ label: "Privacy", href: "/privacy" }, { label: "Terms", href: "/terms" }];
+const columns = [
+  ["Solvers", [["Calculus Solver", "/calculus-solver"], ["Algebra Solver", "/algebra-solver"], ["Daily Challenge", "/daily-challenge"]]],
+  ["Tools", [["All Calculators", "/calculators"], ["Derivative Calculator", "/derivative-calculator"], ["Integral Calculator", "/integral-calculator"]]],
+  ["Learn", [["Guides", "/guides"], ["Examples", "/examples"], ["About", "/about"]]],
+  ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Use", "/terms"], ["Contact", "/contact"]]]
+] as const;
 
 export function Footer(): React.JSX.Element {
-  return (
-    <footer className="mt-24 border-t border-[#393939] bg-heading text-white">
-      <div className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <Link href="/" className="flex min-h-11 items-center gap-3 text-lg font-medium text-white">
-              <BrandLogo inverse compact />
-            </Link>
-            <p className="mt-4 max-w-xs text-sm text-[#c6c6c6]">Step-by-step math solutions for calculus, algebra, and more.</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-white">Product</h3>
-            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {productLinks.map((link) => <li key={link.href}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm text-[#c6c6c6] hover:text-white sm:min-h-0">{link.label}</Link></li>)}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-white">Legal</h3>
-            <ul className="mt-4 space-y-2">
-              {resourceLinks.map((link) => <li key={link.label}><Link href={link.href} className="inline-flex min-h-11 min-w-11 items-center text-sm text-[#c6c6c6] hover:text-white sm:min-h-0 sm:min-w-0">{link.label}</Link></li>)}
-            </ul>
-          </div>
-        </div>
-        <div className="mt-12 border-t border-[#393939] pt-6 text-sm text-[#8d8d8d]">© {new Date().getFullYear()} Calculus Solver. All rights reserved.</div>
-      </div>
-    </footer>
-  );
+  return <footer className="mt-16 bg-[#061f49] text-white"><div className="mx-auto grid max-w-[1240px] gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-5 lg:px-8"><div><BrandLogo inverse compact /><p className="mt-3 max-w-xs text-sm leading-6 text-blue-100/75">Free step-by-step tools for calculus, algebra, and everyday mathematics.</p></div>{columns.map(([title, links]) => <div key={title}><h2 className="text-sm font-bold">{title}</h2><ul className="mt-3 space-y-2">{links.map(([label, href]) => <li key={href}><Link href={href} className="text-sm text-blue-100/75 hover:text-white">{label}</Link></li>)}</ul></div>)}</div><div className="border-t border-white/10 px-4 py-5 text-center text-xs text-blue-100/60">© {new Date().getFullYear()} Calculus Solver. All rights reserved.</div></footer>;
 }

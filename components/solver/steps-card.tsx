@@ -66,10 +66,12 @@ function StepExplanation({ input, step }: { input: string; step: SolverStep }): 
 
 function StepRow({
   input,
-  step
+  step,
+  aiAvailable
 }: {
   input: string;
   step: SolverStep;
+  aiAvailable: boolean;
 }): React.JSX.Element {
   return (
     <div className="border-b border-border py-4 last:border-b-0">
@@ -100,7 +102,7 @@ function StepRow({
 
           <p className="text-sm text-body">{step.explanation}</p>
 
-          <StepExplanation input={input} step={step} />
+          {aiAvailable && <StepExplanation input={input} step={step} />}
         </div>
       </div>
     </div>
@@ -114,6 +116,7 @@ export function StepsCard({
   result: SolverResult;
   input: string;
 }): React.JSX.Element {
+  const aiAvailable = !result.warnings.some((warning) => warning.toLowerCase().includes("ai unavailable"));
   return (
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -122,7 +125,7 @@ export function StepsCard({
       </CardHeader>
       <CardContent className="pt-0">
         {result.steps.map((step) => (
-          <StepRow key={step.number} input={input} step={step} />
+          <StepRow key={step.number} input={input} step={step} aiAvailable={aiAvailable} />
         ))}
       </CardContent>
     </Card>

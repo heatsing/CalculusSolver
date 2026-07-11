@@ -2,15 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 async function fillInputReact(page: Page, text: string): Promise<void> {
   const input = page.locator("#daily-guess-input");
-  await input.click();
-  await input.evaluate((el: HTMLInputElement, val: string) => {
-    const setter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      "value"
-    )?.set;
-    setter?.call(el, val);
-    el.dispatchEvent(new Event("input", { bubbles: true }));
-  }, text);
+  await input.fill(text);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -24,8 +16,8 @@ test.beforeEach(async ({ page }) => {
 test.describe("Daily Challenge", () => {
   test("page loads and shows the challenge", async ({ page }) => {
     await page.goto("/daily-challenge");
-    await expect(page.getByRole("heading", { name: "Daily Math Challenge" })).toBeVisible();
-    await expect(page.getByText("Daily Challenge · Day")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("heading", { name: /Calculus Solve Problems/ })).toBeVisible();
+    await expect(page.getByText(/Daily Challenge.*Day/)).toBeVisible({ timeout: 10000 });
     await expect(page.locator("#daily-guess-input")).toBeVisible();
   });
 
@@ -36,7 +28,7 @@ test.describe("Daily Challenge", () => {
     await expect(page.getByText(/Hints \(1\/6\)/)).not.toBeVisible();
 
     await fillInputReact(page, "definitely_wrong_answer");
-    await page.getByRole("button", { name: "Check" }).click();
+    await page.getByRole("button", { name: "Submit Answer" }).click();
 
     await expect(page.getByText(/Hints \(1\/6\)/)).toBeVisible({ timeout: 5000 });
   });
@@ -55,7 +47,7 @@ test.describe("Daily Challenge", () => {
     await expect(page.locator("#daily-guess-input")).toBeVisible({ timeout: 10000 });
 
     await fillInputReact(page, "wrong");
-    await page.getByRole("button", { name: "Check" }).click();
+    await page.getByRole("button", { name: "Submit Answer" }).click();
     await expect(page.getByText(/Hints \(1\/6\)/)).toBeVisible({ timeout: 5000 });
 
     await page.reload();
@@ -80,22 +72,11 @@ test.describe("Daily Challenge", () => {
     await expect(page.getByTestId("daily-wins")).toBeVisible({ timeout: 5000 });
   });
 
-  test("nav link exists in header", async ({ page }) => {
+  test("daily challenge is linked from the shared footer", async ({ page }) => {
     await page.goto("/");
-    // On mobile, nav links are inside a dialog opened by the menu button
-    const openMenuButton = page.getByRole("button", { name: "Open menu" });
-    if (await openMenuButton.isVisible().catch(() => false)) {
-      await openMenuButton.click();
-      const dialog = page.getByRole("dialog");
-      await expect(dialog).toBeVisible({ timeout: 10000 });
-      const navLink = dialog.getByRole("link", { name: "Daily Challenge" });
-      await expect(navLink).toBeVisible({ timeout: 5000 });
-      await navLink.click();
-    } else {
-      const navLink = page.getByRole("navigation").getByRole("link", { name: "Daily Challenge" });
-      await expect(navLink).toBeVisible({ timeout: 5000 });
-      await navLink.click();
-    }
+    const navLink = page.getByRole("contentinfo").getByRole("link", { name: "Daily Challenge" });
+    await expect(navLink).toBeVisible({ timeout: 5000 });
+    await navLink.click();
     await expect(page).toHaveURL("/daily-challenge", { timeout: 10000 });
   });
 
@@ -131,7 +112,7 @@ test.describe("Daily Challenge", () => {
       if (!stillVisible) break;
 
       await fillInputReact(page, `wrong_${i}`);
-      await page.getByRole("button", { name: "Check" }).click();
+      await page.getByRole("button", { name: "Submit Answer" }).click();
       await page.waitForTimeout(300);
     }
 
@@ -151,7 +132,7 @@ test.describe("Daily Challenge", () => {
       if (!stillVisible) break;
 
       await fillInputReact(page, `wrong_${i}`);
-      await page.getByRole("button", { name: "Check" }).click();
+      await page.getByRole("button", { name: "Submit Answer" }).click();
       await page.waitForTimeout(300);
     }
 

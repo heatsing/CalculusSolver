@@ -26,6 +26,15 @@ export function ResultFeedback({ result, className }: ResultFeedbackProps): Reac
     if (hasSubmitted) return;
     setOptimisticValue(value);
     setFeedback(feedbackKey, value);
+    void fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        value,
+        operation: result.operation,
+        verification: result.localVerification.status
+      })
+    }).catch(() => undefined);
   }
 
   return (
@@ -64,7 +73,7 @@ export function ResultFeedback({ result, className }: ResultFeedbackProps): Reac
         </button>
       </div>
       {hasSubmitted && (
-        <span className="text-sm font-medium text-green-600">Thanks for your feedback!</span>
+        <span className="text-sm font-medium text-green-600">Feedback recorded. Thank you!</span>
       )}
     </div>
   );
