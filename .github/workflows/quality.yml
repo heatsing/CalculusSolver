@@ -31,5 +31,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e -- --project=chromium-desktop e2e/solver.spec.ts e2e/accessibility.spec.ts e2e/seo.spec.ts e2e/daily-challenge.spec.ts e2e/calculator-unification.spec.ts
+      - run: npm run test:e2e -- --project=chromium-desktop e2e/solver.spec.ts e2e/accessibility.spec.ts e2e/seo.spec.ts e2e/daily-challenge.spec.ts e2e/calculator-unification.spec.ts e2e/guides.spec.ts
       - run: npm run test:e2e -- --project=mobile-chrome e2e/mobile.spec.ts

@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
         { key: "X-Frame-Options", value: "DENY" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-        { key: "Content-Security-Policy", value: `default-src 'self'; ${scriptSource}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.is; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'` }
+        { key: "Content-Security-Policy", value: `default-src 'self'; ${scriptSource}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.is https://gateway.umami.is; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'` }
       ]
     }];
   }

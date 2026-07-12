@@ -91,6 +91,65 @@ export function faqPageStructuredData(items: { question: string; answer: string 
   };
 }
 
+export function collectionPageStructuredData(items: { name: string; path: string; description: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Calculus and Algebra Guides",
+    description: "Step-by-step learning guides for calculus, algebra, and linear algebra.",
+    url: `${appUrl}/guides`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        description: item.description,
+        url: `${appUrl}${item.path}`
+      }))
+    }
+  };
+}
+
+export function learningResourceStructuredData(item: {
+  title: string;
+  description: string;
+  path: string;
+  category: string;
+  difficulty: string;
+  updatedAt: string;
+  objectives: readonly string[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["Article", "LearningResource"],
+    headline: item.title,
+    name: item.title,
+    description: item.description,
+    url: `${appUrl}${item.path}`,
+    dateModified: item.updatedAt,
+    author: { "@type": "Organization", name: "Calculus Solver", url: appUrl },
+    publisher: { "@type": "Organization", name: "Calculus Solver", url: appUrl },
+    learningResourceType: "Guide",
+    educationalLevel: item.difficulty,
+    about: item.category,
+    teaches: item.objectives
+  };
+}
+
+export function breadcrumbStructuredData(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${appUrl}${item.path}`
+    }))
+  };
+}
+
 export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data)
     .replace(/</g, "\\u003c")

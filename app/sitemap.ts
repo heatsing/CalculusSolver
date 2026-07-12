@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { guides } from "@/data/guides";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://calculussolver.net";
@@ -33,7 +34,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/contact",
     "/privacy",
-    "/terms"
+    "/terms",
+    ...guides.map((guide) => `/guides/${guide.slug}`)
   ];
 
   return routes.map((route) => ({

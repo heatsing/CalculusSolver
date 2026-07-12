@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mockGraphResult, mockSolveRoute, fillAndSubmit, fillInput } from "./helpers";
 
-const routesToScan = ["/", "/calculus-solver", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/examples"];
+const routesToScan = ["/", "/calculus-solver", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/examples", "/guides", "/guides/derivative-rules"];
 
 test.describe("Accessibility user", () => {
   test("axe-core scans have no critical or serious violations", async ({ page }) => {
