@@ -4,7 +4,9 @@ const calculatorRoutes = [
   "/calculus-calculator",
   "/derivative-calculator",
   "/integral-calculator",
+  "/definite-integral-calculator",
   "/limit-calculator",
+  "/asymptote-calculator",
   "/gradient-calculator",
   "/graphing-calculator",
   "/algebra-solver",
@@ -12,6 +14,9 @@ const calculatorRoutes = [
   "/quadratic-solver",
   "/factoring-calculator",
   "/simplify-calculator",
+  "/inequality-calculator",
+  "/system-of-equations-calculator",
+  "/complex-numbers-calculator",
   "/exponent-calculator",
   "/math-calculator",
   "/fraction-calculator",
@@ -20,8 +25,12 @@ const calculatorRoutes = [
   "/percentage-calculator",
   "/probability-calculator",
   "/root-calculator",
+  "/long-division-calculator",
   "/log-calculator",
-  "/lcm-calculator"
+  "/lcm-calculator",
+  "/pythagorean-theorem-calculator",
+  "/sequence-calculator",
+  "/sum-of-series-calculator"
 ];
 
 test.describe("Unified calculator pages", () => {
@@ -51,6 +60,13 @@ test.describe("Unified calculator pages", () => {
   test("specialized calculator workspaces return real answers", async ({ page }) => {
     test.setTimeout(120000);
     const representativeRoutes = calculatorRoutes.filter((route) => route !== "/calculus-calculator");
+    let requestIndex = 0;
+    await page.route("**/api/solve", async (route) => {
+      requestIndex += 1;
+      await route.continue({
+        headers: { ...route.request().headers(), "x-forwarded-for": `198.51.100.${requestIndex}` }
+      });
+    });
 
     for (const route of representativeRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });

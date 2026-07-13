@@ -75,6 +75,23 @@ describe("computeLocalAnswer", () => {
   it("evaluates a definite integral without adding C", async () => {
     await expect(computeLocalAnswer("Integrate x^2 from 0 to 1", "integral", "x")).resolves.toBe("1/3");
   });
+
+  it.each([
+    ["Solve the inequality x^2 - 5*x + 6 <= 0", "solve_equation", "x", "[2, 3]"],
+    ["Solve the inequality x^2 - 4 > 0", "solve_equation", "x", "(-Infinity, -2) union (2, Infinity)"],
+    ["Find the asymptotes of (2*x+1)/(x-3)", "simplify", "x", "vertical: x = 3; horizontal: y = 2"],
+    ["Find the asymptotes of (x^2+1)/(x-1)", "simplify", "x", "vertical: x = 1; slant: y = 1+x"],
+    ["Calculate the complex expression (3+4i)*(2-i)", "simplify", "x", "10 + 5i"],
+    ["Evaluate the logarithm log10(1000)", "simplify", "x", "3"],
+    ["Divide using long division 125 by 4", "simplify", "x", "31 remainder 1 (31.25)"],
+    ["Apply the Pythagorean theorem to a=3, b=4", "simplify", "x", "c = 5"],
+    ["Analyze the sequence 2, 5, 8, 11", "simplify", "x", "Arithmetic sequence; common difference 3; next terms: 14, 17, 20"],
+    ["Analyze the sequence 1, 4, 9, 16", "simplify", "x", "Quadratic sequence; constant second difference 2; next terms: 25, 36, 49"],
+    ["Find the sum of 1 + 2 + ... + 100", "simplify", "x", "5050"],
+    ["Sum n^2 from 1 to 10", "simplify", "x", "385"]
+  ])("computes specialist calculator input %s", async (input, operation, variable, expected) => {
+    await expect(computeLocalAnswer(input, operation, variable)).resolves.toBe(expected);
+  });
 });
 
 describe("verifyResult", () => {

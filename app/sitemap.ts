@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { allCalculatorTools } from "@/data/calculator-tools";
 import { guides } from "@/data/guides";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -9,25 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/algebra-solver",
     "/calculus-calculator",
     "/daily-challenge",
-    "/derivative-calculator",
-    "/integral-calculator",
-    "/limit-calculator",
-    "/equation-solver",
-    "/quadratic-solver",
-    "/factoring-calculator",
-    "/graphing-calculator",
-    "/fraction-calculator",
-    "/matrix-calculator",
-    "/average-calculator",
-    "/exponent-calculator",
-    "/gradient-calculator",
-    "/lcm-calculator",
-    "/log-calculator",
-    "/math-calculator",
-    "/percentage-calculator",
-    "/probability-calculator",
-    "/root-calculator",
-    "/simplify-calculator",
+    ...allCalculatorTools.map((tool) => tool.href),
     "/examples",
     "/calculators",
     "/guides",
@@ -38,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...guides.map((guide) => `/guides/${guide.slug}`)
   ];
 
-  return routes.map((route) => ({
+  return [...new Set(routes)].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: "weekly",

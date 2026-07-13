@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Log Calculator | Calculus Solver",
+  title: "Free Online Logarithm Calculator | Calculus Solver",
   description: "Free logarithm calculator. Compute log base 10, natural log (ln), and logarithms of any base with step-by-step solutions.",
   path: "/log-calculator",
   keywords: [
@@ -17,11 +17,11 @@ export const metadata = createMetadata({
 export default function LogCalculatorPage(): React.JSX.Element {
   return (
     <CalculatorPage
-      title="Log Calculator"
+      title="Logarithm Calculator"
       description="Free logarithm calculator. Compute log base 10, natural log (ln), and logarithms of any base with step-by-step solutions."
       path="/log-calculator"
       mode="logarithms"
-      h1="Log Calculator"
+      h1="Logarithm Calculator"
       subtitle="Evaluate logarithms in any base — common log (base 10), natural log (base e), and arbitrary bases — with change-of-base steps shown."
       exampleLatex="\\log_{10}(1000) = 3"
       howItWorks={[

@@ -29,6 +29,9 @@ describe("normalizeInput", () => {
 });
 
 describe("toMachineExpression", () => {
+  it("preserves function names that contain digits", () => {
+    expect(toMachineExpression("log10(1000)")).toBe("log10(1000)");
+  });
   it("inserts multiplication between a number and a variable", () => {
     expect(toMachineExpression("2x + 3")).toBe("2*x+3");
   });
@@ -110,7 +113,11 @@ describe("detectPrimaryVariable", () => {
     ["Differentiate x^3 + 2*x", "x"],
     ["Integrate sin(x)", "x"],
     ["Solve 2*x + 5 = 17", "x"],
-    ["Find the derivative of q^2", "q"]
+    ["Find the derivative of q^2", "q"],
+    ["Solve the inequality x^2 < 4", "x"],
+    ["Find the asymptotes of (x+1)/(x-2)", "x"],
+    ["Solve the system x+y=5 and x-y=1", "x"],
+    ["Sum n^2 from 1 to 10", "n"]
   ])("ignores command words in %s", (input, expected) => {
     expect(detectPrimaryVariable(input)).toBe(expected);
   });

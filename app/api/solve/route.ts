@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { buildDeepSeekMessages, buildRepairMessages, callDeepSeek, estimateDeepSeekCost } from "@/lib/deepseek";
 import { parseSolverAiResponse } from "@/lib/ai-response";
 import { detectOperation, detectPrimaryVariable, normalizeInput, toMachineExpression } from "@/lib/math-parser";
-import { computeLocalAnswer, verifyResult } from "@/lib/math-verifier";
+import { computeLocalAnswer, isSpecializedCalculatorInput, verifyResult } from "@/lib/math-verifier";
 import { checkResultConsistency } from "@/lib/result-consistency";
 import { getClientKey, isRateLimited } from "@/lib/rate-limit";
 import { solveCache } from "@/lib/request-cache";
@@ -68,11 +68,22 @@ function mapSolverResultResponse(
 async function createLocalFallback(input: string, mode: string): Promise<SolverResultResponse> {
   const operation = detectOperation(input);
   const variable = detectPrimaryVariable(input);
+  const specialist = isSpecializedCalculatorInput(input);
+  const specialistLabel = /^solve the inequality/i.test(input) ? "inequality"
+    : /^solve the system/i.test(input) ? "system of equations"
+      : /^calculate the complex expression/i.test(input) ? "complex-number calculation"
+        : /^find the asymptotes/i.test(input) ? "asymptote analysis"
+          : /^evaluate the definite integral/i.test(input) ? "definite integral"
+            : /^divide using long division/i.test(input) ? "long division"
+              : /^apply the pythagorean theorem/i.test(input) ? "Pythagorean theorem calculation"
+                : /^analyze the sequence/i.test(input) ? "sequence analysis"
+                  : /^(?:find the sum of|sum\s)/i.test(input) ? "series sum"
+                    : operation;
   const localAnswer = await computeLocalAnswer(input, operation, variable);
   let sourceExpression = normalizeInput(input);
   const prefixes: Partial<Record<string, RegExp>> = {
     derivative: /^(?:differentiate|find the derivative of|derivative of)\s*/i,
-    integral: /^(?:integrate|find the integral of|integral of)\s*/i,
+    integral: /^(?:integrate|find the integral of|integral of|evaluate the definite integral)\s*/i,
     solve_equation: /^(?:solve|find [xy])\s*/i,
     factor: /^(?:factor|factorise)\s*/i,
     expand: /^expand\s*/i,
@@ -80,7 +91,7 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
     graph: /^(?:graph|plot|draw)\s*/i
   };
   if (prefixes[operation]) sourceExpression = sourceExpression.replace(prefixes[operation]!, "").trim();
-  if (operation === "solve_system") sourceExpression = sourceExpression.replace(/^solve\s*/i, "").trim();
+  if (operation === "solve_system") sourceExpression = sourceExpression.replace(/^solve(?:\s+the\s+system(?:\s+of\s+equations)?)?\s*/i, "").trim();
   if (operation === "integral") sourceExpression = sourceExpression.replace(/\s*d[a-z]\s*$/i, "").trim();
   const definiteIntegral = operation === "integral"
     ? sourceExpression.match(/^(.+?)\s+from\s+([^\s]+)\s+to\s+([^\s]+)$/i)
@@ -112,7 +123,7 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
       {
         number: 1,
         title: "Interpret the problem",
-        explanation: `The input was interpreted as ${operation}.`,
+        explanation: `The input was interpreted as a ${specialistLabel} problem.`,
         rule: "Operation detection",
         latexBefore: undefined,
         latexAfter: undefined
@@ -121,18 +132,20 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
         number: 2,
         title: "Compute locally",
         explanation: `Using local symbolic computation, the result is ${localAnswer}.`,
-        rule: "Nerdamer / math.js",
+        rule: specialist ? "Dedicated local math engine" : "Nerdamer / math.js",
         latexBefore: undefined,
         latexAfter: undefined
       }
     ],
     verification: {
       status: "uncertain",
-      explanation: "This fallback response was generated without AI because the DeepSeek API key is not configured."
+      explanation: specialist
+        ? "This result was produced by the dedicated local calculator."
+        : "This fallback response was generated without AI because the DeepSeek API key is not configured."
     },
     graph: {
-      available: operation === "graph" || operation === "simplify",
-      expression: operation === "graph" || operation === "simplify" ? localAnswer : null,
+      available: operation === "graph" || (operation === "simplify" && !specialist),
+      expression: operation === "graph" || (operation === "simplify" && !specialist) ? localAnswer : null,
       variable: operation === "solve_system" ? systemVariables.join(",") : variable,
       domain: [-10, 10]
     },
@@ -148,7 +161,9 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
       limit_point: limitMatch?.[3]?.replace(/[+-]$/, "") ?? null,
       limit_direction: limitMatch?.[3]?.endsWith("+") ? "right" : limitMatch?.[3]?.endsWith("-") ? "left" : null
     },
-    warnings: ["AI unavailable. Results are generated locally and may be limited."]
+    warnings: [specialist
+      ? "Answer computed with the dedicated local calculator."
+      : "AI unavailable. Results are generated locally and may be limited."]
   };
 }
 
@@ -185,7 +200,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) {
+    if (!apiKey || isSpecializedCalculatorInput(input)) {
       const fallback = await createLocalFallback(input, mode);
       const localVerification = await verifyResult(fallback);
       const consistencyWarnings = checkResultConsistency(fallback);

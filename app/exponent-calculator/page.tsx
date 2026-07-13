@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Exponent Calculator | Calculus Solver",
+  title: "Free Exponential Function Calculator | Calculus Solver",
   description: "Free exponent calculator. Compute powers, handle negative and fractional exponents, and simplify exponential expressions.",
   path: "/exponent-calculator",
   keywords: [
@@ -17,11 +17,11 @@ export const metadata = createMetadata({
 export default function ExponentCalculatorPage(): React.JSX.Element {
   return (
     <CalculatorPage
-      title="Exponent Calculator"
+      title="Exponential Function Calculator"
       description="Free exponent calculator. Compute powers, handle negative and fractional exponents, and simplify exponential expressions."
       path="/exponent-calculator"
       mode="exponents"
-      h1="Exponent Calculator"
+      h1="Exponential Function Calculator"
       subtitle="Calculate any base raised to any power — including negative, fractional, and zero exponents — with step-by-step explanations."
       exampleLatex="2^{10} = 1024"
       howItWorks={[

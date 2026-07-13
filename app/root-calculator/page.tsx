@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Root Calculator | Calculus Solver",
+  title: "Free Online Square Root Calculator | Calculus Solver",
   description: "Free root calculator. Compute square roots, cube roots, and nth roots of any number with step-by-step solutions.",
   path: "/root-calculator",
   keywords: [
@@ -17,11 +17,11 @@ export const metadata = createMetadata({
 export default function RootCalculatorPage(): React.JSX.Element {
   return (
     <CalculatorPage
-      title="Root Calculator"
+      title="Square Root Calculator"
       description="Free root calculator. Compute square roots, cube roots, and nth roots of any number with step-by-step solutions."
       path="/root-calculator"
       mode="roots"
-      h1="Root Calculator"
+      h1="Square Root Calculator"
       subtitle="Find square roots, cube roots, and nth roots of any real number. Handle negative inputs for odd roots and simplify radicals."
       exampleLatex="\\sqrt[3]{27} = 3"
       howItWorks={[

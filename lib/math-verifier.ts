@@ -48,6 +48,219 @@ function splitEquation(expression: string): { left: string; right: string } | nu
   return { left, right };
 }
 
+const specialistInputPattern = /^(?:solve the inequality|solve the system|calculate the complex expression|find the asymptotes of|evaluate the definite integral|divide using long division|apply the pythagorean theorem to|analyze the sequence|find the sum of|sum\s|calculate the average of|calculate the percentage|calculate the probability|find the least common multiple of|find the gradient of|evaluate the exponent expression|calculate the fraction expression|calculate the root|evaluate the logarithm|calculate the matrix expression|calculate\s)/i;
+
+export function isSpecializedCalculatorInput(input: string): boolean {
+  return specialistInputPattern.test(normalizeInput(input).trim());
+}
+
+function formatCalculatedNumber(value: number): string {
+  return mathFormat(value, { precision: 12 });
+}
+
+function compareToZero(value: number, operator: string): boolean {
+  const epsilon = 1e-9;
+  if (operator === "<") return value < -epsilon;
+  if (operator === ">") return value > epsilon;
+  if (operator === "<=") return value <= epsilon;
+  return value >= -epsilon;
+}
+
+async function solveInequality(text: string, variable: string): Promise<string> {
+  const source = text.replace(/^solve the inequality\s*/i, "").replace(/≤/g, "<=").replace(/≥/g, ">=").trim();
+  const match = source.match(/^(.+?)(<=|>=|<|>)(.+)$/);
+  if (!match) throw new Error("Enter an inequality such as x^2 - 5*x + 6 <= 0");
+
+  const left = toMachineExpression(match[1]);
+  const operator = match[2];
+  const right = toMachineExpression(match[3]);
+  const difference = `(${left})-(${right})`;
+  const nerdamer = await loadNerdamer();
+  const rawRoots = nerdamer.solveEquations(difference, variable);
+  const roots = (Array.isArray(rawRoots) ? rawRoots : [rawRoots])
+    .map((root) => String(root))
+    .map((exact) => ({ exact, numeric: mathEvaluate(exact) }))
+    .filter((root): root is { exact: string; numeric: number } => typeof root.numeric === "number" && Number.isFinite(root.numeric))
+    .sort((a, b) => a.numeric - b.numeric)
+    .filter((root, index, items) => index === 0 || Math.abs(root.numeric - items[index - 1].numeric) > 1e-9);
+
+  const evaluateAt = (point: number): number => {
+    const value = mathEvaluate(difference, { [variable]: point });
+    if (typeof value !== "number") throw new Error("This inequality is not a supported real polynomial inequality");
+    return value;
+  };
+
+  if (roots.length === 0) {
+    return compareToZero(evaluateAt(0), operator) ? "All real numbers" : "No real solution";
+  }
+
+  const boundaries = [-Infinity, ...roots.map((root) => root.numeric), Infinity];
+  const included: string[] = [];
+  const inclusive = operator.includes("=");
+  for (let index = 0; index < boundaries.length - 1; index += 1) {
+    const lower = boundaries[index];
+    const upper = boundaries[index + 1];
+    const sample = !Number.isFinite(lower) ? upper - Math.max(1, Math.abs(upper) + 1)
+      : !Number.isFinite(upper) ? lower + Math.max(1, Math.abs(lower) + 1)
+        : (lower + upper) / 2;
+    if (!compareToZero(evaluateAt(sample), operator)) continue;
+    const lowerText = Number.isFinite(lower) ? roots[index - 1].exact : "-Infinity";
+    const upperText = Number.isFinite(upper) ? roots[index].exact : "Infinity";
+    included.push(`${Number.isFinite(lower) && inclusive ? "[" : "("}${lowerText}, ${upperText}${Number.isFinite(upper) && inclusive ? "]" : ")"}`);
+  }
+
+  if (included.length > 0) return included.join(" union ");
+  if (inclusive) return roots.map((root) => `${variable} = ${root.exact}`).join(" or ");
+  return "No real solution";
+}
+
+function splitRationalExpression(source: string): { numerator: string; denominator: string } | null {
+  let depth = 0;
+  for (let index = 0; index < source.length; index += 1) {
+    if (source[index] === "(") depth += 1;
+    else if (source[index] === ")") depth -= 1;
+    else if (source[index] === "/" && depth === 0) {
+      const stripOuter = (value: string): string => {
+        let result = value.trim();
+        while (result.startsWith("(") && result.endsWith(")")) result = result.slice(1, -1).trim();
+        return result;
+      };
+      return { numerator: stripOuter(source.slice(0, index)), denominator: stripOuter(source.slice(index + 1)) };
+    }
+  }
+  return null;
+}
+
+function splitVector(value: string): string[] {
+  const inner = value.startsWith("[") && value.endsWith("]") ? value.slice(1, -1) : value;
+  const items: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let index = 0; index < inner.length; index += 1) {
+    if (inner[index] === "(") depth += 1;
+    if (inner[index] === ")") depth -= 1;
+    if (inner[index] === "," && depth === 0) {
+      items.push(inner.slice(start, index));
+      start = index + 1;
+    }
+  }
+  items.push(inner.slice(start));
+  return items.map((item) => item.trim()).filter(Boolean);
+}
+
+async function findAsymptotes(text: string, variable: string): Promise<string> {
+  const source = toMachineExpression(text.replace(/^find the asymptotes of\s*/i, ""));
+  const rational = splitRationalExpression(source);
+  if (!rational) return "No vertical, horizontal, or slant asymptotes found";
+
+  const nerdamer = await loadNerdamer();
+  const rawRoots = nerdamer.solveEquations(rational.denominator, variable);
+  const vertical = (Array.isArray(rawRoots) ? rawRoots : [rawRoots])
+    .map((root) => String(root))
+    .filter((root) => {
+      const numeric = mathEvaluate(root);
+      if (typeof numeric !== "number" || !Number.isFinite(numeric)) return false;
+      const substitute = nerdamer as unknown as (expression: string, substitutions: Record<string, string>) => { toString(): string };
+      const substituted = substitute(rational.numerator, { [variable]: root }).toString();
+      const numeratorValue = mathEvaluate(substituted);
+      return typeof numeratorValue !== "number" || Math.abs(numeratorValue) > 1e-9;
+    });
+
+  const numeratorDegree = Number(nerdamer(`deg(${rational.numerator},${variable})`).toString());
+  const denominatorDegree = Number(nerdamer(`deg(${rational.denominator},${variable})`).toString());
+  let endBehavior = "";
+  if (numeratorDegree < denominatorDegree) {
+    endBehavior = "horizontal: y = 0";
+  } else if (numeratorDegree === denominatorDegree) {
+    const numeratorCoefficients = splitVector(nerdamer(`coeffs(${rational.numerator},${variable})`).toString());
+    const denominatorCoefficients = splitVector(nerdamer(`coeffs(${rational.denominator},${variable})`).toString());
+    const ratio = nerdamer(`(${numeratorCoefficients.at(-1)})/(${denominatorCoefficients.at(-1)})`).toString();
+    endBehavior = `horizontal: y = ${ratio}`;
+  } else if (numeratorDegree === denominatorDegree + 1) {
+    const quotient = splitVector(nerdamer(`div(${rational.numerator},${rational.denominator})`).toString())[0];
+    endBehavior = `slant: y = ${quotient}`;
+  }
+
+  const parts = [vertical.length ? `vertical: ${vertical.map((root) => `x = ${root}`).join(", ")}` : "", endBehavior].filter(Boolean);
+  return parts.length ? parts.join("; ") : "No vertical, horizontal, or slant asymptotes found";
+}
+
+function calculateLongDivision(text: string): string {
+  const values = (text.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+  if (values.length < 2 || values[1] === 0) throw new Error("Enter a dividend and a nonzero divisor, such as 125 by 4");
+  const [dividend, divisor] = values;
+  const quotient = Math.trunc(dividend / divisor);
+  const remainder = dividend - quotient * divisor;
+  return remainder === 0
+    ? `${formatCalculatedNumber(dividend)} / ${formatCalculatedNumber(divisor)} = ${formatCalculatedNumber(quotient)}`
+    : `${formatCalculatedNumber(quotient)} remainder ${formatCalculatedNumber(remainder)} (${formatCalculatedNumber(dividend / divisor)})`;
+}
+
+function calculatePythagorean(text: string): string {
+  const sides = Object.fromEntries([...text.matchAll(/\b([abc])\s*=\s*(\d+(?:\.\d+)?)/gi)].map((match) => [match[1].toLowerCase(), Number(match[2])])) as Partial<Record<"a" | "b" | "c", number>>;
+  if (Object.keys(sides).length !== 2) throw new Error("Enter exactly two known sides, such as a=3, b=4");
+  if (sides.a && sides.b) return `c = ${formatCalculatedNumber(Math.hypot(sides.a, sides.b))}`;
+  if (sides.a && sides.c) {
+    if (sides.c <= sides.a) throw new Error("The hypotenuse c must be longer than leg a");
+    return `b = ${formatCalculatedNumber(Math.sqrt(sides.c ** 2 - sides.a ** 2))}`;
+  }
+  if (sides.b && sides.c) {
+    if (sides.c <= sides.b) throw new Error("The hypotenuse c must be longer than leg b");
+    return `a = ${formatCalculatedNumber(Math.sqrt(sides.c ** 2 - sides.b ** 2))}`;
+  }
+  throw new Error("Use a and b for the legs and c for the hypotenuse");
+}
+
+function analyzeSequence(text: string): string {
+  const values = (text.replace(/^analyze the sequence\s*/i, "").match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+  if (values.length < 3) throw new Error("Enter at least three sequence terms separated by commas");
+  const close = (a: number, b: number): boolean => Math.abs(a - b) < 1e-9;
+  const differences = values.slice(1).map((value, index) => value - values[index]);
+  if (differences.every((difference) => close(difference, differences[0]))) {
+    const next = [1, 2, 3].map((offset) => values.at(-1)! + differences[0] * offset);
+    return `Arithmetic sequence; common difference ${formatCalculatedNumber(differences[0])}; next terms: ${next.map(formatCalculatedNumber).join(", ")}`;
+  }
+  if (values.slice(0, -1).every((value) => value !== 0)) {
+    const ratios = values.slice(1).map((value, index) => value / values[index]);
+    if (ratios.every((ratio) => close(ratio, ratios[0]))) {
+      const next = [1, 2, 3].map((offset) => values.at(-1)! * ratios[0] ** offset);
+      return `Geometric sequence; common ratio ${formatCalculatedNumber(ratios[0])}; next terms: ${next.map(formatCalculatedNumber).join(", ")}`;
+    }
+  }
+  const secondDifferences = differences.slice(1).map((value, index) => value - differences[index]);
+  if (secondDifferences.length && secondDifferences.every((difference) => close(difference, secondDifferences[0]))) {
+    let nextDifference = differences.at(-1)!;
+    let nextValue = values.at(-1)!;
+    const next = [1, 2, 3].map(() => {
+      nextDifference += secondDifferences[0];
+      nextValue += nextDifference;
+      return nextValue;
+    });
+    return `Quadratic sequence; constant second difference ${formatCalculatedNumber(secondDifferences[0])}; next terms: ${next.map(formatCalculatedNumber).join(", ")}`;
+  }
+  return "No arithmetic, geometric, or quadratic pattern was detected";
+}
+
+async function sumSeries(text: string): Promise<string> {
+  const source = text.replace(/^(?:find the sum of|sum)\s*/i, "").trim();
+  const formula = source.match(/^(.+?)\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i);
+  if (formula) {
+    const nerdamer = await loadNerdamer();
+    const variable = (formula[1].match(/[a-z]/i) ?? ["n"])[0];
+    return nerdamer(`sum(${toMachineExpression(formula[1])},${variable},${formula[2]},${formula[3]})`).toString();
+  }
+  const values = (source.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+  if (source.includes("...") && values.length >= 3) {
+    const [first, second] = values;
+    const last = values.at(-1)!;
+    const difference = second - first;
+    const count = difference === 0 ? 0 : (last - first) / difference + 1;
+    if (count > 0 && Number.isInteger(count)) return formatCalculatedNumber((count * (first + last)) / 2);
+  }
+  if (values.length >= 2) return formatCalculatedNumber(values.reduce((sum, value) => sum + value, 0));
+  throw new Error("Enter a finite series, such as 1 + 2 + ... + 100");
+}
+
 function extractSourceAndAnswer(result: SolverResultResponse): {
   source: string;
   answer: string;
@@ -369,8 +582,19 @@ export async function computeLocalAnswer(input: string, operation: string, varia
   const formatNumber = (value: number): string => mathFormat(value, { precision: 12 });
   const expressionAfter = (pattern: RegExp): string => text.replace(pattern, "").trim();
 
+  if (/^solve the inequality\b/i.test(text)) return solveInequality(text, variable);
+  if (/^find the asymptotes of\b/i.test(text)) return findAsymptotes(text, variable);
+  if (/^divide using long division\b/i.test(text)) return calculateLongDivision(text);
+  if (/^apply the pythagorean theorem to\b/i.test(text)) return calculatePythagorean(text);
+  if (/^analyze the sequence\b/i.test(text)) return analyzeSequence(text);
+  if (/^(?:find the sum of|sum\s)/i.test(text)) return sumSeries(text);
+  if (/^calculate the complex expression\b/i.test(text)) {
+    const expression = expressionAfter(/^calculate the complex expression\s*/i);
+    return String(mathEvaluate(toMachineExpression(expression)));
+  }
+
   if (operation === "solve_system") {
-    const source = expressionAfter(/^solve\s*/i);
+    const source = expressionAfter(/^solve(?:\s+the\s+system(?:\s+of\s+equations)?)?\s*/i);
     const equations = source.split(/\s+(?:and|with)\s+|\s*;\s*/i).map((equation) => equation.trim()).filter(Boolean);
     if (equations.length < 2 || equations.some((equation) => !equation.includes("="))) {
       throw new Error("Enter at least two equations separated by 'and'");
@@ -385,7 +609,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
   }
 
   if (operation === "integral") {
-    const definite = text.match(/^(?:integrate|find the integral of|integral of)\s+(.+?)\s+from\s+([^\s]+)\s+to\s+([^\s]+)\s*$/i);
+    const definite = text.match(/^(?:integrate|find the integral of|integral of|evaluate the definite integral)\s+(.+?)\s+from\s+([^\s]+)\s+to\s+([^\s]+)\s*$/i);
     if (definite) {
       const expression = safeNormalize(definite[1]);
       const lower = safeNormalize(definite[2]);
@@ -429,7 +653,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
 
   let source = text;
   if (operation === "derivative") source = expressionAfter(/^(?:differentiate|find the derivative of|derivative of)\s*/i);
-  if (operation === "integral") source = expressionAfter(/^(?:integrate|find the integral of|integral of)\s*/i).replace(/\s*d[a-z]\s*$/i, "");
+  if (operation === "integral") source = expressionAfter(/^(?:integrate|find the integral of|integral of|evaluate the definite integral)\s*/i).replace(/\s*d[a-z]\s*$/i, "");
   if (operation === "factor") source = expressionAfter(/^(?:factor|factorise)\s*/i);
   if (operation === "expand") source = expressionAfter(/^expand\s*/i);
   if (operation === "simplify") source = expressionAfter(/^(?:simplify|reduce)\s*/i);

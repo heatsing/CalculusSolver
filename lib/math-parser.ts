@@ -28,8 +28,8 @@ export function toMachineExpression(input: string): string {
 
   // Insert explicit multiplication where a number precedes a variable or opening parenthesis.
   // Examples: "2x" -> "2*x", "2(x+1)" -> "2*(x+1)", "3sin(x)" -> "3*sin(x)"
-  normalized = normalized.replace(/(\d)([a-zA-Z_(])/g, "$1*$2");
-  normalized = normalized.replace(/(\d)(\()/g, "$1*$2");
+  normalized = normalized.replace(/(\d)([a-zA-Z_])/g, "$1*$2");
+  normalized = normalized.replace(/(?<![a-zA-Z0-9_.])(\d+(?:\.\d+)?)(\()/g, "$1*$2");
 
   // Convert common Unicode math operators.
   normalized = normalized.replace(/\u00D7/g, "*").replace(/\u00F7/g, "/");
@@ -75,7 +75,7 @@ export function detectOperation(input: string): string {
 
 export function detectPrimaryVariable(input: string): string {
   const normalized = normalizeInput(input)
-    .replace(/\b(?:differentiate|derivative|integrate|integral|evaluate|limit|approaches|solve|factor|factorise|expand|simplify|reduce|graph|plot|draw|calculate|average|percentage|probability|matrix|expression|exponent|root|logarithm|least|common|multiple|find|the|of|as)\b/gi, " ")
+    .replace(/\b(?:differentiate|derivative|integrate|integral|definite|evaluate|limit|approaches|solve|system|inequality|asymptote|asymptotes|factor|factorise|expand|simplify|reduce|graph|plot|draw|calculate|average|percentage|probability|matrix|expression|exponent|root|logarithm|complex|long|division|pythagorean|theorem|analyze|sequence|series|sum|least|common|multiple|find|the|of|as|from|to)\b/gi, " ")
     .replace(/\b(?:sin|cos|tan|sec|csc|cot|sqrt|log|ln|exp|pi|infinity)\b/gi, " ");
   const preferred = normalized.match(/[xyztqn]/i);
   if (preferred) return preferred[0].toLowerCase();

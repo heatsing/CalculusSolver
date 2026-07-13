@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Quadratic Calculator | Calculus Solver",
+  title: "Free Quadratic Formula Calculator | Calculus Solver",
   description:
     "Free quadratic equation solver with step-by-step solutions. Solve ax² + bx + c = 0 by factoring, completing the square, or the quadratic formula.",
   path: "/quadratic-solver",
@@ -19,11 +19,11 @@ export const metadata = createMetadata({
 export default function QuadraticSolverPage(): React.JSX.Element {
   return (
     <CalculatorPage
-      title="Quadratic Solver"
+      title="Quadratic Formula Calculator"
       description="Free quadratic equation solver with step-by-step solutions."
       path="/quadratic-solver"
       mode="equation"
-      h1="Quadratic Equation Solver"
+      h1="Quadratic Formula Calculator"
       subtitle="Solve any quadratic equation ax² + bx + c = 0 using factoring, completing the square, or the quadratic formula."
       exampleLatex="x^2 - 5x + 6 = 0 \\Rightarrow x = \\frac{5 \\pm \\sqrt{1}}{2} \\Rightarrow x = 2 \\text{ or } x = 3"
       howItWorks={[
