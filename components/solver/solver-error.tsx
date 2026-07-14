@@ -12,10 +12,11 @@ export function SolverError({
   return (
     <Card className="mt-8 animate-fade-in border-error/20 bg-error/5">
       <CardContent className="flex items-start gap-3 p-5">
-        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-error" />
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-error" aria-hidden="true" />
         <div className="flex-1">
-          <p className="font-semibold text-heading">Something went wrong</p>
+          <p className="font-semibold text-heading">We could not solve this problem</p>
           <p className="mt-1 text-sm text-body">{message}</p>
+          <p className="mt-2 text-sm text-body">Check the notation, add any missing variables or bounds, and try again.</p>
           {onRetry && (
             <Button
               variant="outline"

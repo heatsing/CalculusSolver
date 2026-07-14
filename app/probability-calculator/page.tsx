@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Probability Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Probability Calculator",
   description: "Free probability calculator. Compute single and combined event probabilities, conditional probability, and expected value.",
   path: "/probability-calculator",
   keywords: [

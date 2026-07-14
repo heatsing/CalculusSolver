@@ -7,7 +7,7 @@ test.describe("Returning user", () => {
 
     await page.goto("/?q=derivative%20of%20x%5E2");
     await expect(page.locator("#math-problem-input")).toHaveValue("derivative of x^2");
-    await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
   });
 
   test("keyboard shortcut / focuses input", async ({ page }) => {
@@ -30,6 +30,6 @@ test.describe("Returning user", () => {
     await page.locator("#math-problem-input").focus();
     await page.keyboard.press("Enter");
 
-    await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
   });
 });

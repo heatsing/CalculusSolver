@@ -2,7 +2,6 @@ import { test, expect } from "@playwright/test";
 
 const routes = [
   "/",
-  "/calculus-solver",
   "/algebra-solver",
   "/calculus-calculator",
   "/daily-challenge",
@@ -30,7 +29,7 @@ const routes = [
   "/terms"
 ];
 
-const sampleRoutes = ["/", "/calculus-solver", "/calculus-calculator", "/derivative-calculator"];
+const sampleRoutes = ["/", "/calculus-calculator", "/derivative-calculator"];
 
 async function getMetaContent(page: import("@playwright/test").Page, name: string): Promise<string | null> {
   return page.evaluate((n) => {
@@ -66,9 +65,9 @@ test.describe("SEO crawler", () => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await waitForMetaTags(page);
 
-    await expect(page).toHaveTitle("Free Calculus Solver & Algebra Solver Online | CalculusSolver.net");
+    await expect(page).toHaveTitle("Free Calculus Solver with Steps | Derivatives & Integrals");
     expect(await getMetaContent(page, "description")).toBe(
-      "Solve calculus and algebra problems online for free. Get step-by-step solutions for derivatives, integrals, equations, limits, and more with CalculusSolver.net."
+      "Calculus Solver – Solve Your Problems Quickly."
     );
   });
 
@@ -84,6 +83,7 @@ test.describe("SEO crawler", () => {
 
       expect(title.trim().length, `Empty title on ${route}`).toBeGreaterThan(0);
       expect(description?.trim().length ?? 0, `Empty description on ${route}`).toBeGreaterThan(0);
+      expect(description, `Domain-style brand found in description on ${route}`).not.toMatch(/CalculusSolver\.net/i);
 
       const key = `${title}::${description}`;
       expect(seen.has(key), `Duplicate title/description on ${route} (already on ${seen.get(key)})`).toBe(false);
@@ -149,6 +149,8 @@ test.describe("SEO crawler", () => {
 
   test("structured data includes WebSite and SoftwareApplication", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#homepage-faq-schema")).toBeAttached();
+    await expect(page.locator("#homepage-how-to-schema")).toBeAttached();
 
     const structured = await page.evaluate(() => {
       return Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((script) => {
@@ -166,6 +168,8 @@ test.describe("SEO crawler", () => {
 
     expect(types).toContain("WebSite");
     expect(types).toContain("SoftwareApplication");
+    expect(types).toContain("FAQPage");
+    expect(types).toContain("HowTo");
 
     const app = structured.find(
       (item): item is Record<string, unknown> => item !== null && item["@type"] === "SoftwareApplication"
@@ -175,6 +179,7 @@ test.describe("SEO crawler", () => {
     expect(app).toHaveProperty("applicationSubCategory");
     expect(app).toHaveProperty("operatingSystem");
     expect(app).toHaveProperty("offers");
+    expect(app).toHaveProperty("featureList");
     expect(app).not.toHaveProperty("aggregateRating");
   });
 });

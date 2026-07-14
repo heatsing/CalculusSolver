@@ -652,7 +652,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
   }
 
   let source = text;
-  if (operation === "derivative") source = expressionAfter(/^(?:differentiate|find the derivative of|derivative of)\s*/i);
+  if (operation === "derivative") source = expressionAfter(/^(?:differentiate|find the derivative of|derivative(?: of)?)\s*/i);
   if (operation === "integral") source = expressionAfter(/^(?:integrate|find the integral of|integral of|evaluate the definite integral)\s*/i).replace(/\s*d[a-z]\s*$/i, "");
   if (operation === "factor") source = expressionAfter(/^(?:factor|factorise)\s*/i);
   if (operation === "expand") source = expressionAfter(/^expand\s*/i);

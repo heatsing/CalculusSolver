@@ -35,6 +35,13 @@ describe("computeLocalAnswer", () => {
     expect(answer).toContain("3");
   });
 
+  it.each([
+    ["d/dx x^2", "x", "2*x"],
+    ["d/dy y^3", "y", "3*y^2"]
+  ])("supports operator notation in %s", async (input, variable, expected) => {
+    await expect(computeLocalAnswer(input, "derivative", variable)).resolves.toBe(expected);
+  });
+
   it("solves a linear equation", async () => {
     const answer = await computeLocalAnswer("2x + 5 = 17", "solve_equation", "x");
     expect(answer).toContain("6");

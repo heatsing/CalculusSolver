@@ -6,9 +6,9 @@ test.describe("First-time visitor", () => {
     await page.goto("/");
     const label = page.locator("label[for='math-problem-input']");
     await expect(label).toBeVisible();
-    await expect(label).toHaveText("Enter a math problem");
+    await expect(label).toHaveText("Enter a calculus problem");
 
-    const submit = page.locator('[aria-label="Solve"]');
+    const submit = page.getByRole("button", { name: "Solve Problem" });
     await expect(submit).toBeVisible();
   });
 
@@ -18,8 +18,8 @@ test.describe("First-time visitor", () => {
     await page.goto("/");
     await fillAndSubmit(page, "derivative of x^2");
 
-    await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole("heading", { name: "Step-by-step solution" })).toBeVisible();
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Step-by-Step Solution", exact: true })).toBeVisible();
   });
 
   test("no dead-end Image tab is shown", async ({ page }) => {

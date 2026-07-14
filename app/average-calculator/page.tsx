@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Average Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Average Calculator",
   description: "Free average calculator. Find the arithmetic mean of any set of numbers instantly, plus sum, count, and range.",
   path: "/average-calculator",
   keywords: [

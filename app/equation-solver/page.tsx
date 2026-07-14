@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Equation Solver | Calculus Solver",
+  title: "Calculus Solver – Free Online Equation Solver",
   description:
     "Free equation solver with step-by-step solutions. Solve linear, quadratic, polynomial, and systems of equations.",
   path: "/equation-solver",

@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Integral Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Integral Calculator",
   description:
     "Free integral calculator with step-by-step solutions. Solve indefinite and definite integrals of polynomials, trigonometric, exponential, and logarithmic functions.",
   path: "/integral-calculator",

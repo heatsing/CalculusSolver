@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Percentage Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Percentage Calculator",
   description: "Free percentage calculator. Find a percent of a number, calculate percentage change, and convert between fractions and percentages.",
   path: "/percentage-calculator",
   keywords: [

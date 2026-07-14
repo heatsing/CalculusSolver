@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Factor Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Factor Calculator",
   description:
     "Free factoring calculator with step-by-step solutions. Factor polynomials, quadratics, and expressions using GCF, grouping, and special product rules.",
   path: "/factoring-calculator",

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand/brand-logo";
 
 const columns = [
-  ["Solvers", [["Calculus Solver", "/calculus-solver"], ["Algebra Solver", "/algebra-solver"], ["Daily Challenge", "/daily-challenge"]]],
+  ["Solvers", [["Calculus Solver", "/"], ["Algebra Solver", "/algebra-solver"], ["Daily Challenge", "/daily-challenge"]]],
   ["Tools", [["All Calculators", "/calculators"], ["Derivative Calculator", "/derivative-calculator"], ["Integral Calculator", "/integral-calculator"]]],
   ["Learn", [["Guides", "/guides"], ["Examples", "/examples"], ["About", "/about"]]],
   ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Use", "/terms"], ["Contact", "/contact"]]]

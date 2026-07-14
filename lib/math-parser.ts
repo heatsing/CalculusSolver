@@ -17,7 +17,7 @@ export function normalizeInput(input: string): string {
     .replace(/\u221A/g, "sqrt")
     .replace(/\u03C0/g, "pi")
     .replace(/\u221E/g, "Infinity")
-    .replace(/d\/dx/gi, "derivative")
+    .replace(/d\s*\/\s*d[a-z]/gi, "derivative")
     .replace(/\u2192/g, "->")
     .replace(/\s+/g, " ")
     .trim();

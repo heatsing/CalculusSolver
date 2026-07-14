@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Square Root Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Square Root Calculator",
   description: "Free root calculator. Compute square roots, cube roots, and nth roots of any number with step-by-step solutions.",
   path: "/root-calculator",
   keywords: [

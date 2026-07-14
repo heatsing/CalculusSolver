@@ -82,7 +82,7 @@ async function createLocalFallback(input: string, mode: string): Promise<SolverR
   const localAnswer = await computeLocalAnswer(input, operation, variable);
   let sourceExpression = normalizeInput(input);
   const prefixes: Partial<Record<string, RegExp>> = {
-    derivative: /^(?:differentiate|find the derivative of|derivative of)\s*/i,
+    derivative: /^(?:differentiate|find the derivative of|derivative(?: of)?)\s*/i,
     integral: /^(?:integrate|find the integral of|integral of|evaluate the definite integral)\s*/i,
     solve_equation: /^(?:solve|find [xy])\s*/i,
     factor: /^(?:factor|factorise)\s*/i,

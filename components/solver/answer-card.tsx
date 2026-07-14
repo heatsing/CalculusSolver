@@ -48,13 +48,13 @@ export function AnswerCard({
   return (
     <Card className="relative border-border bg-white">
       <CardHeader>
+        <CardTitle className="text-base">Answer</CardTitle>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-white">
             {answerType}
           </span>
-          <span className="text-xs text-body">Final answer</span>
+          <span className="text-xs font-medium text-body">Final Answer</span>
         </div>
-        <CardTitle className="sr-only">Final Answer</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="overflow-x-auto rounded-xl border border-border bg-secondary-background/50 p-4">
@@ -63,12 +63,12 @@ export function AnswerCard({
 
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleCopyAnswer} className="gap-1.5">
-            {copied ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? <Check className="h-3.5 w-3.5 text-green-600" aria-hidden="true" /> : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
             {copied ? "Copied" : "Copy answer"}
           </Button>
           <ShareButton input={input} mode={mode} />
           <Button variant="secondary" size="sm" onClick={onNewProblem} className="gap-1.5">
-            <RotateCcw className="h-3.5 w-3.5" />
+            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
             New problem
           </Button>
         </div>

@@ -63,7 +63,7 @@ export function DailyChallengeGame(): React.JSX.Element {
     return (
       <div className="flex items-center justify-center py-20" role="status" aria-live="polite">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        <span className="ml-3 text-body">Loading today's challenge...</span>
+        <span className="ml-3 text-body">Loading Today’s Challenge…</span>
       </div>
     );
   }
@@ -168,7 +168,7 @@ export function DailyChallengeGame(): React.JSX.Element {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter your final answer..."
+              placeholder="Enter your final answer…"
               autoComplete="off"
               className="flex-1 rounded-lg border border-border bg-white px-4 py-3 text-sm text-heading placeholder:text-body/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               aria-label="Enter your answer"
@@ -219,6 +219,22 @@ export function DailyChallengeGame(): React.JSX.Element {
             <MathDisplay latex={challenge.answerLatex} display="block" />
           </div>
         </div>
+      )}
+
+      {(isWon || isLost) && (
+        <section className="mt-4 rounded-2xl border border-[#d9e4f3] bg-[#f8fbff] p-5" aria-labelledby="daily-explanation-title">
+          <h3 id="daily-explanation-title" className="text-base font-semibold text-heading">Explanation</h3>
+          <ol className="mt-3 space-y-2">
+            {challenge.hints.map((hint: string, index: number) => (
+              <li key={hint} className="flex items-start gap-3 text-sm leading-6 text-body">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">
+                  {index + 1}
+                </span>
+                <span>{hint}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
       )}
 
       {/* Action bar */}

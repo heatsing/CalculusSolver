@@ -6,7 +6,7 @@ const HISTORY_KEY = "calculus-solver-history-v2";
 test.describe("Calculus Solver", () => {
   test("home page loads and shows the solver", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Calculus Solve Problems\s+Step by Step/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Calculus Solver", exact: true })).toBeVisible();
     await expect(page.locator("#math-problem-input")).toBeVisible();
   });
 
@@ -15,11 +15,11 @@ test.describe("Calculus Solver", () => {
     const menuButton = page.getByRole("button", { name: "Open menu" });
     if (await menuButton.isVisible({ timeout: 1000 }).catch(() => false)) {
       await menuButton.click();
-      await page.getByRole("link", { name: "Examples" }).first().click();
+      await page.getByRole("link", { name: "Calculus Calculator" }).first().click();
     } else {
-      await page.locator('header nav a[href="/examples"]').click();
+      await page.locator('header nav a[href="/calculus-calculator"]').click();
     }
-    await expect(page).toHaveURL("/examples", { timeout: 10000 });
+    await expect(page).toHaveURL("/calculus-calculator", { timeout: 10000 });
   });
 
   test("submitting a problem shows the mocked result", async ({ page }) => {
@@ -28,8 +28,8 @@ test.describe("Calculus Solver", () => {
     await page.goto("/");
     await fillAndSubmit(page, "derivative of x^2");
 
-    await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole("heading", { name: "Step-by-step solution" })).toBeVisible();
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Step-by-Step Solution", exact: true })).toBeVisible();
     await expect(page.getByText("Interpret the problem")).toBeVisible();
   });
 
@@ -39,7 +39,7 @@ test.describe("Calculus Solver", () => {
     await page.goto("/");
     await fillAndSubmit(page, "derivative of x^2");
 
-    await expect(page.getByRole("heading", { name: "Step-by-step solution" })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Step-by-Step Solution", exact: true })).toBeVisible({ timeout: 10000 });
     await expect(page.getByText("Interpret the problem")).toBeVisible();
     await expect(page.getByText("Apply the power rule")).toBeVisible();
   });
@@ -91,9 +91,9 @@ test.describe("Calculus Solver", () => {
     await page.goto("/");
     await fillAndSubmit(page, "derivative of x^2");
 
-    await expect(page.getByText("Solving your problem...")).toBeVisible();
+    await expect(page.getByText("Solving Your Problem…")).toBeVisible();
     await page.getByRole("button", { name: "Cancel solving" }).click();
-    await expect(page.getByText("Solving your problem...")).toBeHidden();
+    await expect(page.getByText("Solving Your Problem…")).toBeHidden();
   });
 
   test("error card shows retry button and retry succeeds", async ({ page }) => {
@@ -122,9 +122,9 @@ test.describe("Calculus Solver", () => {
     await page.goto("/");
     await fillAndSubmit(page, "derivative of x^2");
 
-    await expect(page.getByText("Something went wrong")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("We could not solve this problem")).toBeVisible({ timeout: 10000 });
     await page.getByRole("button", { name: "Try again" }).click();
-    await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
   });
 
   test("graph result renders zoom, reset, download controls and plotly canvas", async ({ page }) => {

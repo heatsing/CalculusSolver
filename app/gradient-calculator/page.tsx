@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Gradient Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Gradient Calculator",
   description: "Free gradient calculator. Compute the gradient of a multivariable function, find partial derivatives, and visualize the direction of steepest ascent.",
   path: "/gradient-calculator",
   keywords: [

@@ -34,12 +34,13 @@ export function ProblemRecognition({
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <CardTitle className="text-base">Problem recognized: {operationLabel}</CardTitle>
+          <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
+          <CardTitle className="text-base">Problem</CardTitle>
+          <span className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">{operationLabel}</span>
         </div>
         {onEdit && (
           <Button type="button" variant="outline" size="sm" onClick={onEdit} className="gap-1.5">
-            <Pencil className="h-3.5 w-3.5" />
+            <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             Edit
           </Button>
         )}

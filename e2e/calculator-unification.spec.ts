@@ -39,6 +39,7 @@ test.describe("Unified calculator pages", () => {
 
     for (const route of calculatorRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
+      await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Calculus Solver – Free Online /);
       await expect(page.getByText("Free online calculator", { exact: true }), `Missing shared hero on ${route}`).toBeVisible();
       await expect(page.getByText("Step-by-step solutions", { exact: true }), `Missing shared benefits on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: /How to Use the/ }), `Missing shared instructions on ${route}`).toBeVisible();

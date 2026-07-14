@@ -90,7 +90,7 @@ export async function fillInput(page: Page, text: string): Promise<void> {
 }
 
 export async function submitProblem(page: Page): Promise<void> {
-  await page.locator('[aria-label="Solve"]').click();
+  await page.getByRole("button", { name: "Solve Problem" }).click();
 }
 
 export async function fillAndSubmit(page: Page, text: string): Promise<void> {

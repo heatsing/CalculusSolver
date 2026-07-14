@@ -6,7 +6,7 @@ import { MathDisplay } from "@/components/math/math-display";
 import { StructuredData } from "@/components/seo/structured-data";
 import { createMetadata, faqPageStructuredData } from "@/lib/seo";
 
-export const metadata = createMetadata({ title: "Free Online Calculus Calculator | Calculus Solver", description: "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.", path: "/calculus-calculator", keywords: ["calculus calculator", "online calculus calculator", "derivative calculator", "integral calculator", "limit calculator", "free math calculator"] });
+export const metadata = createMetadata({ title: "Calculus Solver – Free Online Calculus Calculator", description: "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.", path: "/calculus-calculator", keywords: ["calculus calculator", "online calculus calculator", "derivative calculator", "integral calculator", "limit calculator", "free math calculator"] });
 
 const faqs = [
   { question: "Is this calculus calculator free to use?", answer: "Yes. It is completely free and does not require an account." },

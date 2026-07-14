@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
+  async redirects() {
+    return [
+      {
+        source: "/calculus-solver",
+        destination: "/",
+        permanent: true
+      }
+    ];
+  },
   async headers() {
     return [{
       source: "/(.*)",

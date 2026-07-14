@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Exponential Function Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Exponential Function Calculator",
   description: "Free exponent calculator. Compute powers, handle negative and fractional exponents, and simplify exponential expressions.",
   path: "/exponent-calculator",
   keywords: [

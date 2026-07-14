@@ -17,6 +17,7 @@ export function createMetadata({
   keywords
 }: CreateMetadataOptions): Metadata {
   const url = `${appUrl}${path}`;
+  const normalizedDescription = description.replace(/CalculusSolver\.net/gi, "Calculus Solver");
   const pageTitle = title.toLowerCase().includes("calculus solver")
     ? { absolute: title }
     : title;
@@ -24,11 +25,11 @@ export function createMetadata({
   return {
     metadataBase: new URL(appUrl),
     title: pageTitle,
-    description,
+    description: normalizedDescription,
     ...(keywords ? { keywords } : {}),
     openGraph: {
       title,
-      description,
+      description: normalizedDescription,
       url,
       siteName: "Calculus Solver",
       type: "website",
@@ -37,7 +38,7 @@ export function createMetadata({
     twitter: {
       card: "summary_large_image",
       title,
-      description,
+      description: normalizedDescription,
       images: [ogImage]
     },
     alternates: {
@@ -65,14 +66,47 @@ export function softwareApplicationStructuredData() {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: "Calculus Solver",
+    url: appUrl,
+    description: "Solve derivatives, integrals, limits, equations, and other calculus problems with step-by-step explanations.",
     applicationCategory: "Education",
     applicationSubCategory: "EducationalApplication",
     operatingSystem: "Any",
+    isAccessibleForFree: true,
+    featureList: [
+      "Step-by-step calculus solutions",
+      "Derivative solver",
+      "Integral solver",
+      "Limit solver",
+      "Math symbol keyboard",
+      "Symbolic answer verification"
+    ],
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD"
     }
+  };
+}
+
+export function howToStructuredData({
+  name,
+  description,
+  steps
+}: {
+  name: string;
+  description: string;
+  steps: { name: string; text: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name,
+    description,
+    step: steps.map((step) => ({
+      "@type": "HowToStep",
+      name: step.name,
+      text: step.text
+    }))
   };
 }
 

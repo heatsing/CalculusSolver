@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online LCM Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online LCM Calculator",
   description: "Free LCM calculator. Find the least common multiple of two or more numbers instantly with step-by-step prime factorization.",
   path: "/lcm-calculator",
   keywords: [

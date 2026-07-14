@@ -20,7 +20,7 @@ type SpecializedCalculatorDefinition = {
 export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, SpecializedCalculatorDefinition> = {
   inequality: {
     metadata: {
-      title: "Free Inequality Calculator with Steps | Calculus Solver",
+      title: "Calculus Solver – Free Online Inequality Calculator with Steps",
       description: "Solve linear and quadratic inequalities online. Get interval notation and step-by-step explanations with this free inequality calculator.",
       path: "/inequality-calculator",
       keywords: ["inequality calculator", "solve inequalities", "interval notation calculator", "quadratic inequality solver"]
@@ -47,7 +47,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   "system-of-equations": {
     metadata: {
-      title: "Free System of Equations Calculator | Calculus Solver",
+      title: "Calculus Solver – Free Online System of Equations Calculator",
       description: "Solve systems of linear equations online with exact values and step-by-step explanations.",
       path: "/system-of-equations-calculator",
       keywords: ["system of equations calculator", "simultaneous equations solver", "linear system solver"]
@@ -74,7 +74,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   "complex-numbers": {
     metadata: {
-      title: "Free Complex Numbers Calculator | Calculus Solver",
+      title: "Calculus Solver – Free Online Complex Numbers Calculator",
       description: "Add, subtract, multiply, divide, and evaluate complex numbers online with exact results.",
       path: "/complex-numbers-calculator",
       keywords: ["complex numbers calculator", "imaginary number calculator", "complex arithmetic"]
@@ -101,7 +101,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   asymptote: {
     metadata: {
-      title: "Free Asymptote Calculator with Steps | Calculus Solver",
+      title: "Calculus Solver – Free Online Asymptote Calculator with Steps",
       description: "Find vertical, horizontal, and slant asymptotes of rational functions online.",
       path: "/asymptote-calculator",
       keywords: ["asymptote calculator", "vertical asymptote", "horizontal asymptote", "slant asymptote"]
@@ -128,7 +128,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   "definite-integral": {
     metadata: {
-      title: "Free Definite Integral Calculator with Steps | Calculus Solver",
+      title: "Calculus Solver – Free Online Definite Integral Calculator with Steps",
       description: "Evaluate definite integrals between two bounds and get exact step-by-step solutions online.",
       path: "/definite-integral-calculator",
       keywords: ["definite integral calculator", "area under curve calculator", "evaluate definite integral"]
@@ -155,7 +155,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   "long-division": {
     metadata: {
-      title: "Free Long Division Calculator with Remainder | Calculus Solver",
+      title: "Calculus Solver – Free Online Long Division Calculator with Remainder",
       description: "Divide whole numbers online and get the quotient, remainder, and decimal value.",
       path: "/long-division-calculator",
       keywords: ["long division calculator", "division with remainder", "quotient calculator"]
@@ -182,7 +182,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   "pythagorean-theorem": {
     metadata: {
-      title: "Free Pythagorean Theorem Calculator | Calculus Solver",
+      title: "Calculus Solver – Free Online Pythagorean Theorem Calculator",
       description: "Find a missing side of a right triangle using the Pythagorean theorem a² + b² = c².",
       path: "/pythagorean-theorem-calculator",
       keywords: ["pythagorean theorem calculator", "right triangle calculator", "hypotenuse calculator"]
@@ -209,7 +209,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   sequence: {
     metadata: {
-      title: "Free Sequence Calculator and Pattern Finder | Calculus Solver",
+      title: "Calculus Solver – Free Online Sequence Calculator and Pattern Finder",
       description: "Identify arithmetic, geometric, and quadratic sequences and calculate the next terms.",
       path: "/sequence-calculator",
       keywords: ["sequence calculator", "next term calculator", "arithmetic sequence", "geometric sequence"]
@@ -236,7 +236,7 @@ export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, Speci
   },
   "sum-of-series": {
     metadata: {
-      title: "Free Sum of Series Calculator | Calculus Solver",
+      title: "Calculus Solver – Free Online Sum of Series Calculator",
       description: "Calculate finite arithmetic series, listed terms, and indexed polynomial sums online.",
       path: "/sum-of-series-calculator",
       keywords: ["sum of series calculator", "arithmetic series calculator", "sigma calculator", "finite series sum"]

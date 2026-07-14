@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Simplify Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Simplify Calculator",
   description: "Free simplify calculator. Reduce algebraic expressions, combine like terms, and simplify fractions step by step.",
   path: "/simplify-calculator",
   keywords: [

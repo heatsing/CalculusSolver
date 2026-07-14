@@ -23,7 +23,7 @@ test.describe("Mobile user", () => {
     await mockSolveRoute(page);
     await page.setViewportSize({ width: 320, height: 568 });
 
-    const idleRoutes = ["/", "/calculus-solver", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/inequality-calculator", "/sequence-calculator", "/examples"];
+    const idleRoutes = ["/", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/inequality-calculator", "/sequence-calculator", "/examples"];
     for (const route of idleRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(500);
@@ -41,12 +41,12 @@ test.describe("Mobile user", () => {
       expect(overflowDetails, `Horizontal overflow detected on ${route}: ${JSON.stringify(overflowDetails)}`).toEqual([]);
     }
 
-    const resultRoutes = ["/", "/calculus-solver"];
+    const resultRoutes = ["/"];
     for (const route of resultRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForLoadState("networkidle");
       await fillAndSubmit(page, "derivative of x^2");
-      await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
+      await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
 
       const overflows = await page.evaluate(() => {
         return document.documentElement.scrollWidth > document.documentElement.clientWidth;
@@ -133,15 +133,16 @@ test.describe("Mobile user", () => {
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("link", { name: "Calculus Solver" })).toBeVisible();
     await expect(dialog.getByRole("link", { name: "Algebra Solver" })).toBeVisible();
-    await expect(dialog.getByRole("link", { name: "Examples" })).toBeVisible();
-    await expect(dialog.getByRole("link", { name: "Calculators" })).toBeVisible();
-    await expect(dialog.getByRole("link", { name: "Guides" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Calculus Calculator" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Derivative Calculator" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Integral Calculator" })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Limit Calculator" })).toBeVisible();
   });
 
   test("share URL auto-submits on mobile", async ({ page }) => {
     await mockSolveRoute(page);
     await page.goto("/?q=derivative%20of%20x%5E2");
     await expect(page.locator("#math-problem-input")).toHaveValue("derivative of x^2");
-    await expect(page.getByRole("heading", { name: /Problem recognized/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible({ timeout: 10000 });
   });
 });

@@ -37,8 +37,8 @@ function StepExplanation({ input, step }: { input: string; step: SolverStep }): 
         onClick={handleToggle}
         className="gap-1.5 text-xs font-medium text-primary hover:text-primary"
       >
-        {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Lightbulb className="h-3.5 w-3.5" />}
-        {loading ? "Explaining..." : expanded ? "Hide explanation" : "Explain this step"}
+        {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <Lightbulb className="h-3.5 w-3.5" aria-hidden="true" />}
+        {loading ? "Explaining…" : expanded ? "Hide explanation" : "Explain this step"}
       </Button>
 
       {expanded && (
@@ -120,10 +120,11 @@ export function StepsCard({
   return (
     <Card className="animate-fade-in">
       <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle className="text-base">Step-by-step solution</CardTitle>
+        <CardTitle className="text-base">Step-by-Step Solution</CardTitle>
         <span className="text-xs text-body">{result.steps.length} steps</span>
       </CardHeader>
       <CardContent className="pt-0">
+        <h3 className="sr-only">Explanation</h3>
         {result.steps.map((step) => (
           <StepRow key={step.number} input={input} step={step} aiAvailable={aiAvailable} />
         ))}

@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Logarithm Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Logarithm Calculator",
   description: "Free logarithm calculator. Compute log base 10, natural log (ln), and logarithms of any base with step-by-step solutions.",
   path: "/log-calculator",
   keywords: [

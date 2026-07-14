@@ -14,15 +14,15 @@ export function SolverLoading({ onCancel }: { onCancel?: () => void }): React.JS
     <Card className="mt-8 animate-fade-in">
       <div className="flex items-center justify-between p-5">
         <div className="flex items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
           <div>
-            <p className="font-semibold text-heading">Solving your problem...</p>
+            <p className="font-semibold text-heading">Solving Your Problem…</p>
             <p className="text-sm text-body">This usually takes a few seconds.</p>
           </div>
         </div>
         {onCancel && (
           <Button variant="outline" size="sm" onClick={onCancel} aria-label="Cancel solving">
-            <X className="mr-1 h-4 w-4" />
+            <X className="mr-1 h-4 w-4" aria-hidden="true" />
             Cancel
           </Button>
         )}

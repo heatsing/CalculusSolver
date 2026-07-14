@@ -21,6 +21,7 @@ describe("normalizeInput", () => {
 
   it("replaces derivative shorthand and arrows", () => {
     expect(normalizeInput("d/dx f(x) as x→0")).toBe("derivative f(x) as x->0");
+    expect(normalizeInput("d/dy y²")).toBe("derivative y^2");
   });
 
   it("collapses whitespace and trims", () => {

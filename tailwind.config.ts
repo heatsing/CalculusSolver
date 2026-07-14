@@ -39,7 +39,7 @@ const config: Config = {
       },
       maxWidth: {
         content: "1312px",
-        "solver-input": "760px"
+        "solver-input": "920px"
       },
       fontFamily: {
         sans: ["var(--font-roboto)", '"Roboto"', '"Noto Sans Math"', "system-ui", "sans-serif"],

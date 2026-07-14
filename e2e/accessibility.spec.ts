@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mockGraphResult, mockSolveRoute, fillAndSubmit, fillInput } from "./helpers";
 
-const routesToScan = ["/", "/calculus-solver", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/inequality-calculator", "/sequence-calculator", "/examples", "/guides", "/guides/derivative-rules"];
+const routesToScan = ["/", "/algebra-solver", "/calculus-calculator", "/daily-challenge", "/derivative-calculator", "/inequality-calculator", "/sequence-calculator", "/examples", "/guides", "/guides/derivative-rules"];
 
 test.describe("Accessibility user", () => {
   test("axe-core scans have no critical or serious violations", async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe("Accessibility user", () => {
     await fillInput(page, "derivative of x^2");
     await page.locator("#math-problem-input").focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("heading", { name: "Step-by-step solution" })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Step-by-Step Solution", exact: true })).toBeVisible({ timeout: 10000 });
     await expect(page.locator("#solver-result")).toBeFocused();
   });
 
@@ -90,7 +90,7 @@ test.describe("Accessibility user", () => {
     });
 
     await page.goto("/");
-    await expect(page.locator('[aria-label="Solve"]')).toBeVisible();
+    await expect(page.getByRole("button", { name: "Solve Problem" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Open history" })).toBeVisible();
 
     await fillAndSubmit(page, "derivative of x^2");

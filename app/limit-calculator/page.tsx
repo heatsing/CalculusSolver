@@ -2,7 +2,7 @@ import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
-  title: "Free Online Limit Calculator | Calculus Solver",
+  title: "Calculus Solver – Free Online Limit Calculator",
   description:
     "Free limit calculator with step-by-step solutions. Evaluate one-sided and two-sided limits of functions as x approaches any value.",
   path: "/limit-calculator",

@@ -37,7 +37,7 @@ const popularShortcuts = [
   { label: "∫ Integral", value: "integrate " },
   { label: "d/dx Derivative", value: "derivative of " },
   { label: "lim Limit", value: "limit " },
-  { label: "√ Simplify", value: "simplify " }
+  { label: "Σ Series", value: "sum " }
 ];
 
 export function SmartInput({ value, onChange, onSubmit, loading, context = "calculus" }: SmartInputProps): React.JSX.Element {
@@ -47,22 +47,14 @@ export function SmartInput({ value, onChange, onSubmit, loading, context = "calc
 
   React.useEffect(() => {
     function handleResize(): void {
-      if (window.innerWidth <= 640) {
-        setKeyboardOpen(false);
-      }
+      if (window.innerWidth <= 640) setKeyboardOpen(false);
     }
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useKeyboardShortcut(
-    () => {
-      textareaRef.current?.focus();
-    },
-    "/",
-    { metaKey: false, ctrlKey: false }
-  );
+  useKeyboardShortcut(() => textareaRef.current?.focus(), "/", { metaKey: false, ctrlKey: false });
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>): void {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -73,9 +65,7 @@ export function SmartInput({ value, onChange, onSubmit, loading, context = "calc
 
   function handleModeChange(nextMode: InputMode): void {
     setMode(nextMode);
-    if (nextMode === "natural") {
-      setTimeout(() => textareaRef.current?.focus(), 0);
-    }
+    if (nextMode === "natural") setTimeout(() => textareaRef.current?.focus(), 0);
   }
 
   function handleInsertSymbol(symbol: string): void {
@@ -91,17 +81,16 @@ export function SmartInput({ value, onChange, onSubmit, loading, context = "calc
     const end = textarea.selectionEnd ?? value.length;
     if (symbol === "__backspace__") {
       const deleteFrom = start === end ? Math.max(0, start - 1) : start;
-      const nextValue = value.slice(0, deleteFrom) + value.slice(end);
-      onChange(nextValue);
+      onChange(value.slice(0, deleteFrom) + value.slice(end));
       requestAnimationFrame(() => {
         textarea.focus();
         textarea.setSelectionRange(deleteFrom, deleteFrom);
       });
       return;
     }
+
     const nextValue = value.slice(0, start) + symbol + value.slice(end);
     onChange(nextValue);
-
     requestAnimationFrame(() => {
       textarea.focus();
       const position = start + symbol.length;
@@ -110,79 +99,77 @@ export function SmartInput({ value, onChange, onSubmit, loading, context = "calc
   }
 
   function handleShortcut(valuePrefix: string): void {
-    const textarea = textareaRef.current;
     onChange(valuePrefix);
     requestAnimationFrame(() => {
-      textarea?.focus();
-      textarea?.setSelectionRange(valuePrefix.length, valuePrefix.length);
+      textareaRef.current?.focus();
+      textareaRef.current?.setSelectionRange(valuePrefix.length, valuePrefix.length);
     });
   }
 
+  const label = context === "algebra" ? "Enter an algebra problem" : "Enter a calculus problem";
+  const placeholder = context === "algebra"
+    ? "Try solve 2x + 5 = 17…"
+    : "Try d/dx x^2, ∫ x^2 dx, or limit sin(x)/x as x→0…";
+
   return (
     <div className="space-y-3">
-      <label
-        htmlFor="math-problem-input"
-        className="mx-auto block max-w-solver-input px-1 text-sm font-medium text-heading"
-      >
-        Enter a math problem
+      <label htmlFor="math-problem-input" className="mx-auto block max-w-solver-input px-1 text-sm font-medium text-heading">
+        {label}
       </label>
       <div
         id="solver-input"
-        className={cn(
-          "relative mx-auto w-full max-w-solver-input rounded-input border border-border bg-white p-2 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-primary/20"
-        )}
+        className="relative mx-auto w-full max-w-solver-input rounded-input border border-border bg-white p-2 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-primary/20"
       >
         {mode === "formula" ? (
-          <MathFieldInput
-            value={value}
-            onChange={onChange}
-            placeholder="Type a formula..."
-            disabled={loading}
-          />
+          <MathFieldInput value={value} onChange={onChange} placeholder="Type a formula…" disabled={loading} />
         ) : (
           <Textarea
             ref={textareaRef}
             id="math-problem-input"
+            name="problem"
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(event) => onChange(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={context === "algebra" ? "Type an algebra problem, e.g. solve 2x + 5 = 17" : "Type a math problem, e.g. integrate x^2 sin(x)"}
+            placeholder={placeholder}
+            autoComplete="off"
+            spellCheck={false}
             disabled={loading}
-            className="min-h-[120px] resize-none border-0 bg-transparent px-4 pt-4 pb-14 text-base text-heading shadow-none placeholder:text-body/90 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-[120px] resize-none border-0 bg-transparent px-4 pb-14 pt-4 text-base text-heading shadow-none placeholder:text-body/90 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         )}
         <div className="absolute bottom-3 right-3 flex items-center gap-2">
           <span className="hidden text-xs text-body sm:inline">Shift + Enter for new line</span>
           <Button
+            type="button"
             onClick={onSubmit}
             disabled={loading || value.trim().length === 0}
-            size="icon"
-            aria-label="Solve"
-            className="h-11 w-11 rounded-input"
+            aria-label="Solve Problem"
+            className="h-11 gap-2 rounded-input px-4"
           >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <ArrowRight className="h-5 w-5" aria-hidden="true" />}
+            <span>{loading ? "Solving…" : "Solve Problem"}</span>
           </Button>
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-solver-input flex-wrap items-center justify-center gap-2 px-1">
-        {modes.map((m) => {
-          const Icon = m.icon;
-          const active = mode === m.id;
+      <div className="mx-auto flex max-w-solver-input flex-wrap items-center justify-center gap-2 px-1" role="tablist" aria-label="Input mode">
+        {modes.map((inputMode) => {
+          const Icon = inputMode.icon;
+          const active = mode === inputMode.id;
           return (
             <button
-              key={m.id}
+              key={inputMode.id}
               type="button"
-              onClick={() => handleModeChange(m.id)}
+              role="tab"
+              aria-selected={active}
+              onClick={() => handleModeChange(inputMode.id)}
               className={cn(
-                "inline-flex min-h-11 items-center gap-1.5 border px-4 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "border-primary bg-primary text-white"
-                  : "border-border bg-white text-body hover:bg-primary-soft hover:text-primary"
+                "inline-flex min-h-11 items-center gap-1.5 border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                active ? "border-primary bg-primary text-white" : "border-border bg-white text-body hover:bg-primary-soft hover:text-primary"
               )}
             >
-              <Icon className="h-4 w-4" />
-              {m.label}
+              <Icon className="h-4 w-4" aria-hidden="true" />
+              {inputMode.label}
             </button>
           );
         })}
@@ -202,7 +189,7 @@ export function SmartInput({ value, onChange, onSubmit, loading, context = "calc
                 key={shortcut.label}
                 type="button"
                 onClick={() => handleShortcut(shortcut.value)}
-                className="inline-flex min-h-11 items-center gap-1 border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary"
+                className="inline-flex min-h-11 items-center gap-1 border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 {shortcut.label}
               </button>
@@ -210,8 +197,9 @@ export function SmartInput({ value, onChange, onSubmit, loading, context = "calc
           </div>
           <button
             type="button"
-            onClick={() => setKeyboardOpen((prev) => !prev)}
-            className="flex min-h-11 w-full items-center justify-between border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:bg-primary-soft/30"
+            onClick={() => setKeyboardOpen((previous) => !previous)}
+            aria-expanded={keyboardOpen}
+            className="flex min-h-11 w-full items-center justify-between border border-border bg-white px-3 py-2 text-sm font-medium text-heading transition-colors hover:bg-primary-soft/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <span>Math keyboard</span>
             <span className="text-xs text-body">{keyboardOpen ? "Hide" : "Show"}</span>
