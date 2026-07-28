@@ -1,6 +1,7 @@
 declare module "nerdamer" {
   type NerdamerExpression = {
     toString(): string;
+    toTeX(): string;
     expand(): NerdamerExpression;
     factor(): NerdamerExpression;
     evaluate(): NerdamerExpression;
