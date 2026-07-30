@@ -12,10 +12,9 @@ import {
   Sigma,
   Sparkles
 } from "lucide-react";
-import { DailyChallengeGame } from "@/components/daily-challenge/daily-challenge-game";
+import { DeferredDailyChallenge } from "@/components/daily-challenge/deferred-daily-challenge";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { MathDisplay } from "@/components/math/math-display";
 import { SolverShell } from "@/components/solver/solver-shell";
 import { generalFaqs } from "@/data/faqs";
 
@@ -115,7 +114,7 @@ export function CalculusHomePage(): React.JSX.Element {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,#ffffff_0%,#f8fbff_46%,#f2f7fe_100%)] text-[#071f4a]">
       <SiteHeader />
-      <main id="main-content" tabIndex={-1} className="focus-visible:outline-none">
+      <main id="main-content" tabIndex={-1} className="calculus-home-main focus-visible:outline-none">
         <section className="mx-auto max-w-[1240px] px-4 pb-12 pt-10 sm:px-6 sm:pt-14 lg:px-8">
           <header className="mx-auto max-w-4xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0967ed]">Free online calculus solver</p>
@@ -271,8 +270,8 @@ export function CalculusHomePage(): React.JSX.Element {
               {examples.map((example) => (
                 <article key={example.type} className="rounded-2xl border border-[#d9e5f4] bg-white p-6">
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#0967ed]">{example.type} Example</p>
-                  <div className="mt-5 overflow-x-auto rounded-xl bg-[#f7faff] p-5 text-center text-xl">
-                    <MathDisplay latex={example.latex} display="block" />
+                  <div className="mt-5 overflow-x-auto rounded-xl bg-[#f7faff] p-5 text-center">
+                    <span className="whitespace-nowrap font-serif text-2xl text-[#071f4a]">{example.input}</span>
                   </div>
                   <p className="mt-4 font-mono text-sm text-[#405577]">{example.problem}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
@@ -297,7 +296,7 @@ export function CalculusHomePage(): React.JSX.Element {
             </Link>
           </div>
           <div className="mt-8">
-            <DailyChallengeGame />
+            <DeferredDailyChallenge />
           </div>
         </section>
 

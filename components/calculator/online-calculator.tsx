@@ -1,12 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { Check, Clipboard, Loader2, RotateCcw, Sparkles } from "lucide-react";
-import { MathDisplay } from "@/components/math/math-display";
-import { CalculusGraph } from "@/components/calculator/calculus-graph";
+import dynamic from "next/dynamic";
+import { Check, Loader2, RotateCcw, Sparkles } from "lucide-react";
+import type { OnlineCalculatorResultData } from "@/components/calculator/online-calculator-result";
+
+const OnlineCalculatorResult = dynamic(
+  () => import("@/components/calculator/online-calculator-result").then((module) => module.OnlineCalculatorResult),
+  {
+    ssr: false,
+    loading: () => <div className="mt-5 min-h-40 animate-pulse rounded-xl bg-[#eef5fd]" aria-hidden="true" />
+  }
+);
 
 type Operation = "auto" | "derivative" | "integral" | "limit" | "series";
-type ApiResult = { type: string; expression: string; normalized: string; answer: string; latex: string; steps: string[]; graph: { expression: string; variable: string; domain: [number, number] } | null };
 
 const tabs: Array<[string, Operation]> = [["Derivative", "derivative"], ["Integral", "integral"], ["Limit", "limit"], ["Series", "series"]];
 const keys = [["x", "x"], ["x²", "x^2"], ["xⁿ", "x^"], ["√", "sqrt("], ["sin", "sin("], ["cos", "cos("], ["tan", "tan("], ["ln", "ln("], ["eˣ", "e^("], ["π", "pi"], ["(", "("], [")", ")"], ["a⁄b", "/"], ["∫", "integral "], ["d⁄dx", "d/dx "], ["lim", "lim x-> "], ["+", "+"], ["−", "-"], ["×", "*"], ["÷", "/"]] as const;
@@ -19,15 +26,13 @@ const examples: Array<{ label: string; input: string; operation: Operation }> = 
 export function OnlineCalculator(): React.JSX.Element {
   const [input, setInput] = React.useState("d/dx (x^3 * sin(x))");
   const [operation, setOperation] = React.useState<Operation>("derivative");
-  const [result, setResult] = React.useState<ApiResult | null>(null);
+  const [result, setResult] = React.useState<OnlineCalculatorResultData | null>(null);
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [copied, setCopied] = React.useState(false);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
 
   function insert(value: string): void { const el = inputRef.current; const start = el?.selectionStart ?? input.length; const end = el?.selectionEnd ?? input.length; setInput(input.slice(0, start) + value + input.slice(end)); setResult(null); requestAnimationFrame(() => { el?.focus(); el?.setSelectionRange(start + value.length, start + value.length); }); }
-  async function calculate(): Promise<void> { if (!input.trim() || loading) { if (!input.trim()) setError("Enter an expression to calculate."); return; } setLoading(true); setError(""); setResult(null); try { const response = await fetch("/api/calculus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input, operation }) }); const body = await response.json() as ApiResult & { error?: string }; if (!response.ok) throw new Error(body.error || "Could not calculate this expression."); setResult(body); } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not calculate this expression."); } finally { setLoading(false); } }
-  async function copyAnswer(): Promise<void> { if (!result) return; await navigator.clipboard.writeText(result.answer); setCopied(true); window.setTimeout(() => setCopied(false), 1600); }
+  async function calculate(): Promise<void> { if (!input.trim() || loading) { if (!input.trim()) setError("Enter an expression to calculate."); return; } setLoading(true); setError(""); setResult(null); try { const response = await fetch("/api/calculus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input, operation }) }); const body = await response.json() as OnlineCalculatorResultData & { error?: string }; if (!response.ok) throw new Error(body.error || "Could not calculate this expression."); setResult(body); } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not calculate this expression."); } finally { setLoading(false); } }
   function clear(): void { setInput(""); setResult(null); setError(""); inputRef.current?.focus(); }
 
   return (
@@ -46,7 +51,7 @@ export function OnlineCalculator(): React.JSX.Element {
           <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0a234f]">Solution</h2>{result && <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"><Check className="h-3.5 w-3.5" /> Solved</span>}</div>
           {error && <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">{error}</div>}
           {!result && !error && <div className="flex min-h-[430px] flex-col items-center justify-center text-center"><span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-[#0967ed]"><Sparkles className="h-7 w-7" /></span><h3 className="mt-5 font-bold text-[#0a234f]">Your solution will appear here</h3><p className="mt-2 max-w-sm text-sm leading-6 text-[#637392]">Choose a topic, enter a function, then click Calculate to see the answer and step-by-step explanation.</p></div>}
-          {result && <div className="mt-5 animate-fade-in"><div className="overflow-x-auto rounded-xl border border-[#dbe6f6] bg-white p-5 text-xl text-[#0a234f]"><MathDisplay latex={result.latex} display="block" showCopy={false} /></div><div className={`mt-4 grid gap-4 ${result.graph ? "xl:grid-cols-2" : ""}`}><section className="rounded-xl border border-[#dbe6f6] bg-white p-4"><h3 className="text-sm font-bold text-[#0a234f]">Step-by-step explanation</h3><ol className="mt-4 space-y-4">{result.steps.map((step, index) => <li key={`${step}-${index}`} className="flex gap-3 text-sm leading-6 text-[#314567]"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0967ed] text-xs font-bold text-white">{index + 1}</span><span>{step}</span></li>)}</ol></section>{result.graph && <div className="overflow-hidden rounded-xl border border-[#dbe6f6] bg-white"><CalculusGraph {...result.graph} /></div>}</div><button type="button" onClick={() => void copyAnswer()} className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#cbd9ed] bg-white px-4 text-sm text-[#314567] hover:border-[#0967ed] hover:text-[#0967ed]">{copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}{copied ? "Copied" : "Copy answer"}</button></div>}
+          {result && <OnlineCalculatorResult result={result} />}
         </div>
       </div>
     </section>

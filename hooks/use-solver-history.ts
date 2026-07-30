@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { readHistory, writeHistory, clearHistory, deleteHistoryItem, type HistoryItem } from "@/lib/storage";
+import {
+  HISTORY_CHANGE_EVENT,
+  HISTORY_KEY,
+  readHistory,
+  writeHistory,
+  clearHistory,
+  deleteHistoryItem,
+  type HistoryItem
+} from "@/lib/storage";
 import type { SolverResult } from "@/types/solver";
 
 export function useSolverHistory() {
@@ -9,8 +17,25 @@ export function useSolverHistory() {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
+    function syncHistory(): void {
+      setHistory(readHistory());
+    }
+
+    function handleStorage(event: StorageEvent): void {
+      if (event.key === null || event.key === HISTORY_KEY) {
+        syncHistory();
+      }
+    }
+
     setMounted(true);
-    setHistory(readHistory());
+    syncHistory();
+    window.addEventListener(HISTORY_CHANGE_EVENT, syncHistory);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener(HISTORY_CHANGE_EVENT, syncHistory);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   function add(input: string, mode: string, result: SolverResult): void {
@@ -22,19 +47,15 @@ export function useSolverHistory() {
       mode,
       result
     };
-    const next = [item, ...history].slice(0, 50);
-    setHistory(next);
+    const next = [item, ...readHistory()];
     writeHistory(next);
   }
 
   function remove(id: string): void {
-    const next = history.filter((item) => item.id !== id);
-    setHistory(next);
     deleteHistoryItem(id);
   }
 
   function clear(): void {
-    setHistory([]);
     clearHistory();
   }
 

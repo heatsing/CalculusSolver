@@ -74,6 +74,20 @@ test.describe("Calculus Solver", () => {
     await expect(page.locator("#math-problem-input")).toHaveValue("derivative of x^2");
   });
 
+  test("newly solved problems appear in history without reloading", async ({ page }) => {
+    await mockSolveRoute(page);
+
+    await page.goto("/");
+    await page.evaluate((key) => localStorage.removeItem(key), HISTORY_KEY);
+    await fillAndSubmit(page, "derivative of x^2");
+    await expect(page.locator("#solver-result").getByRole("heading", { name: "Problem", exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Open history" }).click();
+
+    await expect(page.getByTestId("history-select")).toHaveCount(1);
+    await expect(page.getByTestId("history-select")).toContainText("derivative of x^2");
+  });
+
   test("cancel button stops the loading state", async ({ page }) => {
     await page.route("**/api/solve", async (route) => {
       if (route.request().method() === "POST") {

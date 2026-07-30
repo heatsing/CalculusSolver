@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Gift, Zap } from "lucide-react";
-import { MathDisplay } from "@/components/math/math-display";
+import { StaticMath } from "@/components/math/static-math";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { allCalculatorTools } from "@/data/calculator-tools";
@@ -72,7 +72,7 @@ export function CalculatorExample({ latex }: { latex: string }): React.JSX.Eleme
     <section className={`${calculatorSection} mt-6`}>
       <h2 className="text-2xl font-bold">Example</h2>
       <div className="mt-5 overflow-x-auto rounded-xl border border-[#dbe6f6] bg-[#f8fbff] p-6 text-center text-xl">
-        <MathDisplay latex={normalizedLatex} display="block" />
+        <StaticMath latex={normalizedLatex} display="block" />
       </div>
     </section>
   );

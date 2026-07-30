@@ -3,6 +3,7 @@
 import * as React from "react";
 import dynamic from "next/dynamic";
 import type { MathfieldElement } from "mathlive";
+import "mathlive/static.css";
 
 export type MathFieldInputProps = {
   value: string;

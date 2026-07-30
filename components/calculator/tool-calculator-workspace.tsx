@@ -1,11 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { Check, Clipboard, Loader2, RotateCcw, Sparkles } from "lucide-react";
-import { MathDisplay } from "@/components/math/math-display";
-import { GraphCard } from "@/components/solver/graph-card";
+import dynamic from "next/dynamic";
+import { Check, Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { useSolver } from "@/hooks/use-solver";
 import { toSolverMode, withOperationHint } from "@/lib/calculator-mode";
+
+const ToolCalculatorResult = dynamic(
+  () => import("@/components/calculator/tool-calculator-result").then((module) => module.ToolCalculatorResult),
+  {
+    ssr: false,
+    loading: () => <div className="mt-5 min-h-40 animate-pulse rounded-xl bg-[#eef5fd]" aria-hidden="true" />
+  }
+);
 
 type WorkspacePreset = {
   label: string;
@@ -57,7 +64,6 @@ function presetFor(mode: string, title: string): WorkspacePreset {
 export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: string }): React.JSX.Element {
   const preset = React.useMemo(() => presetFor(mode, title), [mode, title]);
   const [input, setInput] = React.useState(preset.initial);
-  const [copied, setCopied] = React.useState(false);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const { state, solve, reset } = useSolver();
 
@@ -77,13 +83,6 @@ export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: 
   }
 
   function clear(): void { setInput(""); reset(); inputRef.current?.focus(); }
-
-  async function copyAnswer(): Promise<void> {
-    if (state.status !== "success") return;
-    await navigator.clipboard.writeText(state.result.answer);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
-  }
 
   return (
     <section className="overflow-hidden rounded-2xl border border-[#dbe6f6] bg-white shadow-[0_12px_40px_rgba(42,88,155,.09)]">
@@ -112,7 +111,7 @@ export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: 
           {state.status === "idle" && <div className="flex min-h-[470px] flex-col items-center justify-center text-center"><span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-[#0967ed]"><Sparkles className="h-7 w-7" /></span><h3 className="mt-5 font-bold text-[#0a234f]">Your solution will appear here</h3><p className="mt-2 max-w-sm text-sm leading-6 text-[#637392]">Enter a problem, use the dedicated math keys, then calculate to see the answer and explanation.</p></div>}
           {state.status === "loading" && <div className="flex min-h-[470px] flex-col items-center justify-center text-center"><Loader2 className="h-9 w-9 animate-spin text-[#0967ed]" /><p className="mt-4 font-semibold text-[#203b67]">Calculating your answer...</p></div>}
           {state.status === "error" && <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700" role="alert"><strong>Could not calculate this problem.</strong><p className="mt-2">{state.message}</p></div>}
-          {state.status === "success" && <div className="mt-5 animate-fade-in"><div className="overflow-x-auto rounded-xl border border-[#dbe6f6] bg-white p-5 text-xl text-[#0a234f]"><MathDisplay latex={state.result.answerLatex || state.result.answer} display="block" showCopy={false} /></div><section className="mt-4 rounded-xl border border-[#dbe6f6] bg-white p-4"><h3 className="text-sm font-bold text-[#0a234f]">Step-by-step explanation</h3><ol className="mt-4 space-y-4">{state.result.steps.map((step) => <li key={`${step.number}-${step.title}`} className="flex gap-3 text-sm leading-6 text-[#314567]"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0967ed] text-xs font-bold text-white">{step.number}</span><span><strong className="block text-[#203b67]">{step.title}</strong>{step.explanation}</span></li>)}</ol></section>{state.result.graph.available && <div className="mt-4"><GraphCard result={state.result} /></div>}<button type="button" onClick={() => void copyAnswer()} className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#cbd9ed] bg-white px-4 text-sm font-medium text-[#314567] hover:border-[#0967ed] hover:text-[#0967ed]">{copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}{copied ? "Copied" : "Copy answer"}</button></div>}
+          {state.status === "success" && <ToolCalculatorResult result={state.result} />}
         </div>
       </div>
     </section>
