@@ -1,6 +1,12 @@
 import { ToolCalculatorWorkspace } from "@/components/calculator/tool-calculator-workspace";
 import { StructuredData } from "@/components/seo/structured-data";
-import { faqPageStructuredData } from "@/lib/seo";
+import type { CalculatorEducationalContent } from "@/data/calculator-pages";
+import {
+  breadcrumbStructuredData,
+  calculatorApplicationStructuredData,
+  faqPageStructuredData,
+  webPageStructuredData
+} from "@/lib/seo";
 import {
   CalculatorBenefits,
   CalculatorExample,
@@ -9,6 +15,7 @@ import {
   CalculatorHeader,
   CalculatorHero,
   CalculatorHowTo,
+  CalculatorLearningContent,
   CalculatorRelatedTools,
   type CalculatorFaq,
   type CalculatorStep,
@@ -26,11 +33,17 @@ export type CalculatorPageProps = {
   howItWorks: CalculatorStep[];
   faqs: CalculatorFaq[];
   relatedTools: CalculatorToolLink[];
+  category?: string;
+  updatedAt?: string;
+  educationalContent?: CalculatorEducationalContent;
 };
 
-export function CalculatorPage({ title, mode, h1, subtitle, exampleLatex, howItWorks, faqs, relatedTools }: CalculatorPageProps): React.JSX.Element {
+export function CalculatorPage({ title, description, path, mode, h1, subtitle, exampleLatex, howItWorks, faqs, relatedTools, category = "Mathematics", updatedAt, educationalContent }: CalculatorPageProps): React.JSX.Element {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]">
+      <StructuredData data={webPageStructuredData({ name: h1, description, path, updatedAt })} />
+      <StructuredData data={calculatorApplicationStructuredData({ name: title, description, path, category, features: howItWorks.map((item) => item.description) })} />
+      <StructuredData data={breadcrumbStructuredData([{ name: "Home", path: "/" }, { name: "Calculators", path: "/calculators" }, { name: h1, path }])} />
       <StructuredData data={faqPageStructuredData(faqs)} />
       <CalculatorHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
@@ -39,6 +52,7 @@ export function CalculatorPage({ title, mode, h1, subtitle, exampleLatex, howItW
         <div className="mt-6"><CalculatorBenefits /></div>
         <CalculatorHowTo title={title} steps={howItWorks} />
         <CalculatorExample latex={exampleLatex} />
+        {educationalContent && <CalculatorLearningContent title={title} content={educationalContent} />}
         <CalculatorFaqs faqs={faqs} />
         <CalculatorRelatedTools tools={relatedTools} />
       </main>

@@ -15,7 +15,7 @@ import {
 import { DeferredDailyChallenge } from "@/components/daily-challenge/deferred-daily-challenge";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { SolverShell } from "@/components/solver/solver-shell";
+import { SolverShellBoundary } from "@/components/solver/solver-shell-boundary";
 import { generalFaqs } from "@/data/faqs";
 
 const capabilities = ["Mathematical expressions", "Equations", "Derivatives", "Integrals"] as const;
@@ -146,7 +146,7 @@ export function CalculusHomePage(): React.JSX.Element {
               <p className="text-xs font-semibold text-[#0967ed]">Free · No sign-up · Instant results</p>
             </div>
             <div className="px-3 pb-2 sm:px-6">
-              <SolverShell mode="auto" />
+              <SolverShellBoundary mode="auto" />
             </div>
           </div>
 
@@ -270,7 +270,7 @@ export function CalculusHomePage(): React.JSX.Element {
               {examples.map((example) => (
                 <article key={example.type} className="rounded-2xl border border-[#d9e5f4] bg-white p-6">
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#0967ed]">{example.type} Example</p>
-                  <div className="mt-5 overflow-x-auto rounded-xl bg-[#f7faff] p-5 text-center">
+                  <div className="mt-5 overflow-x-auto rounded-xl bg-[#f7faff] p-5 text-center" tabIndex={0} role="region" aria-label={`${example.type} example expression`}>
                     <span className="whitespace-nowrap font-serif text-2xl text-[#071f4a]">{example.input}</span>
                   </div>
                   <p className="mt-4 font-mono text-sm text-[#405577]">{example.problem}</p>

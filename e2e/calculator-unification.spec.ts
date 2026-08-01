@@ -1,37 +1,7 @@
 import { test, expect } from "@playwright/test";
+import { allCalculatorTools } from "@/data/calculator-tools";
 
-const calculatorRoutes = [
-  "/calculus-calculator",
-  "/derivative-calculator",
-  "/integral-calculator",
-  "/definite-integral-calculator",
-  "/limit-calculator",
-  "/asymptote-calculator",
-  "/gradient-calculator",
-  "/graphing-calculator",
-  "/algebra-solver",
-  "/equation-solver",
-  "/quadratic-solver",
-  "/factoring-calculator",
-  "/simplify-calculator",
-  "/inequality-calculator",
-  "/system-of-equations-calculator",
-  "/complex-numbers-calculator",
-  "/exponent-calculator",
-  "/math-calculator",
-  "/fraction-calculator",
-  "/matrix-calculator",
-  "/average-calculator",
-  "/percentage-calculator",
-  "/probability-calculator",
-  "/root-calculator",
-  "/long-division-calculator",
-  "/log-calculator",
-  "/lcm-calculator",
-  "/pythagorean-theorem-calculator",
-  "/sequence-calculator",
-  "/sum-of-series-calculator"
-];
+const calculatorRoutes = allCalculatorTools.map((tool) => tool.href);
 
 test.describe("Unified calculator pages", () => {
   test("every calculator uses the shared page structure", async ({ page }) => {

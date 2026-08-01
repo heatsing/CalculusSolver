@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/check-built-seo.mjs",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:seo": "vitest run tests/seo-architecture.test.ts",
+    "seo:check": "npm run typecheck && npm run test:seo && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

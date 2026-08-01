@@ -1,25 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { allCalculatorTools } from "@/data/calculator-tools";
 
 const routes = [
   "/",
-  "/algebra-solver",
-  "/calculus-calculator",
   "/daily-challenge",
-  "/derivative-calculator",
-  "/integral-calculator",
-  "/definite-integral-calculator",
-  "/limit-calculator",
-  "/asymptote-calculator",
-  "/equation-solver",
-  "/quadratic-solver",
-  "/factoring-calculator",
-  "/inequality-calculator",
-  "/system-of-equations-calculator",
-  "/complex-numbers-calculator",
-  "/long-division-calculator",
-  "/pythagorean-theorem-calculator",
-  "/sequence-calculator",
-  "/sum-of-series-calculator",
+  ...allCalculatorTools.map((tool) => tool.href),
   "/examples",
   "/calculators",
   "/guides",
@@ -149,8 +134,6 @@ test.describe("SEO crawler", () => {
 
   test("structured data includes WebSite and SoftwareApplication", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
-    await expect(page.locator("#homepage-faq-schema")).toBeAttached();
-    await expect(page.locator("#homepage-how-to-schema")).toBeAttached();
 
     const structured = await page.evaluate(() => {
       return Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((script) => {
@@ -164,12 +147,14 @@ test.describe("SEO crawler", () => {
 
     const types = structured
       .filter((item): item is Record<string, unknown> => item !== null)
-      .map((item) => item["@type"]);
+      .flatMap((item) => Array.isArray(item["@type"]) ? item["@type"] : [item["@type"]]);
 
     expect(types).toContain("WebSite");
     expect(types).toContain("SoftwareApplication");
     expect(types).toContain("FAQPage");
     expect(types).toContain("HowTo");
+    expect(types).toContain("MathSolver");
+    expect(types).toContain("LearningResource");
 
     const app = structured.find(
       (item): item is Record<string, unknown> => item !== null && item["@type"] === "SoftwareApplication"

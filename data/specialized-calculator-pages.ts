@@ -1,5 +1,4 @@
-import type { CalculatorPageProps } from "@/components/calculator/calculator-page";
-import type { CreateMetadataOptions } from "@/lib/seo";
+import type { CalculatorDefinitionSource } from "@/data/calculator-page-types";
 
 export type SpecializedCalculatorSlug =
   | "inequality"
@@ -12,12 +11,7 @@ export type SpecializedCalculatorSlug =
   | "sequence"
   | "sum-of-series";
 
-type SpecializedCalculatorDefinition = {
-  metadata: CreateMetadataOptions;
-  page: CalculatorPageProps;
-};
-
-export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, SpecializedCalculatorDefinition> = {
+export const specializedCalculatorPages: Record<SpecializedCalculatorSlug, CalculatorDefinitionSource> = {
   inequality: {
     metadata: {
       title: "Calculus Solver – Free Online Inequality Calculator with Steps",

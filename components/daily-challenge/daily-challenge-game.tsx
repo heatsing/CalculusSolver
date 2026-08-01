@@ -3,12 +3,19 @@
 import * as React from "react";
 import { Lightbulb, SkipForward, Share2, Check, X, Clock, Flame, Trophy, RotateCcw } from "lucide-react";
 import { useDailyChallenge } from "@/hooks/use-daily-challenge";
+import type { InitialDailyChallenge } from "@/hooks/use-daily-challenge";
 import { MathDisplay } from "@/components/math/math-display";
-import { getMsUntilNextDay, MAX_HINTS, MAX_GUESSES } from "@/lib/daily-challenge";
+import { getDailyChallenge, getDayNumber, getMsUntilNextDay, getTodayKey, MAX_HINTS, MAX_GUESSES } from "@/lib/daily-challenge";
 import { cn } from "@/lib/utils";
 
-export function DailyChallengeGame(): React.JSX.Element {
-  const { state, submitGuess, skipHint, shareText, resetGame } = useDailyChallenge();
+export function DailyChallengeGame({ initial }: { initial?: InitialDailyChallenge }): React.JSX.Element {
+  const clientNow = new Date();
+  const resolvedInitial = initial ?? {
+    challenge: getDailyChallenge(clientNow),
+    dateKey: getTodayKey(clientNow),
+    dayNumber: getDayNumber(clientNow)
+  };
+  const { state, submitGuess, skipHint, shareText, resetGame } = useDailyChallenge(resolvedInitial);
   const [input, setInput] = React.useState("");
   const [feedback, setFeedback] = React.useState<{ type: "correct" | "incorrect" | "info"; message: string } | null>(null);
   const [copied, setCopied] = React.useState(false);

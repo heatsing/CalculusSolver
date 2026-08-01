@@ -161,7 +161,7 @@ export function clearProgress(): void {
 // Stats Storage
 // ============================================================
 
-const DEFAULT_STATS: DailyChallengeStats = {
+export const DEFAULT_STATS: DailyChallengeStats = {
   currentStreak: 0,
   maxStreak: 0,
   totalPlayed: 0,
@@ -169,6 +169,19 @@ const DEFAULT_STATS: DailyChallengeStats = {
   lastPlayedDateKey: null,
   lastStatus: null
 };
+
+export function createDailyChallengeProgress(challenge: DailyChallenge, date: Date = new Date()): DailyChallengeProgress {
+  return {
+    dateKey: getTodayKey(date),
+    challengeId: challenge.id,
+    hintStage: 0,
+    skipsUsed: 0,
+    status: "playing",
+    score: 0,
+    guesses: [],
+    completedAt: null
+  };
+}
 
 export function readStats(): DailyChallengeStats {
   if (typeof globalThis === "undefined" || !globalThis.localStorage) return DEFAULT_STATS;

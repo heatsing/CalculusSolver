@@ -8,13 +8,15 @@ export type CreateMetadataOptions = {
   description: string;
   path: string;
   keywords?: string[];
+  indexable?: boolean;
 };
 
 export function createMetadata({
   title,
   description,
   path,
-  keywords
+  keywords,
+  indexable = true
 }: CreateMetadataOptions): Metadata {
   const url = `${appUrl}${path}`;
   const normalizedDescription = description.replace(/CalculusSolver\.net/gi, "Calculus Solver");
@@ -43,6 +45,10 @@ export function createMetadata({
     },
     alternates: {
       canonical: path
+    },
+    robots: {
+      index: indexable,
+      follow: true
     }
   };
 }
@@ -84,6 +90,93 @@ export function softwareApplicationStructuredData() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD"
+    }
+  };
+}
+
+export function mathSolverStructuredData() {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["MathSolver", "LearningResource"],
+    name: "Calculus Solver",
+    description: "Solve calculus and algebra problems with step-by-step explanations.",
+    url: appUrl,
+    usageInfo: `${appUrl}/privacy`,
+    learningResourceType: "Math Solver",
+    provider: {
+      "@type": "Organization",
+      name: "Calculus Solver",
+      url: appUrl
+    },
+    potentialAction: {
+      "@type": "SolveMathAction",
+      target: `${appUrl}/?q={math_expression_string}`,
+      "mathExpression-input": "required name=math_expression_string",
+      eduQuestionType: [
+        "Derivative",
+        "Integral",
+        "Limit",
+        "Equation",
+        "Simplify",
+        "Factor"
+      ]
+    }
+  };
+}
+
+export function webPageStructuredData(item: {
+  name: string;
+  description: string;
+  path: string;
+  updatedAt?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: item.name,
+    description: item.description,
+    url: `${appUrl}${item.path}`,
+    ...(item.updatedAt ? { dateModified: item.updatedAt } : {}),
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Calculus Solver",
+      url: appUrl
+    },
+    about: {
+      "@type": "Thing",
+      name: item.name.replace(/ Calculator$| Solver$/, "")
+    }
+  };
+}
+
+export function calculatorApplicationStructuredData(item: {
+  name: string;
+  description: string;
+  path: string;
+  category: string;
+  features: readonly string[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: item.name,
+    description: item.description,
+    url: `${appUrl}${item.path}`,
+    applicationCategory: "EducationalApplication",
+    applicationSubCategory: item.category,
+    operatingSystem: "Any",
+    browserRequirements: "Requires a modern web browser with JavaScript enabled for interactive calculations.",
+    isAccessibleForFree: true,
+    featureList: item.features,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD"
+    },
+    provider: {
+      "@type": "Organization",
+      name: "Calculus Solver",
+      url: appUrl
     }
   };
 }
@@ -168,6 +261,37 @@ export function learningResourceStructuredData(item: {
     educationalLevel: item.difficulty,
     about: item.category,
     teaches: item.objectives
+  };
+}
+
+export function dailyChallengeStructuredData(item: {
+  name: string;
+  description: string;
+  path: string;
+  category: string;
+  difficulty: string;
+  dateKey: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: item.name,
+    description: item.description,
+    url: `${appUrl}${item.path}`,
+    dateModified: item.dateKey,
+    learningResourceType: "Practice",
+    educationalUse: "Practice",
+    educationalLevel: item.difficulty,
+    about: {
+      "@type": "Thing",
+      name: item.category
+    },
+    provider: {
+      "@type": "Organization",
+      name: "Calculus Solver",
+      url: appUrl
+    },
+    isAccessibleForFree: true
   };
 }
 

@@ -4,6 +4,7 @@ import { StaticMath } from "@/components/math/static-math";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { allCalculatorTools } from "@/data/calculator-tools";
+import type { CalculatorEducationalContent } from "@/data/calculator-pages";
 
 export type CalculatorStep = { step: string; description: string };
 export type CalculatorFaq = { question: string; answer: string };
@@ -78,6 +79,33 @@ export function CalculatorExample({ latex }: { latex: string }): React.JSX.Eleme
   );
 }
 
+export function CalculatorLearningContent({ title, content }: { title: string; content: CalculatorEducationalContent }): React.JSX.Element {
+  return (
+    <section className={`${calculatorSection} mt-6`}>
+      <h2 className="text-2xl font-bold">What the {title} Helps You Understand</h2>
+      <p className="mt-4 max-w-4xl text-sm leading-7 text-[#637392]">{content.concept}</p>
+      <div className="mt-6 grid gap-5 md:grid-cols-3">
+        {content.useCases.map((useCase, index) => (
+          <article key={useCase} className="rounded-xl border border-[#dbe6f6] bg-[#f8fbff] p-4">
+            <h3 className="font-bold">Learning focus {index + 1}</h3>
+            <p className="mt-2 text-sm leading-6 text-[#637392]">{useCase}</p>
+          </article>
+        ))}
+      </div>
+      <div className="mt-6 grid gap-5 md:grid-cols-2">
+        <div>
+          <h3 className="font-bold">Input tips</h3>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[#637392]">{content.inputTips.map((tip) => <li key={tip}>• {tip}</li>)}</ul>
+        </div>
+        <div>
+          <h3 className="font-bold">Common mistakes to avoid</h3>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[#637392]">{content.commonMistakes.map((mistake) => <li key={mistake}>• {mistake}</li>)}</ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function CalculatorFaqs({ faqs }: { faqs: CalculatorFaq[] }): React.JSX.Element {
   return (
     <section className={`${calculatorSection} mt-6`}>
@@ -94,12 +122,16 @@ export function CalculatorFaqs({ faqs }: { faqs: CalculatorFaq[] }): React.JSX.E
   );
 }
 
-export function CalculatorRelatedTools({ tools: _tools }: { tools: readonly CalculatorToolLink[] }): React.JSX.Element {
+export function CalculatorRelatedTools({ tools }: { tools: readonly CalculatorToolLink[] }): React.JSX.Element {
+  const orderedTools = [
+    ...tools,
+    ...allCalculatorTools.filter((tool) => !tools.some((related) => related.href === tool.href))
+  ];
   return (
     <section className={`${calculatorSection} mt-6`}>
       <h2 className="text-2xl font-bold">More Calculators</h2>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {allCalculatorTools.map((tool) => (
+        {orderedTools.map((tool) => (
           <Link key={tool.href} href={tool.href} className="group flex min-h-20 items-center justify-between rounded-xl border border-[#dbe6f6] bg-white px-5 py-4 text-base font-semibold text-[#0a234f] shadow-sm transition hover:-translate-y-0.5 hover:border-[#82aff5] hover:shadow-md">
             <span>{tool.label}</span><ArrowRight className="h-5 w-5 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" />
           </Link>

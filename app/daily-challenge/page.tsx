@@ -2,9 +2,12 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Upload } from "lucide-react";
 import { DailyChallengeGame } from "@/components/daily-challenge/daily-challenge-game";
 import { EditorialFooter, EditorialHeader } from "@/components/marketing/solver-landing-page";
-import { SolverShell } from "@/components/solver/solver-shell";
+import { SolverShellBoundary } from "@/components/solver/solver-shell-boundary";
 import { StructuredData } from "@/components/seo/structured-data";
-import { createMetadata, faqPageStructuredData } from "@/lib/seo";
+import { getDailyChallenge, getDayNumber, getTodayKey } from "@/lib/daily-challenge";
+import { breadcrumbStructuredData, createMetadata, dailyChallengeStructuredData, faqPageStructuredData, webPageStructuredData } from "@/lib/seo";
+
+export const revalidate = 3600;
 
 export const metadata = createMetadata({ title: "Daily Calculus Challenge", description: "Solve a new calculus or algebra challenge every day with progressive hints, scoring, and a locally saved streak.", path: "/daily-challenge", keywords: ["daily math challenge", "calculus challenge", "math puzzle", "daily math problem", "math streak"] });
 const faqs = [
@@ -18,10 +21,16 @@ const tools = [["Derivative Solver", "/derivative-calculator", "d/dx"], ["Integr
 const examples = ["∫ x² cos(x) dx", "lim x→∞ (1 + 1/x)ˣ", "d/dx (x³ sin(x))", "d/dx ln(x)", "lim x→0 sin(x)/x", "∫ eˣ cos(x) dx"];
 
 export default function DailyChallengePage(): React.JSX.Element {
-  return <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,#fff_0%,#f8fbff_52%,#f1f6fd_100%)] text-[#071f4a]"><StructuredData data={faqPageStructuredData(faqs)} /><EditorialHeader active="calculus" />
+  const now = new Date();
+  const challenge = getDailyChallenge(now);
+  const dateKey = getTodayKey(now);
+  const dayNumber = getDayNumber(now);
+  const description = "Solve a new calculus or algebra challenge every day with progressive hints, scoring, and a locally saved streak.";
+
+  return <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,#fff_0%,#f8fbff_52%,#f1f6fd_100%)] text-[#071f4a]"><StructuredData data={webPageStructuredData({ name: "Daily Calculus Challenge", description, path: "/daily-challenge", updatedAt: dateKey })} /><StructuredData data={breadcrumbStructuredData([{ name: "Home", path: "/" }, { name: "Daily Challenge", path: "/daily-challenge" }])} /><StructuredData data={dailyChallengeStructuredData({ name: `Daily ${challenge.category} Challenge`, description: challenge.problem, path: "/daily-challenge", category: challenge.category, difficulty: challenge.difficulty, dateKey })} /><StructuredData data={faqPageStructuredData(faqs)} /><EditorialHeader active="calculus" />
     <main id="main-content" tabIndex={-1} className="focus-visible:outline-none">
-      <section className="mx-auto max-w-[1240px] px-4 pb-8 pt-8 text-center sm:px-6 lg:px-8"><h1 className="font-serif text-4xl leading-none sm:text-5xl">Calculus Solve Problems<br />Step by Step</h1><p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#5f6f8d]">Enter a derivative, integral, limit, or series problem and get a clear solution with every step explained.</p><p className="mt-2 text-sm font-medium text-[#0967ed]">Free &nbsp;•&nbsp; No sign-up &nbsp;•&nbsp; Instant results</p><div className="mt-6 rounded-2xl border border-[#d9e4f3] bg-white p-3 text-left shadow-[0_14px_40px_rgba(35,74,132,.11)] sm:p-5"><SolverShell mode="auto" /></div></section>
-      <section className="mx-auto max-w-[1140px] px-4 py-4"><DailyChallengeGame /></section>
+      <section className="mx-auto max-w-[1240px] px-4 pb-8 pt-8 text-center sm:px-6 lg:px-8"><h1 className="font-serif text-4xl leading-none sm:text-5xl">Calculus Solve Problems<br />Step by Step</h1><p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#5f6f8d]">Enter a derivative, integral, limit, or series problem and get a clear solution with every step explained.</p><p className="mt-2 text-sm font-medium text-[#0967ed]">Free &nbsp;•&nbsp; No sign-up &nbsp;•&nbsp; Instant results</p><div className="mt-6 rounded-2xl border border-[#d9e4f3] bg-white p-3 text-left shadow-[0_14px_40px_rgba(35,74,132,.11)] sm:p-5"><SolverShellBoundary mode="auto" /></div></section>
+      <section className="mx-auto max-w-[1140px] px-4 py-4"><DailyChallengeGame initial={{ challenge, dateKey, dayNumber }} /></section>
       <section className="mt-8 border-y border-[#e0e9f5] bg-white/70"><div className="mx-auto grid max-w-[1080px] gap-7 px-4 py-10 md:grid-cols-[240px_1fr]"><div><h2 className="font-serif text-3xl">Clear answers, not just final answers</h2><p className="mt-4 text-sm leading-6 text-[#5f6f8d]">See every step so you can learn and understand.</p></div><div className="rounded-xl border border-[#d9e4f3] bg-white p-6"><p className="font-bold">Example: <span className="font-mono font-normal">∫ x² · cos(x) dx</span></p><ol className="mt-4 space-y-3 text-sm text-[#314567]">{["Choose integration by parts.", "Apply the rule and integrate again.", "Simplify and include the constant C."].map((step, i) => <li key={step} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0967ed] text-xs font-bold text-white">{i + 1}</span>{step}</li>)}</ol></div></div></section>
       <section className="mx-auto max-w-[1140px] px-4 py-10"><h2 className="text-center font-serif text-3xl">Choose What You Want to Solve</h2><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tools.map(([title, href, symbol]) => <Link key={title} href={href} className="flex items-center gap-4 rounded-xl border border-[#d9e4f3] bg-white p-5 shadow-sm hover:border-[#82aff5]"><span className="w-10 text-center font-serif text-3xl text-[#0967ed]">{symbol}</span><strong>{title}</strong><ArrowRight className="ml-auto h-4 w-4 text-[#0967ed]" /></Link>)}</div></section>
       <section className="border-y border-[#e0e9f5] bg-white/75"><div className="mx-auto max-w-[1080px] px-4 py-9"><h2 className="text-center font-serif text-3xl">How Calculus Solver Works</h2><div className="mt-7 grid gap-7 sm:grid-cols-3">{[[Upload, "Enter your problem", "Type or use the math keyboard."], [FileText, "Review each step", "Get a clear, detailed solution."], [Lightbulb, "Understand the result", "Apply the method with confidence."]].map(([Icon, title, text], i) => { const I = Icon as typeof Upload; return <div key={title as string} className="flex gap-4"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 font-bold text-[#0967ed]">{i + 1}</span><I className="h-6 w-6 shrink-0 text-[#0967ed]" /><div><h3 className="font-bold">{title as string}</h3><p className="mt-1 text-xs text-[#5f6f8d]">{text as string}</p></div></div>})}</div></div></section>

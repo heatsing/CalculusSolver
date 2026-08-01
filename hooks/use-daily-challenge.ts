@@ -15,6 +15,8 @@ import {
   readStats,
   writeStats,
   recordCompletion,
+  createDailyChallengeProgress,
+  DEFAULT_STATS,
   MAX_HINTS,
   MAX_GUESSES
 } from "@/lib/daily-challenge";
@@ -28,20 +30,26 @@ export type DailyChallengeState = {
   dayNumber: number;
 };
 
-export function useDailyChallenge(): {
+export type InitialDailyChallenge = {
+  challenge: DailyChallenge;
+  dateKey: string;
+  dayNumber: number;
+};
+
+export function useDailyChallenge(initial: InitialDailyChallenge): {
   state: DailyChallengeState;
   submitGuess: (guess: string) => { correct: boolean; status: DailyChallengeStatus };
   skipHint: () => void;
   shareText: string | null;
   resetGame: () => void;
 } {
-  const [state, setState] = React.useState<DailyChallengeState>({
-    status: "loading",
-    challenge: null,
-    progress: null,
-    stats: null,
-    dayNumber: 0
-  });
+  const [state, setState] = React.useState<DailyChallengeState>(() => ({
+    status: "ready",
+    challenge: initial.challenge,
+    progress: createDailyChallengeProgress(initial.challenge, new Date(`${initial.dateKey}T00:00:00Z`)),
+    stats: DEFAULT_STATS,
+    dayNumber: initial.dayNumber
+  }));
 
   React.useEffect(() => {
     try {
@@ -57,16 +65,7 @@ export function useDailyChallenge(): {
       if (savedProgress && savedProgress.dateKey === todayKey && savedProgress.challengeId === challenge.id) {
         progress = savedProgress;
       } else {
-        progress = {
-          dateKey: todayKey,
-          challengeId: challenge.id,
-          hintStage: 0,
-          skipsUsed: 0,
-          status: "playing",
-          score: 0,
-          guesses: [],
-          completedAt: null
-        };
+        progress = createDailyChallengeProgress(challenge);
       }
 
       setState({

@@ -1,17 +1,11 @@
-"use client";
-
-import * as React from "react";
 import { generalFaqs } from "@/data/faqs";
-import { faqPageStructuredData, howToStructuredData, serializeJsonLd } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/structured-data";
+import { faqPageStructuredData, howToStructuredData, mathSolverStructuredData } from "@/lib/seo";
 
 const schemas = [
-  {
-    id: "homepage-faq-schema",
-    data: faqPageStructuredData(generalFaqs)
-  },
-  {
-    id: "homepage-how-to-schema",
-    data: howToStructuredData({
+  mathSolverStructuredData(),
+  faqPageStructuredData(generalFaqs),
+  howToStructuredData({
       name: "How to Use Calculus Solver",
       description: "Enter a calculus problem and review a step-by-step solution.",
       steps: [
@@ -20,25 +14,8 @@ const schemas = [
         { name: "Review the solution", text: "Read the answer, step-by-step solution, explanation, and final answer." }
       ]
     })
-  }
 ] as const;
 
-export function HomepageStructuredData(): null {
-  React.useEffect(() => {
-    const inserted: HTMLScriptElement[] = [];
-
-    for (const schema of schemas) {
-      if (document.getElementById(schema.id)) continue;
-      const script = document.createElement("script");
-      script.id = schema.id;
-      script.type = "application/ld+json";
-      script.textContent = serializeJsonLd(schema.data);
-      document.head.appendChild(script);
-      inserted.push(script);
-    }
-
-    return () => inserted.forEach((script) => script.remove());
-  }, []);
-
-  return null;
+export function HomepageStructuredData(): React.JSX.Element {
+  return <>{schemas.map((schema, index) => <StructuredData key={index} data={schema} />)}</>;
 }
