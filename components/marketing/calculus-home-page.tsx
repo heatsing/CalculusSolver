@@ -62,24 +62,27 @@ const helpTopics = [
 const examples = [
   {
     type: "Derivative",
-    problem: "d/dx x²",
-    latex: "\\frac{d}{dx}x^2",
-    input: "d/dx x^2",
-    href: "/derivative-calculator"
+    problem: "d/dx (x³ + 2x)",
+    latex: "\\frac{d}{dx}(x^3+2x)",
+    input: "d/dx (x^3 + 2x)",
+    href: "/derivative-calculator",
+    detailHref: "/examples/derivative-polynomial"
   },
   {
     type: "Integral",
-    problem: "∫ x² dx",
-    latex: "\\int x^2\\,dx",
-    input: "integrate x^2",
-    href: "/integral-calculator"
+    problem: "∫₀¹ x² dx",
+    latex: "\\int_0^1 x^2\\,dx",
+    input: "x^2 from 0 to 1",
+    href: "/definite-integral-calculator",
+    detailHref: "/examples/definite-integral"
   },
   {
     type: "Limit",
     problem: "lim x→0 sin(x)/x",
     latex: "\\lim_{x\\to0}\\frac{\\sin(x)}{x}",
     input: "limit sin(x)/x as x approaches 0",
-    href: "/limit-calculator"
+    href: "/limit-calculator",
+    detailHref: "/examples/limit-sinc"
   }
 ] as const;
 
@@ -264,7 +267,7 @@ export function CalculusHomePage(): React.JSX.Element {
             <SectionHeading
               eyebrow="Worked Notation"
               title="Example Calculus Problems"
-              description="Select an example to load it into the solver, or open its dedicated calculator."
+              description="Open a complete worked solution, then try the same notation in its dedicated calculator."
             />
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {examples.map((example) => (
@@ -275,7 +278,7 @@ export function CalculusHomePage(): React.JSX.Element {
                   </div>
                   <p className="mt-4 font-mono text-sm text-[#405577]">{example.problem}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
-                    <Link href={"/?q=" + encodeURIComponent(example.input)} className="inline-flex min-h-11 items-center rounded-lg bg-[#0967ed] px-4 text-sm font-semibold text-white hover:bg-[#0757c9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed] focus-visible:ring-offset-2">Solve Example</Link>
+                    <Link href={example.detailHref} className="inline-flex min-h-11 items-center rounded-lg bg-[#0967ed] px-4 text-sm font-semibold text-white hover:bg-[#0757c9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed] focus-visible:ring-offset-2">View Steps</Link>
                     <Link href={example.href} className="inline-flex min-h-11 items-center rounded-lg border border-[#b9d1f2] px-4 text-sm font-semibold text-[#0967ed] hover:bg-[#eff6ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed] focus-visible:ring-offset-2">Open Calculator</Link>
                   </div>
                 </article>

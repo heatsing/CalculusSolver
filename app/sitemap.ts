@@ -1,14 +1,14 @@
 import type { MetadataRoute } from "next";
 import { calculatorPages } from "@/data/calculator-pages";
 import { guides } from "@/data/guides";
+import { exampleDetails } from "@/data/example-details";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://calculussolver.net";
-  const stableUpdatedAt = "2026-08-01";
-  const coreRoutes = ["/", "/calculus-calculator", "/daily-challenge", "/examples", "/calculators", "/guides", "/about", "/contact", "/privacy", "/terms"];
+  const coreRoutes = ["/", "/calculus-calculator", "/daily-challenge", "/examples", "/calculators", "/guides", "/about"];
   const coreEntries: MetadataRoute.Sitemap = coreRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(stableUpdatedAt),
+    lastModified: route === "/daily-challenge" ? new Date() : new Date("2026-08-10"),
     changeFrequency: route === "/daily-challenge" ? "daily" : "weekly",
     priority: route === "/" ? 1 : route === "/daily-challenge" ? 0.9 : 0.8
   }));
@@ -26,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly",
     priority: 0.8
   }));
+  const exampleEntries: MetadataRoute.Sitemap = exampleDetails.map((example) => ({
+    url: `${baseUrl}/examples/${example.slug}`,
+    lastModified: new Date(example.updatedAt),
+    changeFrequency: "monthly",
+    priority: 0.8
+  }));
 
-  return [...coreEntries, ...calculatorEntries, ...guideEntries];
+  return [...coreEntries, ...calculatorEntries, ...guideEntries, ...exampleEntries];
 }

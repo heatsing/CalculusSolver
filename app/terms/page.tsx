@@ -6,6 +6,7 @@ export const metadata = createMetadata({
   title: "Terms of Service",
   description: "Terms of service for Calculus Solver.",
   path: "/terms",
+  indexable: false,
   keywords: ["terms of service", "user agreement", "Calculus Solver terms"]
 });
 

@@ -1,5 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { allCalculatorTools } from "@/data/calculator-tools";
+import { calculatorPages } from "@/data/calculator-pages";
+import { exampleDetails } from "@/data/example-details";
+import { guides } from "@/data/guides";
 
 const routes = [
   "/",
@@ -11,7 +14,8 @@ const routes = [
   "/about",
   "/contact",
   "/privacy",
-  "/terms"
+  "/terms",
+  ...exampleDetails.map((example) => `/examples/${example.slug}`)
 ];
 
 const sampleRoutes = ["/", "/calculus-calculator", "/derivative-calculator"];
@@ -101,7 +105,7 @@ test.describe("SEO crawler", () => {
     }
   });
 
-  test("sitemap is valid and contains all routes", async ({ page }) => {
+  test("sitemap contains every approved index route and excludes noindex utilities", async ({ page }) => {
     const response = await page.request.get("/sitemap.xml");
     expect(response.status()).toBe(200);
     const xml = await response.text();
@@ -110,8 +114,12 @@ test.describe("SEO crawler", () => {
     expect(locations.length).toBeGreaterThan(0);
     expect(new Set(locations).size, "Duplicate URLs in sitemap").toBe(locations.length);
 
-    for (const route of routes) {
+    const expectedRoutes = ["/", "/calculus-calculator", "/daily-challenge", "/examples", "/calculators", "/guides", "/about", ...calculatorPages.filter((item) => item.indexable).map((item) => `/${item.slug}`), ...guides.map((guide) => `/guides/${guide.slug}`), ...exampleDetails.map((example) => `/examples/${example.slug}`)];
+    for (const route of expectedRoutes) {
       expect(locations.some((url) => url.endsWith(route)), `Missing route ${route} in sitemap`).toBe(true);
+    }
+    for (const route of ["/contact", "/privacy", "/terms", ...calculatorPages.filter((item) => !item.indexable).map((item) => `/${item.slug}`)]) {
+      expect(locations.some((url) => new URL(url).pathname === route), `Noindex route ${route} should not be in sitemap`).toBe(false);
     }
 
     const origins = new Set(locations.map((url) => new URL(url).origin));

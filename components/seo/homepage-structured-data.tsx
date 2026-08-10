@@ -1,9 +1,10 @@
 import { generalFaqs } from "@/data/faqs";
 import { StructuredData } from "@/components/seo/structured-data";
-import { faqPageStructuredData, howToStructuredData, mathSolverStructuredData } from "@/lib/seo";
+import { faqPageStructuredData, howToStructuredData, mathSolverStructuredData, softwareApplicationStructuredData } from "@/lib/seo";
 
 const schemas = [
   mathSolverStructuredData(),
+  softwareApplicationStructuredData(),
   faqPageStructuredData(generalFaqs),
   howToStructuredData({
       name: "How to Use Calculus Solver",

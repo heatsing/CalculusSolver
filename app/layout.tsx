@@ -4,8 +4,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
-  websiteStructuredData,
-  softwareApplicationStructuredData
+  websiteStructuredData
 } from "@/lib/seo";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -90,7 +89,6 @@ export default function RootLayout({
     <html lang="en" className={roboto.variable}>
       <head>
         <StructuredData data={websiteStructuredData()} />
-        <StructuredData data={softwareApplicationStructuredData()} />
         <Script
           defer
           src="https://cloud.umami.is/script.js"

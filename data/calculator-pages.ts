@@ -1,6 +1,7 @@
 import { coreCalculatorPages } from "@/data/core-calculator-pages";
 import { specializedCalculatorPages } from "@/data/specialized-calculator-pages";
 import type { CalculatorDefinitionSource } from "@/data/calculator-page-types";
+import { calculatorQualityContent, type CalculatorQualityContent, type LearningLink } from "@/data/calculator-quality-content";
 
 export const calculatorCategories = ["Calculus", "Algebra", "Everyday Math", "Geometry and Sequences"] as const;
 export type CalculatorCategory = (typeof calculatorCategories)[number];
@@ -20,7 +21,10 @@ export type CalculatorDefinition = CalculatorDefinitionSource & {
   seoScore: number;
   seoGrade: "A" | "B" | "C";
   indexable: boolean;
+  indexReason: string;
   educationalContent: CalculatorEducationalContent;
+  qualityContent?: CalculatorQualityContent;
+  learningLinks: readonly LearningLink[];
   relatedSlugs: readonly string[];
 };
 
@@ -106,16 +110,43 @@ function buildEducationalContent(source: CalculatorDefinitionSource): Calculator
   };
 }
 
-function scoreDefinition(source: CalculatorDefinitionSource, relatedSlugs: readonly string[], content: CalculatorEducationalContent): number {
+const supportingCalculusSlugs = new Set(["sequence-calculator", "sum-of-series-calculator"]);
+
+function hasPrimaryTopicFit(slug: string, category: CalculatorCategory): boolean {
+  return category === "Calculus" || category === "Algebra" || supportingCalculusSlugs.has(slug);
+}
+
+const supportingLearningLinks: Readonly<Record<string, readonly LearningLink[]>> = {
+  "complex-numbers-calculator": [{ label: "Solving equations guide", href: "/guides/solving-equations" }, { label: "Algebra examples", href: "/examples" }, { label: "Algebra Solver", href: "/algebra-solver" }],
+  "exponent-calculator": [{ label: "Simplifying expressions guide", href: "/guides/simplifying-expressions" }, { label: "Algebra examples", href: "/examples" }, { label: "Algebra Solver", href: "/algebra-solver" }],
+  "inequality-calculator": [{ label: "Solving equations guide", href: "/guides/solving-equations" }, { label: "Linear equation example", href: "/examples/linear-equation" }, { label: "Algebra Solver", href: "/algebra-solver" }],
+  "log-calculator": [{ label: "Simplifying expressions guide", href: "/guides/simplifying-expressions" }, { label: "Limits guide", href: "/guides/understanding-limits" }, { label: "Algebra Solver", href: "/algebra-solver" }],
+  "sequence-calculator": [{ label: "Series and sequences guide", href: "/guides/series-and-sequences" }, { label: "Daily Calculus Challenge", href: "/daily-challenge" }, { label: "Sum of Series Calculator", href: "/sum-of-series-calculator" }],
+  "sum-of-series-calculator": [{ label: "Series and sequences guide", href: "/guides/series-and-sequences" }, { label: "Integration basics guide", href: "/guides/integration-basics" }, { label: "Sequence Calculator", href: "/sequence-calculator" }],
+  "system-of-equations-calculator": [{ label: "Solving equations guide", href: "/guides/solving-equations" }, { label: "System example", href: "/examples/system-equations" }, { label: "Algebra Solver", href: "/algebra-solver" }]
+};
+
+function scoreDefinition(
+  slug: string,
+  category: CalculatorCategory,
+  source: CalculatorDefinitionSource,
+  relatedSlugs: readonly string[],
+  content: CalculatorEducationalContent,
+  qualityContent?: CalculatorQualityContent
+): number {
   let score = 0;
-  if (source.metadata.title.length >= 35 && source.metadata.title.length <= 70) score += 15;
-  if (source.metadata.description.length >= 90 && source.metadata.description.length <= 170) score += 15;
-  if (source.page.h1 && source.page.subtitle.length >= 70) score += 15;
-  if (source.page.exampleLatex.length >= 10) score += 15;
-  if (source.page.howItWorks.length >= 3) score += 15;
-  if (source.page.faqs.length >= 2) score += 10;
+  if (source.metadata.title.length >= 30 && source.metadata.title.length <= 75) score += 5;
+  if (source.metadata.description.length >= 70 && source.metadata.description.length <= 180) score += 5;
+  if (source.page.h1 && source.page.subtitle.length >= 55) score += 5;
+  if (hasPrimaryTopicFit(slug, category)) score += 30;
+  if (source.page.howItWorks.length >= 3) score += 5;
+  if (source.page.faqs.length >= 2) score += 5;
   if (content.commonMistakes.length >= 2 && content.inputTips.length >= 2) score += 10;
   if (relatedSlugs.length >= 3) score += 5;
+  if (qualityContent?.searchIntent && qualityContent.methodOverview) score += 5;
+  if ((qualityContent?.supportedProblems.length ?? 0) >= 3 && (qualityContent?.limitations.length ?? 0) >= 2) score += 5;
+  if ((qualityContent?.workedExamples.length ?? 0) >= 3) score += 15;
+  if ((qualityContent?.relatedLearning.length ?? 0) >= 3 && (qualityContent?.additionalFaqs.length ?? 0) >= 2) score += 5;
   return score;
 }
 
@@ -127,12 +158,16 @@ export const calculatorPages: readonly CalculatorDefinition[] = Object.entries(s
       .filter((relatedSlug) => relatedSlug !== slug && relatedSlug in sourceByRoute);
     const relatedSlugs = [...new Set([...explicitRelated, ...fallbackRelatedSlugs(slug, category)])].slice(0, 5);
     const educationalContent = buildEducationalContent(source);
-    const seoScore = scoreDefinition(source, relatedSlugs, educationalContent);
+    const qualityContent = calculatorQualityContent[slug];
+    const learningLinks = qualityContent?.relatedLearning ?? supportingLearningLinks[slug] ?? [];
+    const seoScore = scoreDefinition(slug, category, source, relatedSlugs, educationalContent, qualityContent);
     const seoGrade: CalculatorDefinition["seoGrade"] = seoScore >= 85 ? "A" : seoScore >= 70 ? "B" : "C";
+    const indexable = seoGrade !== "C";
     return {
       ...source,
       page: {
         ...source.page,
+        faqs: [...source.page.faqs, ...(qualityContent?.additionalFaqs ?? [])],
         relatedTools: relatedSlugs.map((relatedSlug) => ({
           label: sourceByRoute[relatedSlug].page.title,
           href: `/${relatedSlug}`
@@ -141,11 +176,18 @@ export const calculatorPages: readonly CalculatorDefinition[] = Object.entries(s
       slug,
       type: "calculator" as const,
       category,
-      updatedAt: "2026-08-01",
+      updatedAt: qualityContent ? "2026-08-10" : "2026-08-01",
       seoScore,
       seoGrade,
-      indexable: seoGrade !== "C",
+      indexable,
+      indexReason: indexable
+        ? qualityContent
+          ? "Primary-topic page with calculator-specific worked examples and learning links."
+          : "Primary-topic page retained for index monitoring while deeper content is developed."
+        : "Supporting utility outside the site's primary calculus and algebra focus; URL and functionality are retained.",
       educationalContent,
+      qualityContent,
+      learningLinks,
       relatedSlugs
     };
   })
@@ -157,4 +199,8 @@ export function getCalculatorPage(slug: string): CalculatorDefinition | undefine
 
 export function getCalculatorPagesByCategory(category: CalculatorCategory): readonly CalculatorDefinition[] {
   return calculatorPages.filter((calculator) => calculator.category === category);
+}
+
+export function getCalculatorStaticParams(): { slug: string }[] {
+  return calculatorPages.map((calculator) => ({ slug: calculator.slug }));
 }

@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { homeExamples } from "@/data/examples";
 
 export function ExampleGrid(): React.JSX.Element {
@@ -9,9 +10,9 @@ export function ExampleGrid(): React.JSX.Element {
       </h2>
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {homeExamples.map((example) => (
-          <a
+          <Link
             key={example.id}
-            href={`/?example=${example.id}`}
+            href={`/examples/${example.id}`}
             className="group flex items-center gap-4 rounded-card border border-border bg-white p-4 transition-colors hover:border-primary hover:bg-primary-soft/30"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-base font-semibold text-primary">
@@ -19,7 +20,7 @@ export function ExampleGrid(): React.JSX.Element {
             </div>
             <p className="flex-1 text-sm font-medium text-heading">{example.problem}</p>
             <ArrowRight className="h-4 w-4 shrink-0 text-body transition-transform group-hover:translate-x-1" />
-          </a>
+          </Link>
         ))}
       </div>
     </section>

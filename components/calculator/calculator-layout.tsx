@@ -3,8 +3,8 @@ import { ArrowRight, CheckCircle2, Gift, Zap } from "lucide-react";
 import { StaticMath } from "@/components/math/static-math";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { allCalculatorTools } from "@/data/calculator-tools";
 import type { CalculatorEducationalContent } from "@/data/calculator-pages";
+import type { CalculatorQualityContent } from "@/data/calculator-quality-content";
 
 export type CalculatorStep = { step: string; description: string };
 export type CalculatorFaq = { question: string; answer: string };
@@ -106,6 +106,58 @@ export function CalculatorLearningContent({ title, content }: { title: string; c
   );
 }
 
+export function CalculatorDeepLearningContent({ title, content }: { title: string; content: CalculatorQualityContent }): React.JSX.Element {
+  return (
+    <>
+      <section className={`${calculatorSection} mt-6`}>
+        <h2 className="text-2xl font-bold">How the {title} Chooses a Method</h2>
+        <p className="mt-4 max-w-4xl text-base leading-7 text-[#526785]">{content.searchIntent}</p>
+        <p className="mt-3 max-w-4xl text-sm leading-7 text-[#637392]">{content.methodOverview}</p>
+        <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <div className="rounded-xl border border-[#dbe6f6] bg-[#f8fbff] p-5">
+            <h3 className="font-bold">Supported problem types</h3>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-[#526785]">{content.supportedProblems.map((item) => <li key={item} className="flex gap-2"><span aria-hidden="true" className="text-[#0967ed]">✓</span><span>{item}</span></li>)}</ul>
+          </div>
+          <div className="rounded-xl border border-[#dbe6f6] bg-[#f8fbff] p-5">
+            <h3 className="font-bold">Limits and assumptions</h3>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-[#526785]">{content.limitations.map((item) => <li key={item} className="flex gap-2"><span aria-hidden="true" className="text-amber-600">!</span><span>{item}</span></li>)}</ul>
+          </div>
+        </div>
+      </section>
+
+      <section className={`${calculatorSection} mt-6`}>
+        <h2 className="text-2xl font-bold">Worked {title} Examples</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#637392]">Each example names the method, shows the ordered reasoning, and keeps the final answer separate so you can check your own work.</p>
+        <div className="mt-6 grid gap-5 lg:grid-cols-3">
+          {content.workedExamples.map((example) => (
+            <article key={example.title} className="rounded-xl border border-[#dbe6f6] bg-white p-5">
+              <p className="text-xs font-bold uppercase tracking-[.14em] text-[#0967ed]">{example.title}</p>
+              <h3 className="mt-2 text-lg font-bold leading-7">{example.problem}</h3>
+              <p className="mt-3 text-sm font-semibold text-[#203b67]">Method: {example.method}</p>
+              <ol className="mt-4 space-y-3 text-sm leading-6 text-[#526785]">
+                {example.steps.map((step, index) => <li key={step} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#e7f1ff] text-xs font-bold text-[#0967ed]">{index + 1}</span><span>{step}</span></li>)}
+              </ol>
+              <div className="mt-5 overflow-x-auto rounded-lg bg-[#edf6ff] p-4"><p className="mb-2 text-xs font-bold uppercase tracking-wide text-[#203b67]">Final answer</p><StaticMath latex={example.answer} display="block" /></div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className={`${calculatorSection} mt-6`}>
+        <h2 className="text-2xl font-bold">Learn This Topic</h2>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {content.relatedLearning.map((item) => <Link key={item.href} href={item.href} className="group flex min-h-16 items-center justify-between rounded-xl border border-[#dbe6f6] bg-[#f8fbff] px-5 py-4 font-semibold text-[#203b67] hover:border-[#82aff5]"><span>{item.label}</span><ArrowRight className="h-4 w-4 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" /></Link>)}
+        </div>
+      </section>
+    </>
+  );
+}
+
+export function CalculatorTopicLinks({ links }: { links: readonly { label: string; href: string }[] }): React.JSX.Element | null {
+  if (links.length === 0) return null;
+  return <section className={`${calculatorSection} mt-6`}><h2 className="text-2xl font-bold">Learn This Topic</h2><div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{links.map((item) => <Link key={item.href} href={item.href} className="group flex min-h-16 items-center justify-between rounded-xl border border-[#dbe6f6] bg-[#f8fbff] px-5 py-4 font-semibold text-[#203b67] hover:border-[#82aff5]"><span>{item.label}</span><ArrowRight className="h-4 w-4 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" /></Link>)}</div></section>;
+}
+
 export function CalculatorFaqs({ faqs }: { faqs: CalculatorFaq[] }): React.JSX.Element {
   return (
     <section className={`${calculatorSection} mt-6`}>
@@ -123,20 +175,17 @@ export function CalculatorFaqs({ faqs }: { faqs: CalculatorFaq[] }): React.JSX.E
 }
 
 export function CalculatorRelatedTools({ tools }: { tools: readonly CalculatorToolLink[] }): React.JSX.Element {
-  const orderedTools = [
-    ...tools,
-    ...allCalculatorTools.filter((tool) => !tools.some((related) => related.href === tool.href))
-  ];
   return (
     <section className={`${calculatorSection} mt-6`}>
       <h2 className="text-2xl font-bold">More Calculators</h2>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {orderedTools.map((tool) => (
+        {tools.map((tool) => (
           <Link key={tool.href} href={tool.href} className="group flex min-h-20 items-center justify-between rounded-xl border border-[#dbe6f6] bg-white px-5 py-4 text-base font-semibold text-[#0a234f] shadow-sm transition hover:-translate-y-0.5 hover:border-[#82aff5] hover:shadow-md">
             <span>{tool.label}</span><ArrowRight className="h-5 w-5 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" />
           </Link>
         ))}
       </div>
+      <Link href="/calculators" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#0967ed] hover:underline">Browse all calculators <ArrowRight className="h-4 w-4" /></Link>
     </section>
   );
 }

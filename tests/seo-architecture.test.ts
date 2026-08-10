@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
-import { calculatorPages, getCalculatorPage } from "@/data/calculator-pages";
+import { calculatorPages, getCalculatorPage, getCalculatorStaticParams } from "@/data/calculator-pages";
+import { exampleDetails, getExampleStaticParams } from "@/data/example-details";
 import {
   breadcrumbStructuredData,
   calculatorApplicationStructuredData,
@@ -27,23 +28,43 @@ describe("programmatic SEO architecture", () => {
       expect(calculator.page.faqs.length).toBeGreaterThanOrEqual(2);
       expect(calculator.educationalContent.commonMistakes).toHaveLength(2);
       expect(calculator.relatedSlugs.length).toBeGreaterThanOrEqual(3);
-      expect(calculator.seoScore).toBeGreaterThanOrEqual(70);
-      expect(calculator.indexable).toBe(true);
+      expect(calculator.seoScore).toBeGreaterThanOrEqual(0);
+      expect(calculator.seoScore).toBeLessThanOrEqual(100);
+      expect(calculator.indexable).toBe(calculator.seoGrade !== "C");
       expect(getCalculatorPage(calculator.slug)).toBe(calculator);
+      if (calculator.seoGrade === "A") {
+        expect(calculator.qualityContent?.workedExamples.length).toBeGreaterThanOrEqual(3);
+        expect(calculator.page.faqs.length).toBeGreaterThanOrEqual(4);
+      }
+      if (calculator.indexable) expect(calculator.learningLinks.length).toBeGreaterThanOrEqual(3);
       for (const relatedSlug of calculator.relatedSlugs) {
         expect(relatedSlug).not.toBe(calculator.slug);
         expect(getCalculatorPage(relatedSlug)).toBeTruthy();
       }
     }
+    expect(calculatorPages.filter((item) => item.seoGrade === "A").length).toBeGreaterThanOrEqual(10);
+    expect(calculatorPages.filter((item) => item.seoGrade === "B").length).toBeGreaterThanOrEqual(1);
+    expect(calculatorPages.filter((item) => item.seoGrade === "C").length).toBeGreaterThanOrEqual(1);
   });
 
   it("keeps sitemap and indexable route inventory aligned", () => {
     const sitemapPaths = new Set(sitemap().map((entry) => new URL(entry.url).pathname));
+    expect(new Set(getCalculatorStaticParams().map((item) => item.slug))).toEqual(new Set(calculatorPages.map((item) => item.slug)));
+    expect(new Set(getExampleStaticParams().map((item) => item.slug))).toEqual(new Set(exampleDetails.map((item) => item.slug)));
     for (const calculator of calculatorPages.filter((item) => item.indexable)) {
       expect(sitemapPaths.has(`/${calculator.slug}`)).toBe(true);
     }
+    for (const calculator of calculatorPages.filter((item) => !item.indexable)) {
+      expect(sitemapPaths.has(`/${calculator.slug}`)).toBe(false);
+    }
+    for (const example of exampleDetails) {
+      expect(sitemapPaths.has(`/examples/${example.slug}`)).toBe(true);
+    }
     expect(sitemapPaths.has("/calculus-calculator")).toBe(true);
     expect(sitemapPaths.has("/daily-challenge")).toBe(true);
+    expect(sitemapPaths.has("/contact")).toBe(false);
+    expect(sitemapPaths.has("/privacy")).toBe(false);
+    expect(sitemapPaths.has("/terms")).toBe(false);
   });
 
   it("generates parseable, route-consistent structured data", () => {

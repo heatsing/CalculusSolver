@@ -256,6 +256,7 @@ export function learningResourceStructuredData(item: {
     url: `${appUrl}${item.path}`,
     dateModified: item.updatedAt,
     author: { "@type": "Organization", name: "Calculus Solver", url: appUrl },
+    reviewedBy: { "@type": "Organization", name: "Calculus Solver editorial team", url: `${appUrl}/about` },
     publisher: { "@type": "Organization", name: "Calculus Solver", url: appUrl },
     learningResourceType: "Guide",
     educationalLevel: item.difficulty,

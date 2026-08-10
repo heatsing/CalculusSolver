@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/header";
 import { MathDisplay } from "@/components/math/math-display";
 import { StructuredData } from "@/components/seo/structured-data";
 import { getGuide, guides } from "@/data/guides";
+import { exampleDetails } from "@/data/example-details";
 import { breadcrumbStructuredData, createMetadata, learningResourceStructuredData } from "@/lib/seo";
 
 type GuidePageProps = { params: Promise<{ slug: string }> };
@@ -34,6 +35,7 @@ export default async function GuidePage({ params }: GuidePageProps): Promise<Rea
 
   const related = guides.filter((item) => item.category === guide.category && item.slug !== guide.slug).slice(0, 3);
   const path = `/guides/${guide.slug}`;
+  const relatedExamples = exampleDetails.filter((item) => item.guide.href === path).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-[#f6f9fe] text-[#0a234f]">
@@ -56,6 +58,7 @@ export default async function GuidePage({ params }: GuidePageProps): Promise<Rea
                 <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-[#0967ed]" />{guide.readingMinutes} min read</span>
                 <span className="inline-flex items-center gap-2"><BarChart3 className="h-4 w-4 text-[#0967ed]" />{guide.difficulty}</span>
                 <span>Updated {guide.updatedAt}</span>
+                <span>Maintained by Calculus Solver editorial team</span>
               </div>
             </div>
           </header>
@@ -104,6 +107,7 @@ export default async function GuidePage({ params }: GuidePageProps): Promise<Rea
                 <ol className="mt-4 space-y-3 text-sm text-[#526785]">{guide.sections.map((section, index) => <li key={section.heading}><a href={`#section-${index + 1}`} className="hover:text-[#0967ed]">{index + 1}. {section.heading}</a></li>)}<li><a href="#worked-example" className="hover:text-[#0967ed]">Worked example</a></li></ol>
               </section>
               {related.length > 0 && <section className="rounded-2xl border border-[#dbe6f6] bg-white p-5 shadow-sm"><h2 className="text-lg font-bold">Related guides</h2><div className="mt-4 space-y-3">{related.map((item) => <Link key={item.slug} href={`/guides/${item.slug}`} className="group flex items-start justify-between gap-3 rounded-lg border border-[#e1e9f4] p-3 text-sm font-semibold text-[#203b67] hover:border-[#82aff5]"><span>{item.shortTitle}</span><ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" /></Link>)}</div></section>}
+              {relatedExamples.length > 0 && <section className="rounded-2xl border border-[#dbe6f6] bg-white p-5 shadow-sm"><h2 className="text-lg font-bold">Worked examples</h2><div className="mt-4 space-y-3">{relatedExamples.map((item) => <Link key={item.slug} href={`/examples/${item.slug}`} className="group flex items-start justify-between gap-3 rounded-lg border border-[#e1e9f4] p-3 text-sm font-semibold text-[#203b67] hover:border-[#82aff5]"><span>{item.title}</span><ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#0967ed] transition-transform group-hover:translate-x-1" /></Link>)}</div></section>}
             </aside>
           </div>
         </article>

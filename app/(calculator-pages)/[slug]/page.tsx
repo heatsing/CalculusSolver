@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CalculatorPage } from "@/components/calculator/calculator-page";
-import { calculatorPages, getCalculatorPage } from "@/data/calculator-pages";
+import { getCalculatorPage, getCalculatorStaticParams } from "@/data/calculator-pages";
 import { createMetadata } from "@/lib/seo";
 
 type CalculatorRouteProps = { params: Promise<{ slug: string }> };
@@ -9,7 +9,7 @@ type CalculatorRouteProps = { params: Promise<{ slug: string }> };
 export const dynamicParams = false;
 
 export function generateStaticParams(): { slug: string }[] {
-  return calculatorPages.map((calculator) => ({ slug: calculator.slug }));
+  return getCalculatorStaticParams();
 }
 
 export async function generateMetadata({ params }: CalculatorRouteProps): Promise<Metadata> {
@@ -30,6 +30,8 @@ export default async function CalculatorRoute({ params }: CalculatorRouteProps):
       category={calculator.category}
       updatedAt={calculator.updatedAt}
       educationalContent={calculator.educationalContent}
+      qualityContent={calculator.qualityContent}
+      learningLinks={calculator.learningLinks}
     />
   );
 }

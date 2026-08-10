@@ -6,6 +6,7 @@ export const metadata = createMetadata({
   title: "Privacy Policy",
   description: "Privacy policy for Calculus Solver.",
   path: "/privacy",
+  indexable: false,
   keywords: ["privacy policy", "data protection", "Calculus Solver privacy"]
 });
 

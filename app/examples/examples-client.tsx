@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { examplesData, type ExampleCategory } from "@/data/examples";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -71,9 +72,9 @@ export default function ExamplesClient(): React.JSX.Element {
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((example) => (
-          <a
+          <Link
             key={example.id}
-            href={`/?example=${example.id}`}
+            href={`/examples/${example.id}`}
             className="group flex flex-col justify-between rounded-card border border-border bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
             <div>
@@ -91,7 +92,7 @@ export default function ExamplesClient(): React.JSX.Element {
                 Try this problem <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
 

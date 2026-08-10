@@ -16,7 +16,9 @@ test.describe("Unified calculator pages", () => {
       await expect(page.getByRole("heading", { name: "Frequently Asked Questions" }), `Missing shared FAQ on ${route}`).toBeVisible();
       const moreCalculators = page.getByRole("heading", { name: "More Calculators" }).locator("..");
       await expect(moreCalculators, `Missing related tools on ${route}`).toBeVisible();
-      await expect(moreCalculators.getByRole("link"), `Incomplete More Calculators list on ${route}`).toHaveCount(calculatorRoutes.length);
+      const relatedCount = await moreCalculators.getByRole("link").count();
+      expect(relatedCount, `Expected a focused related-calculator set on ${route}`).toBeGreaterThanOrEqual(4);
+      expect(relatedCount, `Too many non-contextual calculator links on ${route}`).toBeLessThanOrEqual(7);
       await expect(page.getByRole("contentinfo"), `Missing shared footer on ${route}`).toBeVisible();
     }
   });
