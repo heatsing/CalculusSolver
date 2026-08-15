@@ -84,6 +84,10 @@ export const solverResultSchema = z.object({
 export const apiErrorCodeSchema = z.enum([
   "INVALID_REQUEST",
   "INPUT_TOO_LONG",
+  "INPUT_TOO_COMPLEX",
+  "FORBIDDEN_ORIGIN",
+  "UNSUPPORTED_MEDIA_TYPE",
+  "REQUEST_TOO_LARGE",
   "RATE_LIMITED",
   "AI_UNAVAILABLE",
   "INVALID_AI_RESPONSE",

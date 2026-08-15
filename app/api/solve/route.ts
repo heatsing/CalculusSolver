@@ -5,12 +5,15 @@ import { detectOperation, detectPrimaryVariable, normalizeInput, toMachineExpres
 import { computeLocalAnswer, isSpecializedCalculatorInput, verifyResult } from "@/lib/math-verifier";
 import { checkResultConsistency } from "@/lib/result-consistency";
 import { getClientKey, isRateLimited } from "@/lib/rate-limit";
+import { readJsonRequest } from "@/lib/api-security";
+import { validateMathInputComplexity } from "@/lib/math-security";
 import { solveCache } from "@/lib/request-cache";
 import { solveRequestSchema, solverResultSchema, type SolverResultResponse } from "@/lib/solver-schema";
 import { generateRequestId } from "@/lib/utils";
 import type { SolverResult } from "@/types/solver";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 45;
 
 function createErrorResponse(
   code: string,
@@ -171,20 +174,32 @@ export async function POST(request: Request): Promise<NextResponse> {
   const requestId = generateRequestId();
 
   try {
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      return createErrorResponse("INVALID_REQUEST", "Invalid JSON body.", requestId, 400);
+    const bodyResult = await readJsonRequest(request);
+    if (!bodyResult.ok) {
+      return createErrorResponse(bodyResult.code, bodyResult.message, requestId, bodyResult.status);
     }
 
-    const parsedRequest = solveRequestSchema.safeParse(body);
+    if (isRateLimited(`solve:${getClientKey(request)}`, 20)) {
+      return createErrorResponse("RATE_LIMITED", "Too many requests. Please slow down.", requestId, 429);
+    }
+
+    const parsedRequest = solveRequestSchema.safeParse(bodyResult.data);
     if (!parsedRequest.success) {
       const issues = parsedRequest.error.issues.map((issue) => issue.message).join("; ");
       return createErrorResponse("INVALID_REQUEST", issues, requestId, 400);
     }
 
     const { input, mode } = parsedRequest.data;
+    const detectedOperation = detectOperation(input);
+    const permitsLargeExponent = ["derivative", "integral", "limit"].includes(detectedOperation);
+    const complexity = validateMathInputComplexity(input, {
+      maxLength: 2000,
+      maxExponent: permitsLargeExponent ? 10_000 : 512
+    });
+    if (!complexity.ok) {
+      return createErrorResponse("INPUT_TOO_COMPLEX", complexity.message, requestId, 422);
+    }
+
     const cacheKey = `${mode}:${input.trim()}`;
     const cached = solveCache.get(cacheKey);
     if (cached) {
@@ -193,10 +208,6 @@ export async function POST(request: Request): Promise<NextResponse> {
         requestId,
         result: cached
       });
-    }
-
-    if (isRateLimited(`solve:${getClientKey(request)}`, 20)) {
-      return createErrorResponse("RATE_LIMITED", "Too many requests. Please slow down.", requestId, 429);
     }
 
     const apiKey = process.env.DEEPSEEK_API_KEY;

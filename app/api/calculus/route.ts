@@ -3,8 +3,11 @@ import { z } from "zod";
 import { evaluateExpression, type CalcKind } from "@/lib/calculator-engine";
 import { detectOperation, normalizeInput, toMachineExpression } from "@/lib/math-parser";
 import { getClientKey, isRateLimited } from "@/lib/rate-limit";
+import { readJsonRequest } from "@/lib/api-security";
+import { validateMathInputComplexity } from "@/lib/math-security";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 15;
 
 const requestSchema = z.object({
   input: z.string().trim().min(1).max(500),
@@ -110,14 +113,25 @@ function buildSteps(operation: CalcKind, input: string, answer: string, normaliz
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    const bodyResult = await readJsonRequest(request);
+    if (!bodyResult.ok) {
+      return NextResponse.json({ error: bodyResult.message }, { status: bodyResult.status });
+    }
     if (isRateLimited(`calculus:${getClientKey(request)}`, 30)) {
       return NextResponse.json({ error: "Too many requests. Please wait a minute and try again." }, { status: 429 });
     }
-    const parsed = requestSchema.safeParse(await request.json());
+    const parsed = requestSchema.safeParse(bodyResult.data);
     if (!parsed.success) return NextResponse.json({ error: "Enter a valid calculus expression." }, { status: 400 });
 
     const { input, operation: requested } = parsed.data;
     const operation = resolveOperation(input, requested);
+    const permitsLargeExponent = ["derivative", "integral", "limit"].includes(operation);
+    const complexity = validateMathInputComplexity(input, {
+      maxLength: 500,
+      maxOperators: 128,
+      maxExponent: permitsLargeExponent ? 10_000 : 512
+    });
+    if (!complexity.ok) return NextResponse.json({ error: complexity.message }, { status: 422 });
     const { machineInput, graphExpression } = buildMachineInput(input, operation);
     const result = await evaluateExpression(machineInput);
     if (!result.ok) return NextResponse.json({ error: result.error ?? "Could not calculate this expression." }, { status: 422 });

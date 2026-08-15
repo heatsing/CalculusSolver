@@ -16,6 +16,7 @@
 import { evaluate, format as mathjsFormat } from "mathjs";
 import type nerdamerType from "nerdamer";
 import { toMachineExpression, normalizeInput } from "./math-parser";
+import { assertMathInputComplexity } from "./math-security";
 
 let nerdamerModule: typeof nerdamerType | null = null;
 
@@ -107,6 +108,21 @@ function errorMessage(e: unknown, fallback: string): string {
 export async function evaluateExpression(input: string): Promise<CalcResult> {
   const trimmed = input.trim();
   if (!trimmed) return { ok: false, value: "", error: "Please enter an expression" };
+
+  try {
+    const permitsLargeExponent = /^(?:derivative|integrate|limit)\(/i.test(trimmed);
+    assertMathInputComplexity(trimmed, {
+      maxLength: 500,
+      maxOperators: 128,
+      maxExponent: permitsLargeExponent ? 10_000 : 512
+    });
+  } catch (error) {
+    return {
+      ok: false,
+      value: "",
+      error: error instanceof Error ? error.message : "Expression is too complex"
+    };
+  }
 
   // Normalize: insert implicit multiplication, convert unicode, strip spaces.
   let expr: string;

@@ -3,6 +3,7 @@ import type { SolverMachine, SolverResultResponse } from "@/lib/solver-schema";
 import type { VerificationStatus } from "@/types/solver";
 import type nerdamerType from "nerdamer";
 import { evaluate as mathEvaluate, format as mathFormat } from "mathjs";
+import { assertMathInputComplexity } from "@/lib/math-security";
 
 let nerdamerModule: typeof nerdamerType | null = null;
 
@@ -19,6 +20,7 @@ async function loadNerdamer(): Promise<typeof nerdamerType> {
 const disallowedPattern = /[;{}[\]`\\]/;
 
 function assertSafe(expression: string): void {
+  assertMathInputComplexity(expression, { maxLength: 2000 });
   if (disallowedPattern.test(expression)) {
     throw new Error("Expression contains unsupported characters");
   }
@@ -575,6 +577,11 @@ export async function verifyResult(result: SolverResultResponse): Promise<{
 }
 
 export async function computeLocalAnswer(input: string, operation: string, variable: string): Promise<string> {
+  const permitsLargeExponent = ["derivative", "integral", "limit"].includes(operation);
+  assertMathInputComplexity(input, {
+    maxLength: 2000,
+    maxExponent: permitsLargeExponent ? 10_000 : 512
+  });
   const nerdamer = await loadNerdamer();
   const text = normalizeInput(input).trim();
 

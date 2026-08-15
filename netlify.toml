@@ -4,3 +4,21 @@
 
 [build.environment]
   NEXT_PUBLIC_APP_URL = "https://calculussolver.net"
+
+# Protect public API routes at the edge, before a request reaches a serverless
+# instance. The AI explanation endpoint keeps a stricter path-specific limit.
+[[redirects]]
+  from = "/api/explain-step"
+  to = "/api/explain-step"
+  [redirects.rate_limit]
+    window_limit = 10
+    window_size = 60
+    aggregate_by = ["ip", "domain"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  [redirects.rate_limit]
+    window_limit = 20
+    window_size = 60
+    aggregate_by = ["ip", "domain"]

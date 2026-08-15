@@ -6,6 +6,7 @@ const scriptSource = process.env.NODE_ENV === "development"
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  poweredByHeader: false,
   images: {
     unoptimized: true
   },
@@ -26,7 +27,9 @@ const nextConfig: NextConfig = {
         { key: "X-Frame-Options", value: "DENY" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-        { key: "Content-Security-Policy", value: `default-src 'self'; ${scriptSource}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.is https://gateway.umami.is; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'` }
+        { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+        { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+        { key: "Content-Security-Policy", value: `default-src 'self'; ${scriptSource}; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.is https://gateway.umami.is; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'` }
       ]
     }];
   }
