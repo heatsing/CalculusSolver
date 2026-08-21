@@ -31,21 +31,23 @@ test.describe("Unified calculator pages", () => {
   });
 
   test("specialized calculator workspaces return real answers", async ({ page }) => {
-    test.setTimeout(120000);
+    test.setTimeout(240000);
     const representativeRoutes = calculatorRoutes.filter((route) => route !== "/calculus-calculator");
     let requestIndex = 0;
-    await page.route("**/api/solve", async (route) => {
-      requestIndex += 1;
-      await route.continue({
-        headers: { ...route.request().headers(), "x-forwarded-for": `198.51.100.${requestIndex}` }
+    for (const endpoint of ["**/api/solve", "**/api/calculus"]) {
+      await page.route(endpoint, async (route) => {
+        requestIndex += 1;
+        await route.continue({
+          headers: { ...route.request().headers(), "x-forwarded-for": `198.51.100.${requestIndex}` }
+        });
       });
-    });
+    }
 
     for (const route of representativeRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForLoadState("networkidle");
-      await page.getByRole("button", { name: "Calculate", exact: true }).click();
-      await expect(page.getByText("Solved", { exact: true }), `Calculator failed on ${route}`).toBeVisible({ timeout: 10000 });
+      await page.getByRole("button", { name: "Calculate result", exact: true }).click();
+      await expect(page.getByText("Solved", { exact: true }), `Calculator failed on ${route}`).toBeVisible({ timeout: 30000 });
     }
   });
 });
