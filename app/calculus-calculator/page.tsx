@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Infinity, Sigma, SquareFunction, Waves } from "lucide-react";
-import { OnlineCalculator } from "@/components/calculator/online-calculator";
+import { ScientificCalculusCalculator } from "@/components/calculator/scientific-calculus-calculator";
 import { CalculatorBenefits, CalculatorFaqs, CalculatorFooter, CalculatorHeader, CalculatorHero, CalculatorHowTo, CalculatorRelatedTools, calculatorSection } from "@/components/calculator/calculator-layout";
 import { StaticMath } from "@/components/math/static-math";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -28,7 +28,7 @@ export default function CalculusCalculatorPage(): React.JSX.Element {
   return <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]"><StructuredData data={faqPageStructuredData(faqs)} /><CalculatorHeader />
     <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
       <CalculatorHero h1="Calculus Calculator" subtitle="Solve derivatives, integrals, limits, and more with clear step-by-step explanations." />
-      <OnlineCalculator /><div className="mt-6"><CalculatorBenefits /></div>
+      <ScientificCalculusCalculator variant="calculus" /><div className="mt-6"><CalculatorBenefits /></div>
       <section className={`${calculatorSection} mt-8`}><h2 className="text-2xl font-bold">What Can This Calculus Calculator Solve?</h2><div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{operations.map(([Icon, title, text, color]) => <div key={title} className="rounded-xl border border-[#dbe6f6] p-5"><div className="flex items-center gap-3"><span className={`flex h-11 w-11 items-center justify-center rounded-lg text-white ${color}`}><Icon className="h-6 w-6" /></span><h3 className="font-bold">{title}</h3></div><p className="mt-4 text-sm leading-6 text-[#637392]">{text}</p></div>)}</div></section>
       <CalculatorHowTo title="Calculus Calculator" steps={howItWorks} />
       <section className={`${calculatorSection} mt-6 overflow-hidden`}><h2 className="text-2xl font-bold">Common Calculus Examples</h2><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[680px] border-collapse text-left text-sm"><thead><tr className="bg-[#f6f9fe]"><th className="border border-[#dbe6f6] p-3">Problem</th><th className="border border-[#dbe6f6] p-3">Input</th><th className="border border-[#dbe6f6] p-3">Result</th></tr></thead><tbody>{[["Derivative", "d/dx (x² + 3x)", "2x + 3"], ["Integral", "∫ sin(x) dx", "−cos(x) + C"], ["Limit", "lim x→0 sin(x)/x", "1"], ["Product rule", "d/dx (eˣ ln x)", "eˣ ln x + eˣ/x"]].map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell} className="border border-[#dbe6f6] p-3 font-mono text-[#314567]">{cell}</td>)}</tr>)}</tbody></table></div></section>

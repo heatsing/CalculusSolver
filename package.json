@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "fraction:generate": "node scripts/generate-fraction-pages.mjs",
+    "prebuild": "npm run fraction:generate",
     "build": "next build",
     "postbuild": "node scripts/check-built-seo.mjs",
     "start": "next start",

@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
 import { calculatorPages, getCalculatorPage, getCalculatorStaticParams } from "@/data/calculator-pages";
 import { exampleDetails, getExampleStaticParams } from "@/data/example-details";
+import { equivalentFractionSlug, fractionCandidates, getFractionStaticParams, percentDecimalSlug } from "@/data/fraction-pages";
 import {
   breadcrumbStructuredData,
   calculatorApplicationStructuredData,
@@ -62,6 +63,13 @@ describe("programmatic SEO architecture", () => {
     }
     expect(sitemapPaths.has("/calculus-calculator")).toBe(true);
     expect(sitemapPaths.has("/daily-challenge")).toBe(true);
+    expect(sitemapPaths.has("/percent-and-decimal")).toBe(true);
+    expect(sitemapPaths.has("/equivalent-fractions")).toBe(true);
+    expect(getFractionStaticParams()).toHaveLength(1500);
+    for (const candidate of fractionCandidates) {
+      expect(sitemapPaths.has(`/${percentDecimalSlug(candidate)}`)).toBe(true);
+      expect(sitemapPaths.has(`/${equivalentFractionSlug(candidate)}`)).toBe(true);
+    }
     expect(sitemapPaths.has("/contact")).toBe(false);
     expect(sitemapPaths.has("/privacy")).toBe(false);
     expect(sitemapPaths.has("/terms")).toBe(false);

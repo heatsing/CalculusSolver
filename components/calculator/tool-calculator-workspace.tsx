@@ -2,79 +2,78 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { Check, Loader2, RotateCcw, Sparkles } from "lucide-react";
+import { Check, Delete, Loader2, RotateCcw } from "lucide-react";
 import { useSolver } from "@/hooks/use-solver";
 import { toSolverMode, withOperationHint } from "@/lib/calculator-mode";
+import { getCalculatorWorkspaceKeys, getCalculatorWorkspaceProfile, type CalculatorWorkspaceKey } from "@/data/calculator-workspace-profiles";
 
 const ToolCalculatorResult = dynamic(
   () => import("@/components/calculator/tool-calculator-result").then((module) => module.ToolCalculatorResult),
-  {
-    ssr: false,
-    loading: () => <div className="mt-5 min-h-40 animate-pulse rounded-xl bg-[#eef5fd]" aria-hidden="true" />
-  }
+  { ssr: false, loading: () => <div className="mt-5 min-h-40 animate-pulse rounded-xl bg-[#eef5fd]" aria-hidden="true" /> }
 );
 
-type WorkspacePreset = {
-  label: string;
-  inputLabel: string;
-  placeholder: string;
-  initial: string;
-  keys: readonly (readonly [string, string])[];
-  examples: readonly string[];
-  parameter?: string;
+const toneClasses: Record<NonNullable<CalculatorWorkspaceKey["tone"]>, string> = {
+  number: "border-[#36536d] bg-[#203a50] text-white hover:bg-[#294963]",
+  function: "border-[#36536d] bg-[#29465e] text-[#f5f9ff] hover:bg-[#355873]",
+  special: "border-[#315675] bg-[#274b67] text-[#eaf5ff] hover:bg-[#356382]",
+  operator: "border-[#a65300] bg-[#a65300] text-white hover:bg-[#b85d00]"
 };
 
-const algebraKeys = [["x", "x"], ["x²", "x^2"], ["xⁿ", "x^"], ["+", "+"], ["−", "-"], ["×", "*"], ["÷", "/"], ["=", "="], ["(", "("], [")", ")"], ["√", "sqrt("], ["|x|", "abs("]] as const;
-const calculusKeys = [["x", "x"], ["x²", "x^2"], ["xⁿ", "x^"], ["√", "sqrt("], ["sin", "sin("], ["cos", "cos("], ["tan", "tan("], ["ln", "ln("], ["eˣ", "e^("], ["π", "pi"], ["(", "("], [")", ")"]] as const;
-const numericKeys = [["7", "7"], ["8", "8"], ["9", "9"], ["÷", "/"], ["4", "4"], ["5", "5"], ["6", "6"], ["×", "*"], ["1", "1"], ["2", "2"], ["3", "3"], ["−", "-"], ["0", "0"], [".", "."], ["(", "("], ["+", "+"]] as const;
-
-function presetFor(mode: string, title: string): WorkspacePreset {
-  if (mode === "derivative") return { label: "Derivative", inputLabel: "Enter your function", placeholder: "For example x^3 * sin(x)", initial: "x^3 * sin(x)", keys: calculusKeys, examples: ["x^2 + 3x", "sin(x) * e^x", "ln(x) / x"], parameter: "Variable: x" };
-  if (mode === "integral") return { label: "Integral", inputLabel: "Enter an integrand", placeholder: "For example x^2 * cos(x)", initial: "x^2 * cos(x)", keys: calculusKeys, examples: ["sin(x)", "x^2 from 0 to 1", "e^x * cos(x)"], parameter: "Variable: x" };
-  if (mode === "definite-integral") return { label: "Definite integral", inputLabel: "Enter an integrand and bounds", placeholder: "For example x^2 from 0 to 1", initial: "x^2 from 0 to 1", keys: [...calculusKeys, ["from", " from "], ["to", " to "]], examples: ["x^2 from 0 to 1", "sin(x) from 0 to pi", "e^x from 0 to 1"], parameter: "Variable: x" };
-  if (mode === "limit") return { label: "Limit", inputLabel: "Enter a limit", placeholder: "For example sin(x)/x as x approaches 0", initial: "sin(x)/x as x approaches 0", keys: calculusKeys, examples: ["sin(x)/x as x approaches 0", "(x^2-1)/(x-1) as x approaches 1", "1/x as x approaches Infinity"], parameter: "Variable: x" };
-  if (mode === "asymptote") return { label: "Asymptotes", inputLabel: "Enter a rational function", placeholder: "For example (2*x+1)/(x-3)", initial: "(2*x+1)/(x-3)", keys: calculusKeys, examples: ["1/(x-2)", "(2*x+1)/(x-3)", "(x^2+1)/(x-1)"], parameter: "Variable: x" };
-  if (mode === "gradient") return { label: "Gradient", inputLabel: "Enter a multivariable function", placeholder: "For example x^2 + y^2", initial: "x^2 + y^2", keys: [...calculusKeys, ["y", "y"]], examples: ["x^2 + y^2", "x*y + y^2", "sin(x) * cos(y)"], parameter: "Variables: x, y" };
-  if (mode === "graph") return { label: "Graph", inputLabel: "Enter a function to plot", placeholder: "For example x^2 - 4*x + 3", initial: "x^2 - 4*x + 3", keys: calculusKeys, examples: ["x^2", "sin(x)", "1/x"], parameter: "Variable: x" };
-  if (mode === "factoring") return { label: "Factor", inputLabel: "Enter an expression", placeholder: "For example x^2 - 5*x + 6", initial: "x^2 - 5*x + 6", keys: algebraKeys, examples: ["x^2 - 9", "x^2 - 5*x + 6", "2*x^2 + 4*x"] };
-  if (mode === "simplify") return { label: "Simplify", inputLabel: "Enter an expression", placeholder: "For example (x^2 - 1)/(x - 1)", initial: "(x^2 - 1)/(x - 1)", keys: algebraKeys, examples: ["3*x + 2*x - 4", "(x^2 - 1)/(x - 1)", "2*(x + 3) - x"] };
-  if (mode === "equation" || mode === "algebra") {
-    const quadratic = title.toLowerCase().includes("quadratic");
-    return { label: quadratic ? "Quadratic" : "Equation", inputLabel: quadratic ? "Enter a quadratic equation" : "Enter an equation", placeholder: quadratic ? "For example x^2 - 5*x + 6 = 0" : "For example 2*x + 5 = 17", initial: quadratic ? "x^2 - 5*x + 6 = 0" : "2*x + 5 = 17", keys: algebraKeys, examples: quadratic ? ["x^2 - 5*x + 6 = 0", "x^2 - 9 = 0", "2*x^2 + 3*x - 2 = 0"] : ["2*x + 5 = 17", "x^2 = 16", "x + y = 5 and x - y = 1"], parameter: "Solve for: x" };
-  }
-  if (mode === "inequality") return { label: "Inequality", inputLabel: "Enter an inequality", placeholder: "For example x^2 - 5*x + 6 <= 0", initial: "x^2 - 5*x + 6 <= 0", keys: [...algebraKeys, ["<", "<"], ["≤", "<="], [">", ">"], ["≥", ">="]], examples: ["2*x + 3 < 11", "x^2 - 5*x + 6 <= 0", "x^2 - 4 > 0"], parameter: "Solve for: x" };
-  if (mode === "system") return { label: "Equation system", inputLabel: "Enter equations separated by and", placeholder: "For example x + y = 5 and x - y = 1", initial: "x + y = 5 and x - y = 1", keys: [...algebraKeys, ["y", "y"], ["and", " and "]], examples: ["x + y = 5 and x - y = 1", "2*x + y = 7 and x - y = 2", "x + 2*y = 8 and 3*x - y = 3"], parameter: "Solve for: x, y" };
-  if (mode === "complex") return { label: "Complex numbers", inputLabel: "Enter a complex-number expression", placeholder: "For example (3+4i)*(2-i)", initial: "(3+4i)*(2-i)", keys: [...numericKeys, ["i", "i"], ["|z|", "abs("], ["conj", "conj("]], examples: ["(3+4i)*(2-i)", "(1+i)^4", "abs(3+4i)"] };
-  if (mode === "fractions") return { label: "Fractions", inputLabel: "Enter a fraction expression", placeholder: "For example 1/2 + 1/3", initial: "1/2 + 1/3", keys: numericKeys, examples: ["1/2 + 1/3", "3/4 * 2/5", "7/8 - 1/4"] };
-  if (mode === "matrix") return { label: "Matrix", inputLabel: "Enter a matrix operation", placeholder: "For example det([[1,2],[3,4]])", initial: "det([[1,2],[3,4]])", keys: [["[", "["], ["]", "]"], [",", ","], ["+", "+"], ["−", "-"], ["×", "*"], ["det", "det("], ["inv", "inv("], ["(", "("], [")", ")"]], examples: ["det([[1,2],[3,4]])", "transpose([[1,2],[3,4]])", "[[1,2],[3,4]] + [[2,0],[1,2]]"] };
-  if (mode === "average") return { label: "Average", inputLabel: "Enter numbers", placeholder: "For example 4, 8, 12", initial: "4, 8, 12", keys: numericKeys, examples: ["4, 8, 12", "10, 15, 20, 25", "2.5, 3.5, 5"] };
-  if (mode === "percentage") return { label: "Percentage", inputLabel: "Enter a percentage problem", placeholder: "For example 15% of 200", initial: "15% of 200", keys: [...numericKeys, ["%", "%"], ["of", " of "]], examples: ["15% of 200", "25% of 80", "12.5% of 240"] };
-  if (mode === "probability") return { label: "Probability", inputLabel: "Enter favorable and total outcomes", placeholder: "For example 3 out of 10", initial: "3 out of 10", keys: numericKeys, examples: ["3 out of 10", "1 out of 6", "12 out of 52"] };
-  if (mode === "roots") return { label: "Roots", inputLabel: "Enter a radical expression", placeholder: "For example sqrt(81)", initial: "sqrt(81)", keys: [...numericKeys, ["√", "sqrt("], ["∛", "cbrt("]], examples: ["sqrt(81)", "sqrt(144)", "cbrt(27)"] };
-  if (mode === "logarithms") return { label: "Logarithms", inputLabel: "Enter a logarithm", placeholder: "For example log10(1000)", initial: "log10(1000)", keys: [...numericKeys, ["log", "log10("], ["ln", "ln("], ["e", "e"]], examples: ["log10(1000)", "ln(e^2)", "log(8, 2)"] };
-  if (mode === "lcm") return { label: "LCM", inputLabel: "Enter integers", placeholder: "For example 4 and 6", initial: "4 and 6", keys: numericKeys, examples: ["4 and 6", "12 and 18", "8, 12, 20"] };
-  if (mode === "exponents") return { label: "Exponents", inputLabel: "Enter an exponent expression", placeholder: "For example 2^10", initial: "2^10", keys: [...numericKeys, ["x²", "^2"], ["xⁿ", "^"]], examples: ["2^10", "9^(1/2)", "5^0"] };
-  if (mode === "long-division") return { label: "Long division", inputLabel: "Enter dividend and divisor", placeholder: "For example 125 by 4", initial: "125 by 4", keys: [...numericKeys, ["by", " by "]], examples: ["125 by 4", "987 by 12", "144 by 12"] };
-  if (mode === "pythagorean") return { label: "Pythagorean theorem", inputLabel: "Enter two known sides", placeholder: "For example a=3, b=4", initial: "a=3, b=4", keys: [...numericKeys, ["a=", "a="], ["b=", "b="], ["c=", "c="], [",", ", "]], examples: ["a=3, b=4", "a=5, c=13", "b=12, c=15"] };
-  if (mode === "sequence") return { label: "Sequence", inputLabel: "Enter sequence terms", placeholder: "For example 2, 5, 8, 11", initial: "2, 5, 8, 11", keys: [...numericKeys, [",", ", "]], examples: ["2, 5, 8, 11", "3, 6, 12, 24", "1, 4, 9, 16"] };
-  if (mode === "series-sum") return { label: "Series sum", inputLabel: "Enter a finite series", placeholder: "For example 1 + 2 + ... + 100", initial: "1 + 2 + ... + 100", keys: [...numericKeys, ["…", "..."], [",", ", "]], examples: ["1 + 2 + ... + 100", "Sum n^2 from 1 to 10", "3, 6, 9, 12, 15"] };
-  return { label: "Calculate", inputLabel: "Enter an expression", placeholder: "For example 2 + 3 * 4", initial: "2 + 3 * 4", keys: numericKeys, examples: ["2 + 3 * 4", "sqrt(144)", "sin(pi/2)"] };
-}
-
 export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: string }): React.JSX.Element {
-  const preset = React.useMemo(() => presetFor(mode, title), [mode, title]);
-  const [input, setInput] = React.useState(preset.initial);
+  const profile = React.useMemo(() => getCalculatorWorkspaceProfile(mode, title), [mode, title]);
+  const keys = React.useMemo(() => getCalculatorWorkspaceKeys(profile), [profile]);
+  const [input, setInput] = React.useState(profile.initial);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const { state, solve, reset } = useSolver();
+
+  React.useEffect(() => {
+    setInput(profile.initial);
+    reset();
+  // `reset` is intentionally omitted because the hook returns a new function each render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile]);
+
+  function focusAt(position: number): void {
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(position, position);
+    });
+  }
 
   function insert(value: string): void {
     const element = inputRef.current;
     const start = element?.selectionStart ?? input.length;
     const end = element?.selectionEnd ?? input.length;
-    const next = input.slice(0, start) + value + input.slice(end);
-    setInput(next);
+    setInput(input.slice(0, start) + value + input.slice(end));
     reset();
-    requestAnimationFrame(() => { element?.focus(); element?.setSelectionRange(start + value.length, start + value.length); });
+    focusAt(start + value.length);
+  }
+
+  function applyKey(item: CalculatorWorkspaceKey): void {
+    if (item.behavior === "replace") {
+      setInput(item.value);
+      reset();
+      requestAnimationFrame(() => inputRef.current?.focus());
+      return;
+    }
+    insert(item.value);
+  }
+
+  function backspace(): void {
+    const element = inputRef.current;
+    const start = element?.selectionStart ?? input.length;
+    const end = element?.selectionEnd ?? input.length;
+    if (start !== end) {
+      setInput(input.slice(0, start) + input.slice(end));
+      reset();
+      focusAt(start);
+      return;
+    }
+    if (start > 0) {
+      setInput(input.slice(0, start - 1) + input.slice(start));
+      reset();
+      focusAt(start - 1);
+    }
   }
 
   async function calculate(): Promise<void> {
@@ -82,38 +81,44 @@ export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: 
     await solve(withOperationHint(input.trim(), mode), toSolverMode(mode));
   }
 
-  function clear(): void { setInput(""); reset(); inputRef.current?.focus(); }
+  function clear(): void {
+    setInput("");
+    reset();
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  const screenAnswer = state.status === "loading" ? "Calculating…"
+    : state.status === "success" ? state.result.answer
+      : state.status === "error" ? "Check input" : "Ready";
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-[#dbe6f6] bg-white shadow-[0_12px_40px_rgba(42,88,155,.09)]">
-      <div className="grid min-w-0 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
-        <form onSubmit={(event) => { event.preventDefault(); void calculate(); }} className="min-w-0 border-b border-[#dbe6f6] p-5 lg:border-b-0 lg:border-r sm:p-6">
-          <div className="flex items-center gap-2 overflow-x-auto border-b border-[#dbe6f6] pb-3">
-            <span className="rounded-md bg-[#eaf3ff] px-4 py-2 text-sm font-semibold text-[#075bc7]">{preset.label}</span>
-            <span className="px-3 py-2 text-xs font-medium text-[#637392]">Exact answer</span>
-            <span className="px-3 py-2 text-xs font-medium text-[#637392]">Step-by-step</span>
-          </div>
-          <label htmlFor={`tool-input-${mode}`} className="mt-5 block text-sm font-semibold text-[#203b67]">{preset.inputLabel}</label>
-          <textarea ref={inputRef} id={`tool-input-${mode}`} value={input} onChange={(event) => { setInput(event.target.value); reset(); }} rows={4} className="mt-2 w-full resize-none rounded-xl border border-[#b9d1f2] bg-white px-4 py-4 font-mono text-base leading-7 text-[#0a234f] outline-none transition focus:border-[#0967ed] focus:ring-2 focus:ring-blue-100" placeholder={preset.placeholder} />
-          <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-6">
-            {preset.keys.map(([label, value]) => <button key={`${label}-${value}`} type="button" onClick={() => insert(value)} className="min-h-11 rounded-lg border border-[#dbe6f6] bg-[#fbfdff] px-2 font-mono text-sm font-medium text-[#203b67] shadow-sm transition hover:border-[#8eb9f8] hover:bg-[#eff6ff] hover:text-[#0967ed]">{label}</button>)}
-          </div>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            {preset.parameter && <span className="rounded-md border border-[#dbe6f6] bg-[#f8fbff] px-3 py-2 text-xs font-medium text-[#637392]">{preset.parameter}</span>}
-            <button type="submit" disabled={!input.trim() || state.status === "loading"} className="ml-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0967ed] px-6 text-sm font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-[#0757c9] disabled:opacity-60">{state.status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}{state.status === "loading" ? "Calculating..." : "Calculate"}</button>
-            <button type="button" onClick={clear} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#cbd9ed] px-4 text-sm font-medium text-[#314567] hover:bg-[#f4f8fe]"><RotateCcw className="h-4 w-4" />Clear</button>
-          </div>
-          <div className="mt-6 flex flex-wrap items-center gap-2"><span className="mr-1 text-xs font-medium text-[#637392]">Examples:</span>{preset.examples.map((example) => <button key={example} type="button" onClick={() => { setInput(example); reset(); }} className="rounded-md border border-[#b8d2f7] bg-[#f5f9ff] px-3 py-2 font-mono text-xs text-[#314567] hover:border-[#0967ed] hover:text-[#0967ed]">{example}</button>)}</div>
-        </form>
-
-        <div className="min-h-[560px] min-w-0 bg-[#fbfdff] p-5 sm:p-6" aria-live="polite" aria-busy={state.status === "loading"}>
-          <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0a234f]">Solution</h2>{state.status === "success" && <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"><Check className="h-3.5 w-3.5" />Solved</span>}</div>
-          {state.status === "idle" && <div className="flex min-h-[470px] flex-col items-center justify-center text-center"><span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-[#0967ed]"><Sparkles className="h-7 w-7" /></span><h3 className="mt-5 font-bold text-[#0a234f]">Your solution will appear here</h3><p className="mt-2 max-w-sm text-sm leading-6 text-[#637392]">Enter a problem, use the dedicated math keys, then calculate to see the answer and explanation.</p></div>}
-          {state.status === "loading" && <div className="flex min-h-[470px] flex-col items-center justify-center text-center"><Loader2 className="h-9 w-9 animate-spin text-[#0967ed]" /><p className="mt-4 font-semibold text-[#203b67]">Calculating your answer...</p></div>}
-          {state.status === "error" && <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700" role="alert"><strong>Could not calculate this problem.</strong><p className="mt-2">{state.message}</p></div>}
-          {state.status === "success" && <ToolCalculatorResult result={state.result} />}
+    <section aria-label={`${title} interactive calculator`}>
+      <form onSubmit={(event) => { event.preventDefault(); void calculate(); }} aria-busy={state.status === "loading"} className="mx-auto max-w-[780px] rounded-[30px] border-4 border-[#182d3f] bg-[linear-gradient(145deg,#173149,#0b1d2c)] p-3 shadow-[0_24px_65px_rgba(14,35,58,.28),inset_0_1px_0_rgba(255,255,255,.16)] sm:p-5">
+        <div className="mb-3 flex items-center justify-between gap-3 px-1 text-white">
+          <div><p className="text-xs font-bold uppercase tracking-[.18em] text-blue-200">{profile.label} mode</p><p className="mt-1 text-sm font-semibold text-white/90">Exact answer · Step-by-step</p></div>
+          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-bold text-blue-100">ONLINE</span>
         </div>
-      </div>
+
+        <div className="rounded-2xl border border-[#8ba0a0] bg-[linear-gradient(145deg,#e7eeea,#cfdcd7)] p-4 shadow-[inset_0_2px_5px_rgba(24,45,63,.22)] sm:p-5">
+          <label htmlFor={`tool-input-${mode}`} className="block text-xs font-bold uppercase tracking-wider text-[#536b72]">{profile.inputLabel}</label>
+          <textarea ref={inputRef} id={`tool-input-${mode}`} value={input} onChange={(event) => { setInput(event.target.value); reset(); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void calculate(); } }} rows={2} spellCheck={false} className="mt-2 w-full resize-none bg-transparent font-mono text-lg font-semibold leading-7 text-[#10283c] outline-none sm:text-xl" placeholder={profile.placeholder} aria-describedby={profile.parameter ? `tool-hint-${mode}` : undefined} />
+          <div className="mt-2 flex min-h-12 items-end justify-between gap-4 border-t border-dashed border-[#9aaea8] pt-3"><span className="font-mono text-lg text-[#1d3a4d]">=</span><output className={`max-w-[85%] overflow-x-auto text-right font-mono font-bold text-[#10283c] ${state.status === "success" ? "text-xl sm:text-2xl" : "text-sm text-[#536b72]"}`} aria-live="polite">{screenAnswer}</output></div>
+        </div>
+
+        <div className="mt-3 flex min-h-9 items-center gap-2 overflow-x-auto pb-1"><span className="shrink-0 rounded-lg border border-[#a65300] bg-[#a65300] px-3 py-2 text-xs font-bold text-white">{profile.label}</span>{profile.parameter && <span id={`tool-hint-${mode}`} className="shrink-0 rounded-lg border border-[#36536d] bg-[#203a50] px-3 py-2 text-xs font-bold text-blue-100">{profile.parameter}</span>}</div>
+
+        <div className="mt-3 grid grid-cols-5 gap-1.5 min-[360px]:grid-cols-6 sm:gap-2" aria-label={`${profile.label} keypad`}>
+          <button type="button" onClick={clear} aria-label="Clear expression" className="min-h-11 rounded-lg border border-[#b91c1c] bg-[#dc2626] px-1 font-mono text-xs font-semibold text-white shadow-[0_2px_3px_rgba(0,0,0,.28)] hover:bg-[#ef4444] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:min-h-12 sm:text-sm">C</button>
+          <button type="button" onClick={backspace} aria-label="Delete previous character" className="min-h-11 rounded-lg border border-[#36536d] bg-[#29465e] px-1 text-white shadow-[0_2px_3px_rgba(0,0,0,.28)] hover:bg-[#355873] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:min-h-12"><Delete className="mx-auto h-4 w-4" /></button>
+          {keys.map((item, index) => <button key={`${item.label}-${item.value}-${index}`} type="button" aria-label={item.ariaLabel ?? item.label} onClick={() => applyKey(item)} disabled={state.status === "loading"} className={`min-h-11 rounded-lg border px-1 font-mono text-[11px] font-semibold shadow-[0_2px_3px_rgba(0,0,0,.28)] transition active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-60 sm:min-h-12 sm:text-sm ${toneClasses[item.tone ?? "function"]}`}>{item.label}</button>)}
+          <button type="submit" disabled={!input.trim() || state.status === "loading"} aria-label="Calculate result" className="min-h-11 rounded-lg border border-[#a65300] bg-[#a65300] px-1 font-mono text-sm font-bold text-white shadow-[0_2px_3px_rgba(0,0,0,.28)] hover:bg-[#b85d00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-60 sm:min-h-12">{state.status === "loading" ? <Loader2 className="mx-auto h-4 w-4 animate-spin motion-reduce:animate-none" /> : "="}</button>
+        </div>
+      </form>
+
+      <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center justify-center gap-2">{profile.examples.map((example) => <button key={example} type="button" onClick={() => { setInput(example); reset(); requestAnimationFrame(() => inputRef.current?.focus()); }} className="rounded-full border border-[#c5d8ef] bg-white px-4 py-2 font-mono text-xs font-semibold text-[#314567] shadow-sm hover:border-[#0967ed] hover:text-[#0967ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed]">{example}</button>)}<button type="button" onClick={() => { setInput(profile.initial); reset(); }} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#c5d8ef] bg-white px-4 text-xs font-semibold text-[#637392] hover:border-[#0967ed] hover:text-[#0967ed]"><RotateCcw className="h-3.5 w-3.5" />Reset</button></div>
+
+      {state.status === "error" && <div className="mx-auto mt-5 max-w-[780px] rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert"><strong>Could not calculate this problem.</strong><p className="mt-2">{state.message}</p></div>}
+      {state.status === "success" && <div className="mx-auto mt-6 max-w-[980px] rounded-2xl border border-[#dbe6f6] bg-[#fbfdff] p-5 shadow-sm sm:p-6"><div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0a234f]">Step-by-step solution</h2><span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"><Check className="h-3.5 w-3.5" />Solved</span></div><ToolCalculatorResult result={state.result} /></div>}
     </section>
   );
 }

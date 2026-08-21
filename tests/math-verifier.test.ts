@@ -62,7 +62,7 @@ describe("computeLocalAnswer", () => {
     ["Factor x^2 - 5*x + 6", "factor", "x", "(-2+x)*(-3+x)"],
     ["Simplify 3*x + 2*x - 4", "simplify", "x", "-4+5*x"],
     ["Calculate the average of 4, 8, 12", "simplify", "x", "8"],
-    ["Calculate the fraction expression 1/2 + 1/3", "simplify", "x", "0.833333333333"],
+    ["Calculate the fraction expression 1/2 + 1/3", "simplify", "x", "5/6"],
     ["Evaluate the exponent expression 2^10", "simplify", "x", "1024"],
     ["Calculate the root sqrt(144)", "solve_equation", "x", "12"],
     ["Evaluate the logarithm log(100,10)", "simplify", "x", "2"],

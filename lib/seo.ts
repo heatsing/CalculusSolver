@@ -218,13 +218,20 @@ export function faqPageStructuredData(items: { question: string; answer: string 
   };
 }
 
-export function collectionPageStructuredData(items: { name: string; path: string; description: string }[]) {
+export function collectionPageStructuredData(
+  items: { name: string; path: string; description: string }[],
+  collection: { name: string; description: string; path: string } = {
+    name: "Calculus and Algebra Guides",
+    description: "Step-by-step learning guides for calculus, algebra, and linear algebra.",
+    path: "/guides"
+  }
+) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Calculus and Algebra Guides",
-    description: "Step-by-step learning guides for calculus, algebra, and linear algebra.",
-    url: `${appUrl}/guides`,
+    name: collection.name,
+    description: collection.description,
+    url: `${appUrl}${collection.path}`,
     mainEntity: {
       "@type": "ItemList",
       itemListElement: items.map((item, index) => ({

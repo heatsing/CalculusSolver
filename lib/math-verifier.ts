@@ -647,11 +647,25 @@ export async function computeLocalAnswer(input: string, operation: string, varia
   }
   if (/^find the gradient of\b/i.test(text)) {
     const expression = safeNormalize(expressionAfter(/^find the gradient of\s*/i));
-    const variables = [...new Set((expression.match(/[a-zA-Z]/g) ?? []).filter((name) => !["e", "i"].includes(name)))];
+    const withoutFunctions = expression.replace(/\b(?:sin|cos|tan|sec|csc|cot|asin|acos|atan|sqrt|log|ln|exp|abs)\s*\(/gi, "(");
+    const variables = [...new Set((withoutFunctions.match(/\b[a-zA-Z]\b/g) ?? []).map((name) => name.toLowerCase()).filter((name) => !["e", "i"].includes(name)))];
     return `[${(variables.length ? variables : [variable]).map((name) => nerdamer.diff(expression, name).toString()).join(", ")}]`;
   }
 
-  const utilityPrefixes = /^(?:evaluate the exponent expression|calculate the fraction expression|calculate the root|evaluate the logarithm|calculate the matrix expression|calculate)\s*/i;
+  if (/^calculate the fraction expression\b/i.test(text)) {
+    const expression = safeNormalize(expressionAfter(/^calculate the fraction expression\s*/i));
+    return nerdamer(expression).toString();
+  }
+  if (/^calculate the root\b/i.test(text)) {
+    const expression = safeNormalize(expressionAfter(/^calculate the root\s*/i));
+    try {
+      return nerdamer(expression).toString();
+    } catch {
+      return String(mathEvaluate(toMachineExpression(expression)));
+    }
+  }
+
+  const utilityPrefixes = /^(?:evaluate the exponent expression|evaluate the logarithm|calculate the matrix expression|calculate)\s*/i;
   if (utilityPrefixes.test(text)) {
     const expression = expressionAfter(utilityPrefixes);
     const value = mathEvaluate(toMachineExpression(expression));
@@ -676,6 +690,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
     source = expressionAfter(/^(?:evaluate the )?limit\s*/i);
   }
 
+  if (operation === "graph") source = source.replace(/^\s*(?:y|f\s*\(\s*x\s*\))\s*=\s*/i, "");
   const normalized = safeNormalize(source);
 
   switch (operation) {
@@ -697,6 +712,7 @@ export async function computeLocalAnswer(input: string, operation: string, varia
     case "graph":
       return normalized;
     case "simplify":
+      return nerdamer(normalized).toString();
     default:
       return nerdamer(normalized).expand().toString();
   }

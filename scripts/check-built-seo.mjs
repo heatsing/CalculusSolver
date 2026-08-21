@@ -103,7 +103,12 @@ for (const url of urls) {
       }
     } catch { failures.push(`${route}: JSON-LD is not valid JSON`); }
   }
-  indexedContent.push({ route, shingles: shingles(text) });
+  const fractionFamily = /^\/\d+-\d+-as-a-percent-and-decimal$/.test(route)
+    ? "percent-decimal"
+    : /^\/what-is-equivalent-to-\d+-\d+-fraction$/.test(route)
+      ? "equivalent-fractions"
+      : null;
+  indexedContent.push({ route, shingles: shingles(text), fractionFamily });
 }
 
 const sitemapRoutes = new Set(urls.map((url) => new URL(url).pathname));
@@ -124,10 +129,26 @@ for (const filePath of htmlFiles) {
   }
 }
 
-for (let left = 0; left < indexedContent.length; left += 1) {
-  for (let right = left + 1; right < indexedContent.length; right += 1) {
-    const similarity = jaccard(indexedContent[left].shingles, indexedContent[right].shingles);
-    if (similarity >= 0.65) failures.push(`${indexedContent[left].route} and ${indexedContent[right].route}: high template similarity (${similarity.toFixed(2)})`);
+const fractionHubs = new Set(["/percent-and-decimal", "/equivalent-fractions"]);
+const standardContent = indexedContent.filter((item) => !item.fractionFamily && !fractionHubs.has(item.route));
+for (let left = 0; left < standardContent.length; left += 1) {
+  for (let right = left + 1; right < standardContent.length; right += 1) {
+    const similarity = jaccard(standardContent[left].shingles, standardContent[right].shingles);
+    if (similarity >= 0.65) failures.push(`${standardContent[left].route} and ${standardContent[right].route}: high template similarity (${similarity.toFixed(2)})`);
+  }
+}
+
+for (const family of ["percent-decimal", "equivalent-fractions"]) {
+  const familyContent = indexedContent.filter((item) => item.fractionFamily === family);
+  if (familyContent.length !== 750) failures.push(`${family}: expected 750 generated pages, found ${familyContent.length}`);
+  const step = Math.max(1, Math.floor(familyContent.length / 100));
+  const sample = familyContent.filter((_, index) => index % step === 0).slice(0, 100);
+  if (sample.length < 100) failures.push(`${family}: quality sample contains only ${sample.length} pages`);
+  for (let left = 0; left < sample.length; left += 1) {
+    for (let right = left + 1; right < sample.length; right += 1) {
+      const similarity = jaccard(sample[left].shingles, sample[right].shingles);
+      if (similarity >= 0.92) failures.push(`${sample[left].route} and ${sample[right].route}: extreme fraction-template similarity (${similarity.toFixed(2)})`);
+    }
   }
 }
 

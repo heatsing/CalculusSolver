@@ -1,4 +1,5 @@
 import { ToolCalculatorWorkspace } from "@/components/calculator/tool-calculator-workspace";
+import { ScientificCalculusCalculator } from "@/components/calculator/scientific-calculus-calculator";
 import { StructuredData } from "@/components/seo/structured-data";
 import type { CalculatorEducationalContent } from "@/data/calculator-pages";
 import type { CalculatorQualityContent } from "@/data/calculator-quality-content";
@@ -53,7 +54,9 @@ export function CalculatorPage({ title, description, path, mode, h1, subtitle, e
       <CalculatorHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
         <CalculatorHero h1={h1} subtitle={subtitle} />
-        <ToolCalculatorWorkspace title={title} mode={mode} />
+        {path === "/derivative-calculator" || path === "/integral-calculator" || path === "/limit-calculator"
+          ? <ScientificCalculusCalculator variant={path === "/derivative-calculator" ? "derivative" : path === "/integral-calculator" ? "integral" : "limit"} />
+          : <ToolCalculatorWorkspace title={title} mode={mode} />}
         <div className="mt-6"><CalculatorBenefits /></div>
         <CalculatorHowTo title={title} steps={howItWorks} />
         <CalculatorExample latex={exampleLatex} />

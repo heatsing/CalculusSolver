@@ -39,6 +39,7 @@ function resolveOperation(input: string, requested: string): CalcKind {
 function stripOperationWords(input: string): string {
   return input
     .replace(/^\s*(?:derivative|differentiate|integrate|integral|series|sum)\s*(?:of\s*)?/i, "")
+    .replace(/^\s*d\s*\/\s*d[xy]\s*/i, "")
     .replace(/\s*d[xy]\s*$/i, "")
     .trim();
 }
@@ -55,6 +56,8 @@ function buildMachineInput(input: string, operation: CalcKind): { machineInput: 
   if (operation === "integral") {
     if (/^integrate\(/i.test(normalized)) return { machineInput: normalized, graphExpression: null };
     const target = stripOperationWords(normalized).replace(/^integrate\s*/i, "");
+    const bounded = target.match(/^(.+?)\s+from\s+([^\s]+)\s+to\s+([^\s]+)$/i);
+    if (bounded) return { machineInput: `definiteIntegral(${bounded[1]},x,${bounded[2]},${bounded[3]})`, graphExpression: bounded[1] };
     return { machineInput: `integrate(${target},x)`, graphExpression: target };
   }
   if (operation === "limit") {
@@ -137,7 +140,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (!result.ok) return NextResponse.json({ error: result.error ?? "Could not calculate this expression." }, { status: 422 });
 
     const graphable = graphExpression && /^(?:x(?:\^\d+)?|sin\(x\)|cos\(x\)|1\/x)$/i.test(graphExpression.replace(/\s+/g, ""));
-    const isIndefiniteIntegral = result.kind === "integral";
+    const isIndefiniteIntegral = result.kind === "integral" && !/^definiteIntegral\(/i.test(machineInput);
     const answer = isIndefiniteIntegral ? `${result.value} + C` : result.value;
     const latex = isIndefiniteIntegral ? `${result.latex ?? result.value} + C` : (result.latex ?? result.value);
     return NextResponse.json({

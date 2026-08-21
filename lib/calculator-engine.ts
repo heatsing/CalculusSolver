@@ -66,6 +66,23 @@ function splitTargetVar(args: string, defaultVar = "x"): { target: string; varia
   return { target, variable };
 }
 
+function splitTopLevelArgs(args: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let index = 0; index < args.length; index += 1) {
+    const character = args[index];
+    if (character === "(" || character === "[") depth += 1;
+    if (character === ")" || character === "]") depth -= 1;
+    if (character === "," && depth === 0) {
+      parts.push(args.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+  parts.push(args.slice(start).trim());
+  return parts;
+}
+
 function formatValue(v: unknown): string {
   if (typeof v === "number") {
     if (Number.isNaN(v)) return "NaN";
@@ -168,6 +185,19 @@ export async function evaluateExpression(input: string): Promise<CalcResult> {
     }
   }
 
+  const definiteArg = extractCallArg(expr, "definiteIntegral");
+  if (definiteArg !== null) {
+    try {
+      const [target, variable = "x", lower, upper] = splitTopLevelArgs(definiteArg);
+      if (!target || !lower || !upper) throw new Error("Definite integral requires an expression and two bounds");
+      const nerdamer = await loadNerdamer();
+      const result = nerdamer(`defint(${target},${lower},${upper},${variable})`);
+      return { ok: true, kind: "integral", value: result.toString(), latex: safeToTeX(result) };
+    } catch (error) {
+      return { ok: false, value: "", error: errorMessage(error, "Could not compute definite integral") };
+    }
+  }
+
   // 3. Limit: limit(expr, var->value)
   const limitArg = extractCallArg(expr, "limit");
   if (limitArg !== null) {
@@ -239,9 +269,11 @@ async function evalLimit(args: string): Promise<CalcResult> {
       error: "Limit format: limit(expr, x->value)",
     };
   }
-  const [, target, variable, valueStr] = m;
+  const [, target, variable, rawValue] = m;
+  const direction = rawValue.endsWith("+") ? "right" : rawValue.endsWith("-") ? "left" : "both";
+  const valueStr = direction === "both" ? rawValue : rawValue.slice(0, -1);
   try {
-    try {
+    if (direction === "both") try {
       const nerdamer = await loadNerdamer();
       const symbolic = (nerdamer as unknown as {
         limit: (expression: string, variable: string, value: string) => ReturnType<typeof nerdamer>;
@@ -264,8 +296,8 @@ async function evalLimit(args: string): Promise<CalcResult> {
       return { ok: false, value: "", error: "Limit target must be a number" };
     }
 
-    // Try direct substitution first.
-    try {
+    // Try direct substitution first for an ordinary two-sided limit.
+    if (direction === "both") try {
       const direct = evaluate(target, { [variable]: val });
       if (typeof direct === "number" && Number.isFinite(direct)) {
         return {
@@ -277,6 +309,17 @@ async function evalLimit(args: string): Promise<CalcResult> {
       }
     } catch {
       // Direct substitution failed (e.g. 0/0); fall through to estimation.
+    }
+
+    if (direction !== "both") {
+      const epsilon = Math.max(1e-7, Math.abs(val) * 1e-7);
+      const samplePoint = direction === "left" ? val - epsilon : val + epsilon;
+      const directed = evaluate(target, { [variable]: samplePoint });
+      if (typeof directed !== "number" || Number.isNaN(directed)) {
+        return { ok: false, value: "", error: "Could not evaluate this one-sided limit" };
+      }
+      const value = Math.abs(directed) > 100_000 ? (directed > 0 ? "Infinity" : "-Infinity") : `≈ ${formatValue(directed)}`;
+      return { ok: true, kind: "limit", value, latex: value.replace("≈", "\\approx") };
     }
 
     // Numeric estimation via left/right approach.

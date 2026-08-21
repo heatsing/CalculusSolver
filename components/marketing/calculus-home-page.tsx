@@ -376,6 +376,21 @@ export function CalculusHomePage(): React.JSX.Element {
           </div>
         </section>
 
+        <section className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-[#d9e5f4] bg-white p-6 sm:p-8">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#0967ed]">Supporting Math Resources</p>
+            <h2 className="mt-2 text-2xl font-bold text-[#071f4a]">Explore Fraction Guides</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-7 text-[#5f6f8d]">Use these secondary learning resources to move between fractions, decimals, percentages, and equivalent forms.</p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {[["Percent and Decimal", "/percent-and-decimal"], ["Equivalent Fractions", "/equivalent-fractions"]].map(([label, href]) => (
+                <Link key={href} href={href} className="group flex items-center justify-between rounded-xl border border-[#d9e5f4] px-5 py-4 font-bold text-[#071f4a] hover:border-[#82aff5] hover:text-[#0967ed]">
+                  {label}<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="mx-auto max-w-[1120px] px-4 py-14 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Questions & Answers" title="Frequently Asked Questions" />
           <div className="mt-8 divide-y divide-[#d9e5f4] rounded-2xl border border-[#d9e5f4] bg-white">
