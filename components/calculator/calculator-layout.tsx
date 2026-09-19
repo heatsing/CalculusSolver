@@ -20,12 +20,35 @@ export function CalculatorFooter(): React.JSX.Element {
   return <Footer />;
 }
 
-export function CalculatorHero({ h1, subtitle }: { h1: string; subtitle: string }): React.JSX.Element {
+export function CalculatorHero({
+  h1,
+  subtitle,
+  eyebrow = "Free online calculator",
+  relatedLinks = []
+}: {
+  h1: string;
+  subtitle: string;
+  eyebrow?: string;
+  relatedLinks?: readonly CalculatorToolLink[];
+}): React.JSX.Element {
   return (
     <header className="mx-auto mb-8 max-w-3xl text-center">
-      <p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#0967ed]">Free online calculator</p>
+      <p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#0967ed]">{eyebrow}</p>
       <h1 className="text-4xl font-bold tracking-tight text-[#0a234f] sm:text-5xl">{h1}</h1>
       <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-[#637392]">{subtitle}</p>
+      {relatedLinks.length > 0 ? (
+        <nav aria-label="Related calculators" className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-2 text-sm">
+          {relatedLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="rounded-full border border-[#dbe6f6] bg-white px-3 py-1.5 font-semibold text-[#0967ed] hover:border-[#82aff5]"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
     </header>
   );
 }

@@ -75,6 +75,28 @@ describe("programmatic SEO architecture", () => {
     expect(sitemapPaths.has("/terms")).toBe(false);
   });
 
+  it("leads the derivative calculator title with the primary query", () => {
+    const derivative = getCalculatorPage("derivative-calculator");
+    expect(derivative).toBeTruthy();
+    if (!derivative) return;
+
+    expect(derivative.metadata.title.startsWith("Derivative Calculator")).toBe(true);
+    expect(derivative.metadata.title.toLowerCase().startsWith("calculus solver")).toBe(false);
+    expect(derivative.metadata.description.toLowerCase()).toContain("find the derivative");
+    expect(derivative.metadata.description.toLowerCase()).toContain("step-by-step differentiation");
+    expect(derivative.page.h1.toLowerCase()).toContain("derivative calculator");
+    expect(derivative.page.heroRelatedTools?.map((tool) => tool.href)).toEqual([
+      "/integral-calculator",
+      "/definite-integral-calculator",
+      "/limit-calculator",
+      "/calculus-calculator"
+    ]);
+    expect(derivative.page.relatedTools.map((tool) => tool.href)).toEqual(
+      expect.arrayContaining(["/integral-calculator", "/definite-integral-calculator", "/limit-calculator"])
+    );
+    expect(derivative.learningLinks.map((link) => link.href)).toContain("/calculus-calculator");
+  });
+
   it("generates parseable, route-consistent structured data", () => {
     const sample = calculatorPages.find((item) => item.slug === "derivative-calculator");
     expect(sample).toBeTruthy();

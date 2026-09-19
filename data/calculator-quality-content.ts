@@ -23,7 +23,7 @@ export type CalculatorQualityContent = {
 // shared paragraph.
 export const calculatorQualityContent: Readonly<Record<string, CalculatorQualityContent>> = {
   "derivative-calculator": {
-    searchIntent: "Find a derivative and understand which differentiation rule applies at each stage.",
+    searchIntent: "Find a derivative with this calculator and understand which differentiation rule applies at each stage.",
     methodOverview: "The calculator classifies sums, products, quotients, powers, and compositions before applying the matching differentiation rules. The result is simplified and can be checked by differentiating equivalent forms or comparing numerical slopes.",
     supportedProblems: ["Polynomial, rational, trigonometric, exponential, and logarithmic functions", "Product, quotient, and chain-rule combinations", "First and higher-order derivatives with respect to x"],
     limitations: ["Piecewise functions and implicit equations may require a more explicit input format.", "A simplified symbolic answer can look different from an equivalent textbook form."],
@@ -32,7 +32,7 @@ export const calculatorQualityContent: Readonly<Record<string, CalculatorQuality
       { title: "Product rule", problem: "Differentiate x^2 sin(x)", method: "Use (uv)' = u'v + uv'.", steps: ["Let u=x^2 and v=sin(x).", "Compute u'=2x and v'=cos(x).", "Substitute into the product rule."], answer: "2x\sin(x)+x^2\cos(x)" },
       { title: "Chain rule", problem: "Differentiate e^(3x^2)", method: "Differentiate the outer exponential and then the inner exponent.", steps: ["Set u=3x^2.", "The outer derivative is e^u and du/dx=6x.", "Multiply the outer and inner derivatives."], answer: "6xe^{3x^2}" }
     ],
-    relatedLearning: [{ label: "Derivative rules guide", href: "/guides/derivative-rules" }, { label: "Derivative examples", href: "/examples/derivative-polynomial" }, { label: "Second derivative example", href: "/examples/second-derivative" }],
+    relatedLearning: [{ label: "Derivative rules guide", href: "/guides/derivative-rules" }, { label: "Derivative examples", href: "/examples/derivative-polynomial" }, { label: "Second derivative example", href: "/examples/second-derivative" }, { label: "Calculus Calculator", href: "/calculus-calculator" }],
     additionalFaqs: [{ question: "How should I enter a composite function?", answer: "Use parentheses around the inner expression, for example exp(3*x^2) or sin(x^2+1)." }, { question: "How can I check a derivative?", answer: "Differentiate an equivalent form, inspect the rules used, or compare the result with numerical slopes at valid sample points." }]
   },
   "integral-calculator": {

@@ -33,10 +33,12 @@ export type CalculatorPageProps = {
   mode: string;
   h1: string;
   subtitle: string;
+  eyebrow?: string;
   exampleLatex: string;
   howItWorks: CalculatorStep[];
   faqs: CalculatorFaq[];
   relatedTools: CalculatorToolLink[];
+  heroRelatedTools?: readonly CalculatorToolLink[];
   category?: string;
   updatedAt?: string;
   educationalContent?: CalculatorEducationalContent;
@@ -44,7 +46,7 @@ export type CalculatorPageProps = {
   learningLinks?: readonly { label: string; href: string }[];
 };
 
-export function CalculatorPage({ title, description, path, mode, h1, subtitle, exampleLatex, howItWorks, faqs, relatedTools, category = "Mathematics", updatedAt, educationalContent, qualityContent, learningLinks = [] }: CalculatorPageProps): React.JSX.Element {
+export function CalculatorPage({ title, description, path, mode, h1, subtitle, eyebrow, exampleLatex, howItWorks, faqs, relatedTools, heroRelatedTools = [], category = "Mathematics", updatedAt, educationalContent, qualityContent, learningLinks = [] }: CalculatorPageProps): React.JSX.Element {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]">
       <StructuredData data={webPageStructuredData({ name: h1, description, path, updatedAt })} />
@@ -53,7 +55,7 @@ export function CalculatorPage({ title, description, path, mode, h1, subtitle, e
       <StructuredData data={faqPageStructuredData(faqs)} />
       <CalculatorHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
-        <CalculatorHero h1={h1} subtitle={subtitle} />
+        <CalculatorHero h1={h1} subtitle={subtitle} eyebrow={eyebrow} relatedLinks={heroRelatedTools} />
         {path === "/derivative-calculator" || path === "/integral-calculator" || path === "/limit-calculator"
           ? <ScientificCalculusCalculator variant={path === "/derivative-calculator" ? "derivative" : path === "/integral-calculator" ? "integral" : "limit"} />
           : <ToolCalculatorWorkspace title={title} mode={mode} />}
