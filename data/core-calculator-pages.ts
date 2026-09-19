@@ -73,26 +73,28 @@ export const coreCalculatorPages = {
   },
   "derivative-calculator": {
     metadata: {
-  title: "Calculus Solver – Free Online Derivative Calculator",
+  title: "Derivative Calculator – Find Derivatives with Steps | Calculus Solver",
   description:
-    "Free derivative calculator with step-by-step solutions. Compute derivatives of polynomials, trigonometric, exponential, and logarithmic functions instantly.",
+    "Find the derivative of a function with step-by-step differentiation. Free online derivative calculator for polynomials, trig, exponential, and log functions.",
   path: "/derivative-calculator",
   keywords: [
     "derivative calculator",
-    "differentiation calculator",
     "find derivative",
+    "differentiation calculator",
     "step by step derivative",
-    "free math solver",
-    "calculus help"
+    "differentiate with steps",
+    "dy/dx calculator",
+    "free math solver"
   ]
 },
     page: {
       title: "Derivative Calculator",
-      description: "Free derivative calculator with step-by-step solutions.",
+      description: "Find the derivative of a function with step-by-step differentiation. Free online derivative calculator for polynomials, trig, exponential, and log functions.",
       path: "/derivative-calculator",
       mode: "derivative",
-      h1: "Derivative Calculator",
-      subtitle: "Compute derivatives of polynomials, trigonometric, exponential, and logarithmic functions with detailed steps.",
+      h1: "Derivative Calculator with Steps",
+      eyebrow: "Free derivative calculator",
+      subtitle: "Find the derivative of a function and see each differentiation rule applied. Enter an expression to differentiate polynomials, trigonometric, exponential, and logarithmic functions step by step.",
       exampleLatex: "\\\\frac{d}{dx}(x^3 - 2x^2 + x) = 3x^2 - 4x + 1",
       howItWorks: [
         {
@@ -120,8 +122,14 @@ export const coreCalculatorPages = {
       ],
       relatedTools: [
         { label: "Integral Calculator", href: "/integral-calculator" },
+        { label: "Definite Integral Calculator", href: "/definite-integral-calculator" },
+        { label: "Limit Calculator", href: "/limit-calculator" }
+      ],
+      heroRelatedTools: [
+        { label: "Integral Calculator", href: "/integral-calculator" },
+        { label: "Definite Integral Calculator", href: "/definite-integral-calculator" },
         { label: "Limit Calculator", href: "/limit-calculator" },
-        { label: "Equation Solver", href: "/equation-solver" }
+        { label: "Calculus Calculator", href: "/calculus-calculator" }
       ]
     }
   },
