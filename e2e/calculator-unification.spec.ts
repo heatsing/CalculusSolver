@@ -9,8 +9,14 @@ test.describe("Unified calculator pages", () => {
 
     for (const route of calculatorRoutes) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
-      await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Calculus Solver – Free Online /);
-      await expect(page.getByText("Free online calculator", { exact: true }), `Missing shared hero on ${route}`).toBeVisible();
+      if (route === "/derivative-calculator") {
+        await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Derivative Calculator – Find Derivatives with Steps \| Calculus Solver$/);
+        await expect(page.getByText("Free derivative calculator", { exact: true }), `Missing intent-matched hero on ${route}`).toBeVisible();
+        await expect(page.getByRole("navigation", { name: "Related calculators" }), `Missing related calculator links on ${route}`).toBeVisible();
+      } else {
+        await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Calculus Solver – Free Online /);
+        await expect(page.getByText("Free online calculator", { exact: true }), `Missing shared hero on ${route}`).toBeVisible();
+      }
       await expect(page.getByText("Step-by-step solutions", { exact: true }), `Missing shared benefits on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: /How to Use the/ }), `Missing shared instructions on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: "Frequently Asked Questions" }), `Missing shared FAQ on ${route}`).toBeVisible();
