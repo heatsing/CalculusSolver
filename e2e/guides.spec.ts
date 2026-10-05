@@ -46,6 +46,18 @@ test.describe("Learning guides", () => {
     }
   });
 
+  test("unknown guide slugs use the not-found page", async ({ page }) => {
+    for (const slug of ["not-a-real-guide-zzz", "foo"]) {
+      const response = await page.goto(`/guides/${slug}`, { waitUntil: "domcontentloaded" });
+      expect(response?.status(), `Expected 404 for /guides/${slug}`).toBe(404);
+      await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
+      const robots = (await page.locator('meta[name="robots"]').first().getAttribute("content"))?.toLowerCase() ?? "";
+      expect(robots, `Expected noindex on /guides/${slug}`).toContain("noindex");
+      expect(robots, `Unknown guide should not be index,follow`).not.toContain("index, follow");
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+    }
+  });
+
   test("index exposes collection data and sitemap includes every guide", async ({ page }) => {
     await page.goto("/guides");
     const types = await page.evaluate(() => Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((element) => {
