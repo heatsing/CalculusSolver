@@ -12,6 +12,10 @@ import { breadcrumbStructuredData, createMetadata, learningResourceStructuredDat
 
 type GuidePageProps = { params: Promise<{ slug: string }> };
 
+// Unknown slugs must 404 before the root loading shell is sent. Calling
+// notFound() after params resolve still prerenders that shell as HTTP 200.
+export const dynamicParams = false;
+
 export function generateStaticParams(): { slug: string }[] {
   return guides.map((guide) => ({ slug: guide.slug }));
 }
@@ -19,7 +23,9 @@ export function generateStaticParams(): { slug: string }[] {
 export async function generateMetadata({ params }: GuidePageProps): Promise<Metadata> {
   const { slug } = await params;
   const guide = getGuide(slug);
-  if (!guide) return {};
+  if (!guide) {
+    notFound();
+  }
   return createMetadata({
     title: `${guide.shortTitle} Guide`,
     description: guide.description,

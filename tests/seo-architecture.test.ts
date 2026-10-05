@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
 import { calculatorPages, getCalculatorPage, getCalculatorStaticParams } from "@/data/calculator-pages";
 import { exampleDetails, getExampleStaticParams } from "@/data/example-details";
+import { guides } from "@/data/guides";
 import { equivalentFractionSlug, fractionCandidates, getFractionStaticParams, percentDecimalSlug } from "@/data/fraction-pages";
 import {
   breadcrumbStructuredData,
@@ -73,6 +74,10 @@ describe("programmatic SEO architecture", () => {
     expect(sitemapPaths.has("/contact")).toBe(false);
     expect(sitemapPaths.has("/privacy")).toBe(false);
     expect(sitemapPaths.has("/terms")).toBe(false);
+    const guidePaths = [...sitemapPaths].filter((pathname) => pathname.startsWith("/guides/"));
+    expect(new Set(guidePaths)).toEqual(new Set(guides.map((guide) => `/guides/${guide.slug}`)));
+    expect(guidePaths).not.toContain("/guides/not-a-real-guide-zzz");
+    expect(guidePaths).not.toContain("/guides/foo");
   });
 
   it("leads the derivative calculator title with the primary query", () => {
@@ -95,6 +100,39 @@ describe("programmatic SEO architecture", () => {
       expect.arrayContaining(["/integral-calculator", "/definite-integral-calculator", "/limit-calculator"])
     );
     expect(derivative.learningLinks.map((link) => link.href)).toContain("/calculus-calculator");
+  });
+
+  it("leads the limit calculator title with the primary query", () => {
+    const limit = getCalculatorPage("limit-calculator");
+    expect(limit).toBeTruthy();
+    if (!limit) return;
+
+    expect(limit.metadata.title).toBe("Limit Calculator – Evaluate Limits with Steps | Calculus Solver");
+    expect(limit.metadata.title.toLowerCase().startsWith("calculus solver")).toBe(false);
+    expect(limit.metadata.description.toLowerCase()).toContain("evaluate limits");
+    expect(limit.metadata.description.toLowerCase()).toContain("step-by-step");
+    expect(limit.metadata.path).toBe("/limit-calculator");
+    expect(limit.page.h1).toBe("Limit Calculator with Steps");
+    expect(limit.page.eyebrow).toBe("Free limit calculator");
+    expect(limit.page.subtitle.toLowerCase()).toContain("evaluate limits with steps");
+    expect(limit.page.heroRelatedTools?.map((tool) => tool.href)).toEqual([
+      "/derivative-calculator",
+      "/integral-calculator",
+      "/asymptote-calculator",
+      "/calculus-calculator"
+    ]);
+    expect(limit.page.relatedTools.map((tool) => tool.href)).toEqual(
+      expect.arrayContaining(["/derivative-calculator", "/integral-calculator", "/asymptote-calculator"])
+    );
+    for (const href of [...limit.page.relatedTools.map((tool) => tool.href), ...(limit.page.heroRelatedTools ?? []).map((tool) => tool.href)]) {
+      expect(href.startsWith("/")).toBe(true);
+      if (href !== "/calculus-calculator") expect(getCalculatorPage(href.slice(1))).toBeTruthy();
+    }
+    expect(limit.updatedAt).toBe("2026-10-05");
+    const limitEntry = sitemap().find((entry) => new URL(entry.url).pathname === "/limit-calculator");
+    const derivativeEntry = sitemap().find((entry) => new URL(entry.url).pathname === "/derivative-calculator");
+    expect(limitEntry?.lastModified && new Date(limitEntry.lastModified).toISOString().startsWith("2026-10-05")).toBe(true);
+    expect(derivativeEntry?.lastModified && new Date(derivativeEntry.lastModified).toISOString().startsWith("2026-08-10")).toBe(true);
   });
 
   it("generates parseable, route-consistent structured data", () => {

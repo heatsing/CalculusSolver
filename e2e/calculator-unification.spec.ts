@@ -13,6 +13,10 @@ test.describe("Unified calculator pages", () => {
         await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Derivative Calculator – Find Derivatives with Steps \| Calculus Solver$/);
         await expect(page.getByText("Free derivative calculator", { exact: true }), `Missing intent-matched hero on ${route}`).toBeVisible();
         await expect(page.getByRole("navigation", { name: "Related calculators" }), `Missing related calculator links on ${route}`).toBeVisible();
+      } else if (route === "/limit-calculator") {
+        await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Limit Calculator – Evaluate Limits with Steps \| Calculus Solver$/);
+        await expect(page.getByText("Free limit calculator", { exact: true }), `Missing intent-matched hero on ${route}`).toBeVisible();
+        await expect(page.getByRole("navigation", { name: "Related calculators" }), `Missing related calculator links on ${route}`).toBeVisible();
       } else {
         await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Calculus Solver – Free Online /);
         await expect(page.getByText("Free online calculator", { exact: true }), `Missing shared hero on ${route}`).toBeVisible();

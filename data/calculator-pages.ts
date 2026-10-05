@@ -176,7 +176,7 @@ export const calculatorPages: readonly CalculatorDefinition[] = Object.entries(s
       slug,
       type: "calculator" as const,
       category,
-      updatedAt: qualityContent ? "2026-08-10" : "2026-08-01",
+      updatedAt: slug === "limit-calculator" ? "2026-10-05" : qualityContent ? "2026-08-10" : "2026-08-01",
       seoScore,
       seoGrade,
       indexable,

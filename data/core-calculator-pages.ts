@@ -485,26 +485,28 @@ export const coreCalculatorPages = {
   },
   "limit-calculator": {
     metadata: {
-  title: "Calculus Solver – Free Online Limit Calculator",
+  title: "Limit Calculator – Evaluate Limits with Steps | Calculus Solver",
   description:
-    "Free limit calculator with step-by-step solutions. Evaluate one-sided and two-sided limits of functions as x approaches any value.",
+    "Evaluate limits with step-by-step solutions. Free online limit calculator for one-sided limits, two-sided limits, and limits at infinity.",
   path: "/limit-calculator",
   keywords: [
     "limit calculator",
-    "evaluate limit",
+    "evaluate limits",
+    "evaluate limits with steps",
+    "one sided limit calculator",
+    "two sided limit calculator",
     "limit solver",
-    "as x approaches",
-    "step by step limits",
     "free math solver"
   ]
 },
     page: {
       title: "Limit Calculator",
-      description: "Free limit calculator with step-by-step solutions.",
+      description: "Evaluate limits with step-by-step solutions. Free online limit calculator for one-sided limits, two-sided limits, and limits at infinity.",
       path: "/limit-calculator",
       mode: "limit",
-      h1: "Limit Calculator",
-      subtitle: "Evaluate one-sided and two-sided limits with detailed reasoning about behavior near the target point.",
+      h1: "Limit Calculator with Steps",
+      eyebrow: "Free limit calculator",
+      subtitle: "Evaluate limits with steps and see how the function behaves near the target. Enter an expression to evaluate one-sided limits, two-sided limits, and limits at infinity.",
       exampleLatex: "\\\\lim_{x \\\\to 0} \\\\frac{\\\\sin x}{x} = 1",
       howItWorks: [
         { step: "Enter the limit", description: "Type the function and the value x is approaching." },
@@ -524,7 +526,13 @@ export const coreCalculatorPages = {
       relatedTools: [
         { label: "Derivative Calculator", href: "/derivative-calculator" },
         { label: "Integral Calculator", href: "/integral-calculator" },
-        { label: "Equation Solver", href: "/equation-solver" }
+        { label: "Asymptote Calculator", href: "/asymptote-calculator" }
+      ],
+      heroRelatedTools: [
+        { label: "Derivative Calculator", href: "/derivative-calculator" },
+        { label: "Integral Calculator", href: "/integral-calculator" },
+        { label: "Asymptote Calculator", href: "/asymptote-calculator" },
+        { label: "Calculus Calculator", href: "/calculus-calculator" }
       ]
     }
   },
