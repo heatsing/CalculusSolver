@@ -1,0 +1,4 @@
+{
+  "generateNewThinPages": false,
+  "note": "Existing percent and equivalent-fraction URLs stay published. Leave generateNewThinPages false unless an expansion is explicitly approved. While false, the generator does not add thin pages, and routes plus the sitemap ignore candidates outside data/fraction-published-keys.json."
+}

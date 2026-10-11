@@ -152,6 +152,12 @@ for (const family of ["percent-decimal", "equivalent-fractions"]) {
   }
 }
 
+const homeHtml = fs.readFileSync(htmlPathFor("/"), "utf8");
+for (const href of ["/derivative-calculator", "/limit-calculator", "/integral-calculator", "/calculus-calculator"]) {
+  if (!homeHtml.includes(`href="${href}"`)) failures.push(`/: missing homepage link to ${href}`);
+}
+if (!homeHtml.includes('aria-label="Popular calculators"')) failures.push("/: missing popular calculators start-here block");
+
 if (failures.length) {
   console.error(`SEO output check failed with ${failures.length} issue(s):`);
   for (const failure of failures) console.error(`- ${failure}`);

@@ -1,5 +1,9 @@
 # Fraction Programmatic SEO Audit
 
+## Generation status
+
+New thin percent and equivalent-fraction pages are written only when `data/fraction-page-generation.json` sets `generateNewThinPages` to true. While that flag is false, the generator keeps the frozen allowlist and does not add URLs. Existing child URLs stay in place; this freeze does not delete or noindex them.
+
 ## Existing state
 
 Before this expansion, CalcSolver had focused fraction, percentage, and decimal calculators but no dedicated equivalent-fraction or combined percent-and-decimal page families.

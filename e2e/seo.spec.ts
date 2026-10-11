@@ -50,6 +50,34 @@ async function waitForMetaTags(page: import("@playwright/test").Page): Promise<v
 }
 
 test.describe("SEO crawler", () => {
+  test("homepage start-here block links to core solvers", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const nav = page.getByRole("navigation", { name: "Popular calculators" });
+    await expect(nav).toBeVisible();
+    await expect(page.locator("footer").getByRole("navigation", { name: "Popular calculators" })).toHaveCount(0);
+
+    const box = await nav.boundingBox();
+    const viewport = page.viewportSize();
+    expect(box).toBeTruthy();
+    expect(viewport).toBeTruthy();
+    if (!box || !viewport) return;
+    expect(box.y).toBeLessThan(viewport.height);
+    expect(box.y + box.height).toBeGreaterThan(0);
+
+    for (const [name, href] of [
+      ["Derivative Calculator", "/derivative-calculator"],
+      ["Limit Calculator", "/limit-calculator"],
+      ["Integral Calculator", "/integral-calculator"],
+      ["Calculus Calculator", "/calculus-calculator"]
+    ] as const) {
+      await expect(nav.getByRole("link", { name })).toHaveAttribute("href", href);
+    }
+
+    await nav.getByRole("link", { name: "Derivative Calculator" }).click();
+    await expect(page).toHaveURL(/\/derivative-calculator$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/derivative calculator/i);
+  });
+
   test("home page uses the approved title and description", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await waitForMetaTags(page);

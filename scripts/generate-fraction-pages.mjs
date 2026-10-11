@@ -1,5 +1,32 @@
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { frozenInventoryMatches, selectPublishableCandidates } from "../lib/fraction-page-freeze.mjs";
+
+const configPath = path.resolve("data/fraction-page-generation.json");
+const keysPath = path.resolve("data/fraction-published-keys.json");
+const dataPath = path.resolve("data/fraction-page-candidates.json");
+
+function stopNewThinPages() {
+  const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  if (config.generateNewThinPages === true) return false;
+  const existing = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+  const publishedKeys = JSON.parse(fs.readFileSync(keysPath, "utf8"));
+  if (!frozenInventoryMatches(existing, publishedKeys)) {
+    throw new Error(
+      `Refusing to generate thin percent and equivalent-fraction pages. Candidate inventory (${existing.length}) does not match the frozen allowlist (${publishedKeys.length}). New pages are not created while generateNewThinPages is false.`
+    );
+  }
+  console.log(
+    `Thin percent and equivalent-fraction page generation is stopped. Kept ${existing.length} existing candidates (${existing.length * 2} URLs). No new pages were written.`
+  );
+  return true;
+}
+
+function main() {
+  if (stopNewThinPages()) return;
+  writeGeneratedInventory();
+}
 
 const targetCount = 750;
 const commonDenominators = new Set([2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 25, 50]);
@@ -48,6 +75,7 @@ function scoreCandidate(numerator, denominator) {
   return score;
 }
 
+function writeGeneratedInventory() {
 const pool = [];
 for (let denominator = 2; denominator <= 60; denominator += 1) {
   const maxNumerator = Math.min(72, denominator * 2 - 1);
@@ -85,11 +113,13 @@ const candidates = selected
     pageFamilies: { equivalentFractions: true, percentDecimal: true }
   }));
 
-const dataPath = path.resolve("data/fraction-page-candidates.json");
-fs.writeFileSync(dataPath, `${JSON.stringify(candidates, null, 2)}\n`);
+const publishedKeys = JSON.parse(fs.readFileSync(keysPath, "utf8"));
+const publishable = selectPublishableCandidates(candidates, publishedKeys, true);
+fs.writeFileSync(dataPath, `${JSON.stringify(publishable, null, 2)}\n`);
+fs.writeFileSync(keysPath, `${JSON.stringify(publishable.map((item) => `${item.numerator}/${item.denominator}`), null, 2)}\n`);
 
 const csvRows = [["URL", "Page Family", "Numerator", "Denominator", "Simplified Fraction", "Decimal", "Percent", "Priority", "Indexable", "Canonical", "Related Page"]];
-for (const item of candidates) {
+for (const item of publishable) {
   const fraction = `${item.numerator}/${item.denominator}`;
   const equivalentUrl = `/what-is-equivalent-to-${item.numerator}-${item.denominator}-fraction`;
   const conversionUrl = `/${item.numerator}-${item.denominator}-as-a-percent-and-decimal`;
@@ -99,9 +129,13 @@ for (const item of candidates) {
 const csv = csvRows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
 fs.writeFileSync(path.resolve("FRACTION-PAGE-INVENTORY.csv"), `${csv}\n`);
 
-const excluded = pool.length - candidates.length;
-const grades = candidates.reduce((counts, item) => ({ ...counts, [item.priority]: (counts[item.priority] ?? 0) + 1 }), {});
+const excluded = pool.length - publishable.length;
+const grades = publishable.reduce((counts, item) => ({ ...counts, [item.priority]: (counts[item.priority] ?? 0) + 1 }), {});
 const audit = `# Fraction Programmatic SEO Audit
+
+## Generation status
+
+New thin percent and equivalent-fraction pages are written only when \`data/fraction-page-generation.json\` sets \`generateNewThinPages\` to true. While that flag is false, the generator keeps the frozen allowlist and does not add URLs.
 
 ## Existing state
 
@@ -111,10 +145,10 @@ Before this expansion, CalcSolver had focused fraction, percentage, and decimal 
 
 - Primary product identity remains scientific calculation, algebra, calculus, and mathematical solving.
 - Secondary hubs: \`/equivalent-fractions\` and \`/percent-and-decimal\`.
-- ${candidates.length} approved fraction candidates feed both page families.
-- Equivalent Fractions pages: ${candidates.length}.
-- Percent and Decimal pages: ${candidates.length}.
-- Total generated child pages: ${candidates.length * 2}.
+- ${publishable.length} approved fraction candidates feed both page families.
+- Equivalent Fractions pages: ${publishable.length}.
+- Percent and Decimal pages: ${publishable.length}.
+- Total generated child pages: ${publishable.length * 2}.
 - Candidate grades: A=${grades.A ?? 0}, B=${grades.B ?? 0}, C=${grades.C ?? 0}.
 
 ## Selection and exclusions
@@ -141,4 +175,9 @@ Automated tests validate uniqueness, denominator safety, simplification, decimal
 `;
 fs.writeFileSync(path.resolve("FRACTION-PROGRAMMATIC-SEO-AUDIT.md"), audit);
 
-console.log(`Generated ${candidates.length} candidates, ${candidates.length * 2} pages, and excluded ${excluded} lower-priority combinations.`);
+console.log(`Generated ${publishable.length} candidates, ${publishable.length * 2} pages, and excluded ${excluded} lower-priority combinations.`);
+}
+
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+  main();
+}
