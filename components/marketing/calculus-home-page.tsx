@@ -15,6 +15,7 @@ import {
 import { DeferredDailyChallenge } from "@/components/daily-challenge/deferred-daily-challenge";
 import { Footer } from "@/components/layout/footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { HomeStartHere, homeStartHereCalculators } from "@/components/marketing/home-start-here";
 import { SolverShellBoundary } from "@/components/solver/solver-shell-boundary";
 import { generalFaqs } from "@/data/faqs";
 
@@ -86,14 +87,7 @@ const examples = [
   }
 ] as const;
 
-const relatedCalculators = [
-  ["Calculus Calculator", "/calculus-calculator"],
-  ["Derivative Calculator", "/derivative-calculator"],
-  ["Integral Calculator", "/integral-calculator"],
-  ["Limit Calculator", "/limit-calculator"],
-  ["Algebra Solver", "/algebra-solver"],
-  ["Equation Solver", "/equation-solver"]
-] as const;
+const relatedCalculators = homeStartHereCalculators;
 
 function SectionHeading({
   eyebrow,
@@ -133,6 +127,7 @@ export function CalculusHomePage(): React.JSX.Element {
                 </li>
               ))}
             </ul>
+            <HomeStartHere />
           </header>
 
           <div id="calculator" className="mx-auto mt-8 max-w-[1080px] scroll-mt-24 overflow-hidden rounded-2xl border border-[#cfe0f6] bg-white shadow-[0_20px_60px_rgba(35,74,132,.14)]">
@@ -366,9 +361,9 @@ export function CalculusHomePage(): React.JSX.Element {
               description="Use a dedicated tool for a more focused input format and topic-specific examples."
             />
             <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedCalculators.map(([label, href]) => (
-                <Link key={href} href={href} className="group flex min-h-16 items-center justify-between rounded-xl border border-[#d9e5f4] bg-white px-5 py-4 text-sm font-bold text-[#071f4a] hover:border-[#82aff5] hover:text-[#0967ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed]">
-                  {label}
+              {relatedCalculators.map((calculator) => (
+                <Link key={calculator.href} href={calculator.href} className="group flex min-h-16 items-center justify-between rounded-xl border border-[#d9e5f4] bg-white px-5 py-4 text-sm font-bold text-[#071f4a] hover:border-[#82aff5] hover:text-[#0967ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed]">
+                  {calculator.label}
                   <ArrowRight className="h-4 w-4 text-[#0967ed] transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </Link>
               ))}

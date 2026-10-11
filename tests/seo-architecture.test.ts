@@ -67,10 +67,18 @@ describe("programmatic SEO architecture", () => {
     expect(sitemapPaths.has("/percent-and-decimal")).toBe(true);
     expect(sitemapPaths.has("/equivalent-fractions")).toBe(true);
     expect(getFractionStaticParams()).toHaveLength(1500);
+    const percentPaths = [...sitemapPaths].filter((pathname) => /^\d+-\d+-as-a-percent-and-decimal$/.test(pathname.slice(1)));
+    const equivalentPaths = [...sitemapPaths].filter((pathname) => /^what-is-equivalent-to-\d+-\d+-fraction$/.test(pathname.slice(1)));
+    expect(percentPaths).toHaveLength(fractionCandidates.length);
+    expect(equivalentPaths).toHaveLength(fractionCandidates.length);
+    expect(sitemapPaths.has("/99-97-as-a-percent-and-decimal")).toBe(false);
+    expect(sitemapPaths.has("/what-is-equivalent-to-99-97-fraction")).toBe(false);
     for (const candidate of fractionCandidates) {
       expect(sitemapPaths.has(`/${percentDecimalSlug(candidate)}`)).toBe(true);
       expect(sitemapPaths.has(`/${equivalentFractionSlug(candidate)}`)).toBe(true);
     }
+    const homeEntry = sitemap().find((entry) => new URL(entry.url).pathname === "/");
+    expect(homeEntry?.lastModified && new Date(homeEntry.lastModified).toISOString().startsWith("2026-10-11")).toBe(true);
     expect(sitemapPaths.has("/contact")).toBe(false);
     expect(sitemapPaths.has("/privacy")).toBe(false);
     expect(sitemapPaths.has("/terms")).toBe(false);

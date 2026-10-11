@@ -4,12 +4,14 @@ import { guides } from "@/data/guides";
 import { exampleDetails } from "@/data/example-details";
 import { equivalentFractionSlug, fractionCandidates, percentDecimalSlug } from "@/data/fraction-pages";
 
+const homepageLastModified = "2026-10-11";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://calculussolver.net";
   const coreRoutes = ["/", "/calculus-calculator", "/daily-challenge", "/examples", "/calculators", "/guides", "/about", "/percent-and-decimal", "/equivalent-fractions"];
   const coreEntries: MetadataRoute.Sitemap = coreRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: route === "/daily-challenge" ? new Date() : new Date("2026-08-10"),
+    lastModified: route === "/" ? new Date(homepageLastModified) : route === "/daily-challenge" ? new Date() : new Date("2026-08-10"),
     changeFrequency: route === "/daily-challenge" ? "daily" : "weekly",
     priority: route === "/" ? 1 : route === "/daily-challenge" ? 0.9 : 0.8
   }));
@@ -34,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8
   }));
 
+  // Only the frozen published inventory. New thin candidates are excluded while generation is stopped.
   const fractionEntries: MetadataRoute.Sitemap = fractionCandidates.flatMap((candidate) => [
     {
       url: `${baseUrl}/${percentDecimalSlug(candidate)}`,

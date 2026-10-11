@@ -1,5 +1,8 @@
 import rawCandidates from "@/data/fraction-page-candidates.json";
+import generationConfig from "@/data/fraction-page-generation.json";
+import publishedFractionKeys from "@/data/fraction-published-keys.json";
 import { formatFractionDecimal, formatPercent, fractionToPercent, gcd, simplifyFraction } from "@/lib/fractions";
+import { selectPublishableCandidates } from "@/lib/fraction-page-freeze.mjs";
 
 export type FractionFamily = "percent-decimal" | "equivalent-fractions";
 export type FractionPriority = "A" | "B" | "C";
@@ -16,7 +19,19 @@ export type FractionCandidate = {
   pageFamilies: { equivalentFractions: true; percentDecimal: true };
 };
 
-export const fractionCandidates = rawCandidates as FractionCandidate[];
+/** False stops new thin percent and equivalent-fraction pages. Existing allowlisted URLs still publish. */
+export const GENERATE_NEW_THIN_FRACTION_PAGES = generationConfig.generateNewThinPages === true;
+
+export const frozenFractionKeys = publishedFractionKeys;
+
+export function publishableFractionCandidates<T extends Pick<FractionCandidate, "numerator" | "denominator">>(
+  candidates: readonly T[],
+  generateNew = GENERATE_NEW_THIN_FRACTION_PAGES
+): T[] {
+  return selectPublishableCandidates(candidates, frozenFractionKeys, generateNew);
+}
+
+export const fractionCandidates = publishableFractionCandidates(rawCandidates as FractionCandidate[]);
 
 export function percentDecimalSlug(item: Pick<FractionCandidate, "numerator" | "denominator">): string {
   return `${item.numerator}-${item.denominator}-as-a-percent-and-decimal`;
