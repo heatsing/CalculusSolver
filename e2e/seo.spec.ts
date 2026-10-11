@@ -72,6 +72,10 @@ test.describe("SEO crawler", () => {
     ] as const) {
       await expect(nav.getByRole("link", { name })).toHaveAttribute("href", href);
     }
+
+    await nav.getByRole("link", { name: "Derivative Calculator" }).click();
+    await expect(page).toHaveURL(/\/derivative-calculator$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/derivative calculator/i);
   });
 
   test("home page uses the approved title and description", async ({ page }) => {
