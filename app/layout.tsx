@@ -88,7 +88,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <StructuredData data={[websiteStructuredData(), organizationStructuredData()]} />
+        <StructuredData data={websiteStructuredData()} />
+        <StructuredData data={organizationStructuredData()} />
         <Script
           defer
           src="https://cloud.umami.is/script.js"

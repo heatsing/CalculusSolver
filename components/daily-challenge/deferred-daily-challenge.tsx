@@ -22,7 +22,7 @@ function DailyChallengePlaceholder(): React.JSX.Element {
         <p className="text-sm font-semibold text-[#0967ed]">Today&apos;s calculus problem</p>
         <div className="mt-4 border-l-4 border-[#0967ed] bg-[#f3f7fc] px-5 py-5">
           <p className="font-serif text-xl font-semibold text-[#0a234f]">Preparing the challenge…</p>
-          <p className="mt-2 text-sm leading-6 text-[#637392]">Your progress and today&apos;s problem will appear here.</p>
+          <p className="mt-2 text-sm leading-6 text-[#526785]">Your progress and today&apos;s problem will appear here.</p>
         </div>
       </div>
       <div className="flex items-center gap-3 text-sm text-[#526785]">

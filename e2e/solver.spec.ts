@@ -17,7 +17,7 @@ test.describe("Calculus Solver", () => {
       await menuButton.click();
       await page.getByRole("link", { name: "Calculus Calculator" }).first().click();
     } else {
-      await page.locator('header nav a[href="/calculus-calculator"]').click();
+      await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Calculus Calculator" }).click();
     }
     await expect(page).toHaveURL("/calculus-calculator", { timeout: 10000 });
   });

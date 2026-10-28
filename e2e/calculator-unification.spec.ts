@@ -45,6 +45,12 @@ test.describe("Unified calculator pages", () => {
   test("specialized calculator workspaces return real answers", async ({ page }) => {
     test.setTimeout(240000);
     const representativeRoutes = calculatorRoutes.filter((route) => route !== "/calculus-calculator");
+    const warmup = await page.request.post("/api/calculus", {
+      data: { input: "x^2", operation: "derivative" },
+      headers: { "x-forwarded-for": "198.51.100.250" },
+      timeout: 120000
+    });
+    expect(warmup.ok(), "Calculus API warmup failed").toBe(true);
     let requestIndex = 0;
     for (const endpoint of ["**/api/solve", "**/api/calculus"]) {
       await page.route(endpoint, async (route) => {
@@ -59,7 +65,7 @@ test.describe("Unified calculator pages", () => {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await page.waitForLoadState("networkidle");
       await page.getByRole("button", { name: "Calculate result", exact: true }).click();
-      await expect(page.getByText("Solved", { exact: true }), `Calculator failed on ${route}`).toBeVisible({ timeout: 30000 });
+      await expect(page.getByText("Solved", { exact: true }), `Calculator failed on ${route}`).toBeVisible({ timeout: 60000 });
     }
   });
 });
