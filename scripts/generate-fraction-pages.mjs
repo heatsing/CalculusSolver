@@ -123,19 +123,22 @@ for (const item of publishable) {
   const fraction = `${item.numerator}/${item.denominator}`;
   const equivalentUrl = `/what-is-equivalent-to-${item.numerator}-${item.denominator}-fraction`;
   const conversionUrl = `/${item.numerator}-${item.denominator}-as-a-percent-and-decimal`;
-  csvRows.push([equivalentUrl, "Equivalent Fractions", item.numerator, item.denominator, `${item.simplifiedNumerator}/${item.simplifiedDenominator}`, item.decimal, `${item.percent}%`, item.priority, "true", equivalentUrl, conversionUrl]);
-  csvRows.push([conversionUrl, "Percent and Decimal", item.numerator, item.denominator, `${item.simplifiedNumerator}/${item.simplifiedDenominator}`, item.decimal, `${item.percent}%`, item.priority, "true", conversionUrl, equivalentUrl]);
+  const indexable = item.priority !== "C";
+  csvRows.push([equivalentUrl, "Equivalent Fractions", item.numerator, item.denominator, `${item.simplifiedNumerator}/${item.simplifiedDenominator}`, item.decimal, `${item.percent}%`, item.priority, indexable, equivalentUrl, conversionUrl]);
+  csvRows.push([conversionUrl, "Percent and Decimal", item.numerator, item.denominator, `${item.simplifiedNumerator}/${item.simplifiedDenominator}`, item.decimal, `${item.percent}%`, item.priority, indexable, conversionUrl, equivalentUrl]);
 }
 const csv = csvRows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
 fs.writeFileSync(path.resolve("FRACTION-PAGE-INVENTORY.csv"), `${csv}\n`);
 
 const excluded = pool.length - publishable.length;
 const grades = publishable.reduce((counts, item) => ({ ...counts, [item.priority]: (counts[item.priority] ?? 0) + 1 }), {});
+const indexableCandidates = (grades.A ?? 0) + (grades.B ?? 0);
+const noindexCandidates = grades.C ?? 0;
 const audit = `# Fraction Programmatic SEO Audit
 
 ## Generation status
 
-New thin percent and equivalent-fraction pages are written only when \`data/fraction-page-generation.json\` sets \`generateNewThinPages\` to true. While that flag is false, the generator keeps the frozen allowlist and does not add URLs.
+New thin percent and equivalent-fraction pages are written only when \`data/fraction-page-generation.json\` sets \`generateNewThinPages\` to true. While that flag is false, the generator keeps the frozen allowlist and does not add URLs. The freeze preserves the published URL set; the independent quality policy keeps A/B pages indexable and marks C pages \`noindex, follow\`.
 
 ## Existing state
 
@@ -150,6 +153,8 @@ Before this expansion, CalcSolver had focused fraction, percentage, and decimal 
 - Percent and Decimal pages: ${publishable.length}.
 - Total generated child pages: ${publishable.length * 2}.
 - Candidate grades: A=${grades.A ?? 0}, B=${grades.B ?? 0}, C=${grades.C ?? 0}.
+- Indexable child pages (A and B): ${indexableCandidates * 2}.
+- Noindex, follow child pages (C): ${noindexCandidates * 2}.
 
 ## Selection and exclusions
 
@@ -167,11 +172,11 @@ Pages adapt to proper, improper, unit, reducible, terminating-decimal, repeating
 
 ## Metadata, schema, sitemap, and linking
 
-Every child page receives a unique title, description, H1, canonical, WebPage schema, BreadcrumbList, and visible FAQ schema. Only approved inventory pages enter the sitemap. Each family links to its hub, its mathematical counterpart, and a small set of nearby relevant fractions.
+Every child page receives a unique title, description, H1, canonical, WebPage schema, BreadcrumbList, and visible FAQ schema. A- and B-grade pages are indexable and enter the sitemap. C-grade URLs remain generated and crawlable with “noindex, follow” metadata, but are excluded from the sitemap and hub indexes. Each family links to its hub, its mathematical counterpart, and a small set of indexable nearby fractions.
 
 ## Quality validation
 
-Automated tests validate uniqueness, denominator safety, simplification, decimal and percent correctness, equivalent-fraction equality, reciprocal family links, sitemap inclusion, and representative content-profile variation. The build-time SEO audit verifies generated HTML, metadata, canonicals, schema, internal links, encoding, and minimum server-rendered content.
+Automated tests validate uniqueness, denominator safety, simplification, decimal and percent correctness, equivalent-fraction equality, reciprocal family links, grade-based indexation, sitemap inclusion, and representative content-profile variation. The build-time SEO audit verifies generated HTML, metadata, canonicals, schema, internal links, encoding, and minimum server-rendered content.
 `;
 fs.writeFileSync(path.resolve("FRACTION-PROGRAMMATIC-SEO-AUDIT.md"), audit);
 

@@ -244,9 +244,9 @@ export function ScientificCalculusCalculator({ variant = "calculus" }: { variant
 
   return (
     <section aria-label={`${variant.charAt(0).toUpperCase() + variant.slice(1)} calculator`}>
-      <div className="mx-auto max-w-[780px] rounded-[30px] border-4 border-[#182d3f] bg-[linear-gradient(145deg,#173149,#0b1d2c)] p-3 shadow-[0_24px_65px_rgba(14,35,58,.28),inset_0_1px_0_rgba(255,255,255,.16)] sm:p-5">
+      <div className="mx-auto max-w-[780px] rounded-[24px] border-2 border-[#182d3f] bg-[linear-gradient(145deg,#173149,#0b1d2c)] p-3 shadow-[0_18px_45px_rgba(14,35,58,.22),inset_0_1px_0_rgba(255,255,255,.14)] sm:p-5">
         <div className="mb-3 flex items-center justify-between gap-3 px-1 text-white">
-          <div><p className="text-xs font-bold uppercase tracking-[.18em] text-blue-200">{variant.charAt(0).toUpperCase() + variant.slice(1)} mode</p><p className="mt-1 text-sm font-semibold text-white/90">{operationLabel}</p></div>
+          <div><p className="text-sm font-semibold text-white">{variant.charAt(0).toUpperCase() + variant.slice(1)} calculator</p><p className="mt-0.5 text-xs text-blue-200">Current operation: {operationLabel}</p></div>
           <button type="button" role="switch" aria-label="Angle unit" aria-checked={angleMode === "DEG"} onClick={() => setAngleMode((current) => current === "RAD" ? "DEG" : "RAD")} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 text-xs font-bold text-white hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
             <span>{angleMode}</span><span className={`relative h-5 w-9 rounded-full transition ${angleMode === "DEG" ? "bg-[#ff9f0a]" : "bg-[#557289]"}`}><span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition ${angleMode === "DEG" ? "left-[18px]" : "left-0.5"}`} /></span>
           </button>
@@ -264,7 +264,7 @@ export function ScientificCalculusCalculator({ variant = "calculus" }: { variant
         </div>
       </div>
       <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center justify-center gap-2">
-        {preset.examples.map((example) => <button key={example.label} type="button" onClick={() => updateInput(example.input, example.operation)} className="rounded-full border border-[#c5d8ef] bg-white px-4 py-2 text-xs font-semibold text-[#314567] shadow-sm hover:border-[#0967ed] hover:text-[#0967ed]">{example.label}</button>)}
+        {preset.examples.map((example) => <button key={example.label} type="button" onClick={() => updateInput(example.input, example.operation)} className="rounded-full border border-[#c5d8ef] bg-white px-4 py-2 text-xs font-semibold text-[#314567] hover:border-[#0967ed] hover:text-[#0967ed]">{example.label}</button>)}
         <button type="button" onClick={() => updateInput("")} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#c5d8ef] bg-white px-4 text-xs font-semibold text-[#637392] hover:border-[#0967ed] hover:text-[#0967ed]"><RotateCcw className="h-3.5 w-3.5" />Reset</button>
       </div>
       {error && <div className="mx-auto mt-5 max-w-[780px] rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">{error}</div>}

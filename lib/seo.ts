@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-const ogImage = `${appUrl}/og-image.png`;
+export const siteUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://calculussolver.net").replace(/\/$/, "");
+const ogImage = `${siteUrl}/og-image.png`;
+
+function absoluteUrl(path: string): string {
+  return path === "/" ? siteUrl : `${siteUrl}${path}`;
+}
 
 export type CreateMetadataOptions = {
   title: string;
@@ -18,14 +22,14 @@ export function createMetadata({
   keywords,
   indexable = true
 }: CreateMetadataOptions): Metadata {
-  const url = `${appUrl}${path}`;
+  const url = absoluteUrl(path);
   const normalizedDescription = description.replace(/CalculusSolver\.net/gi, "Calculus Solver");
   const pageTitle = title.toLowerCase().includes("calculus solver")
     ? { absolute: title }
     : title;
 
   return {
-    metadataBase: new URL(appUrl),
+    metadataBase: new URL(siteUrl),
     title: pageTitle,
     description: normalizedDescription,
     ...(keywords ? { keywords } : {}),
@@ -35,20 +39,27 @@ export function createMetadata({
       url,
       siteName: "Calculus Solver",
       type: "website",
-      images: [ogImage]
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `${title} - Calculus Solver` }]
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: normalizedDescription,
-      images: [ogImage]
+      images: [{ url: ogImage, alt: `${title} - Calculus Solver` }]
     },
     alternates: {
       canonical: path
     },
     robots: {
       index: indexable,
-      follow: true
+      follow: true,
+      googleBot: {
+        index: indexable,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1
+      }
     }
   };
 }
@@ -58,11 +69,33 @@ export function websiteStructuredData() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Calculus Solver",
-    url: appUrl,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${appUrl}/?q={search_term_string}`,
-      "query-input": "required name=search_term_string"
+    alternateName: "CalculusSolver.net",
+    url: siteUrl,
+    inLanguage: "en",
+    publisher: {
+      "@id": `${siteUrl}/#organization`
+    }
+  };
+}
+
+export function organizationStructuredData() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: "Calculus Solver",
+    url: siteUrl,
+    logo: {
+      "@type": "ImageObject",
+      url: `${siteUrl}/android-chrome-512x512.png`,
+      width: 512,
+      height: 512
+    },
+    description: "A free educational math platform for calculus, algebra, and step-by-step problem solving.",
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      url: `${siteUrl}/contact`
     }
   };
 }
@@ -72,7 +105,7 @@ export function softwareApplicationStructuredData() {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: "Calculus Solver",
-    url: appUrl,
+    url: siteUrl,
     description: "Solve derivatives, integrals, limits, equations, and other calculus problems with step-by-step explanations.",
     applicationCategory: "Education",
     applicationSubCategory: "EducationalApplication",
@@ -100,26 +133,12 @@ export function mathSolverStructuredData() {
     "@type": ["MathSolver", "LearningResource"],
     name: "Calculus Solver",
     description: "Solve calculus and algebra problems with step-by-step explanations.",
-    url: appUrl,
-    usageInfo: `${appUrl}/privacy`,
+    url: siteUrl,
     learningResourceType: "Math Solver",
     provider: {
       "@type": "Organization",
       name: "Calculus Solver",
-      url: appUrl
-    },
-    potentialAction: {
-      "@type": "SolveMathAction",
-      target: `${appUrl}/?q={math_expression_string}`,
-      "mathExpression-input": "required name=math_expression_string",
-      eduQuestionType: [
-        "Derivative",
-        "Integral",
-        "Limit",
-        "Equation",
-        "Simplify",
-        "Factor"
-      ]
+      url: siteUrl
     }
   };
 }
@@ -135,12 +154,12 @@ export function webPageStructuredData(item: {
     "@type": "WebPage",
     name: item.name,
     description: item.description,
-    url: `${appUrl}${item.path}`,
+    url: absoluteUrl(item.path),
     ...(item.updatedAt ? { dateModified: item.updatedAt } : {}),
     isPartOf: {
       "@type": "WebSite",
       name: "Calculus Solver",
-      url: appUrl
+      url: siteUrl
     },
     about: {
       "@type": "Thing",
@@ -161,7 +180,7 @@ export function calculatorApplicationStructuredData(item: {
     "@type": "WebApplication",
     name: item.name,
     description: item.description,
-    url: `${appUrl}${item.path}`,
+    url: absoluteUrl(item.path),
     applicationCategory: "EducationalApplication",
     applicationSubCategory: item.category,
     operatingSystem: "Any",
@@ -176,7 +195,7 @@ export function calculatorApplicationStructuredData(item: {
     provider: {
       "@type": "Organization",
       name: "Calculus Solver",
-      url: appUrl
+      url: siteUrl
     }
   };
 }
@@ -231,7 +250,7 @@ export function collectionPageStructuredData(
     "@type": "CollectionPage",
     name: collection.name,
     description: collection.description,
-    url: `${appUrl}${collection.path}`,
+    url: absoluteUrl(collection.path),
     mainEntity: {
       "@type": "ItemList",
       itemListElement: items.map((item, index) => ({
@@ -239,7 +258,7 @@ export function collectionPageStructuredData(
         position: index + 1,
         name: item.name,
         description: item.description,
-        url: `${appUrl}${item.path}`
+        url: absoluteUrl(item.path)
       }))
     }
   };
@@ -260,11 +279,11 @@ export function learningResourceStructuredData(item: {
     headline: item.title,
     name: item.title,
     description: item.description,
-    url: `${appUrl}${item.path}`,
+    url: absoluteUrl(item.path),
     dateModified: item.updatedAt,
-    author: { "@type": "Organization", name: "Calculus Solver", url: appUrl },
-    reviewedBy: { "@type": "Organization", name: "Calculus Solver editorial team", url: `${appUrl}/about` },
-    publisher: { "@type": "Organization", name: "Calculus Solver", url: appUrl },
+    author: { "@type": "Organization", name: "Calculus Solver", url: siteUrl },
+    reviewedBy: { "@type": "Organization", name: "Calculus Solver editorial team", url: `${siteUrl}/about` },
+    publisher: { "@type": "Organization", name: "Calculus Solver", url: siteUrl },
     learningResourceType: "Guide",
     educationalLevel: item.difficulty,
     about: item.category,
@@ -285,7 +304,7 @@ export function dailyChallengeStructuredData(item: {
     "@type": "LearningResource",
     name: item.name,
     description: item.description,
-    url: `${appUrl}${item.path}`,
+    url: absoluteUrl(item.path),
     dateModified: item.dateKey,
     learningResourceType: "Practice",
     educationalUse: "Practice",
@@ -297,7 +316,7 @@ export function dailyChallengeStructuredData(item: {
     provider: {
       "@type": "Organization",
       name: "Calculus Solver",
-      url: appUrl
+      url: siteUrl
     },
     isAccessibleForFree: true
   };
@@ -311,7 +330,7 @@ export function breadcrumbStructuredData(items: { name: string; path: string }[]
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${appUrl}${item.path}`
+      item: absoluteUrl(item.path)
     }))
   };
 }

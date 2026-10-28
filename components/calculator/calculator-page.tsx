@@ -48,23 +48,23 @@ export type CalculatorPageProps = {
 
 export function CalculatorPage({ title, description, path, mode, h1, subtitle, eyebrow, exampleLatex, howItWorks, faqs, relatedTools, heroRelatedTools = [], category = "Mathematics", updatedAt, educationalContent, qualityContent, learningLinks = [] }: CalculatorPageProps): React.JSX.Element {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]">
+    <div className="min-h-screen overflow-x-hidden bg-white text-[#0a234f]">
       <StructuredData data={webPageStructuredData({ name: h1, description, path, updatedAt })} />
       <StructuredData data={calculatorApplicationStructuredData({ name: title, description, path, category, features: howItWorks.map((item) => item.description) })} />
       <StructuredData data={breadcrumbStructuredData([{ name: "Home", path: "/" }, { name: "Calculators", path: "/calculators" }, { name: h1, path }])} />
       <StructuredData data={faqPageStructuredData(faqs)} />
       <CalculatorHeader />
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1160px] px-4 py-9 focus-visible:outline-none sm:px-6 sm:py-11 lg:px-8">
         <CalculatorHero h1={h1} subtitle={subtitle} eyebrow={eyebrow} relatedLinks={heroRelatedTools} />
         {path === "/derivative-calculator" || path === "/integral-calculator" || path === "/limit-calculator"
           ? <ScientificCalculusCalculator variant={path === "/derivative-calculator" ? "derivative" : path === "/integral-calculator" ? "integral" : "limit"} />
           : <ToolCalculatorWorkspace title={title} mode={mode} />}
         <div className="mt-6"><CalculatorBenefits /></div>
         <CalculatorHowTo title={title} steps={howItWorks} />
-        <CalculatorExample latex={exampleLatex} />
+        {!qualityContent && <CalculatorExample latex={exampleLatex} />}
         {qualityContent && <CalculatorDeepLearningContent title={title} content={qualityContent} />}
         {!qualityContent && <CalculatorTopicLinks links={learningLinks} />}
-        {educationalContent && <CalculatorLearningContent title={title} content={educationalContent} />}
+        {!qualityContent && educationalContent && <CalculatorLearningContent title={title} content={educationalContent} />}
         <CalculatorFaqs faqs={faqs} />
         <CalculatorRelatedTools tools={relatedTools} />
       </main>

@@ -1,8 +1,20 @@
 import { generalFaqs } from "@/data/faqs";
 import { StructuredData } from "@/components/seo/structured-data";
-import { faqPageStructuredData, howToStructuredData, mathSolverStructuredData, softwareApplicationStructuredData } from "@/lib/seo";
+import {
+  faqPageStructuredData,
+  howToStructuredData,
+  mathSolverStructuredData,
+  softwareApplicationStructuredData,
+  webPageStructuredData
+} from "@/lib/seo";
 
 const schemas = [
+  webPageStructuredData({
+    name: "Free Calculus Solver with Steps",
+    description: "Calculus Solver – Solve Your Problems Quickly.",
+    path: "/",
+    updatedAt: "2026-08-10"
+  }),
   mathSolverStructuredData(),
   softwareApplicationStructuredData(),
   faqPageStructuredData(generalFaqs),

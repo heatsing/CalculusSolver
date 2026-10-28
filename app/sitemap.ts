@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { calculatorPages } from "@/data/calculator-pages";
 import { guides } from "@/data/guides";
 import { exampleDetails } from "@/data/example-details";
-import { equivalentFractionSlug, fractionCandidates, percentDecimalSlug } from "@/data/fraction-pages";
+import { equivalentFractionSlug, indexableFractionCandidates, percentDecimalSlug } from "@/data/fraction-pages";
 
 const homepageLastModified = "2026-10-11";
 
@@ -36,8 +36,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8
   }));
 
-  // Only the frozen published inventory. New thin candidates are excluded while generation is stopped.
-  const fractionEntries: MetadataRoute.Sitemap = fractionCandidates.flatMap((candidate) => [
+  // The inventory is frozen upstream; only its A/B quality tier is submitted for indexing.
+  const fractionEntries: MetadataRoute.Sitemap = indexableFractionCandidates.flatMap((candidate) => [
     {
       url: `${baseUrl}/${percentDecimalSlug(candidate)}`,
       lastModified: new Date("2026-08-22"),

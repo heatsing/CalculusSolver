@@ -5,7 +5,14 @@ import sitemap from "@/app/sitemap";
 import { calculatorPages, getCalculatorPage, getCalculatorStaticParams } from "@/data/calculator-pages";
 import { exampleDetails, getExampleStaticParams } from "@/data/example-details";
 import { guides } from "@/data/guides";
-import { equivalentFractionSlug, fractionCandidates, getFractionStaticParams, percentDecimalSlug } from "@/data/fraction-pages";
+import {
+  equivalentFractionSlug,
+  fractionCandidates,
+  fractionIndexable,
+  getFractionStaticParams,
+  indexableFractionCandidates,
+  percentDecimalSlug
+} from "@/data/fraction-pages";
 import {
   breadcrumbStructuredData,
   calculatorApplicationStructuredData,
@@ -50,7 +57,9 @@ describe("programmatic SEO architecture", () => {
   });
 
   it("keeps sitemap and indexable route inventory aligned", () => {
-    const sitemapPaths = new Set(sitemap().map((entry) => new URL(entry.url).pathname));
+    const sitemapEntries = sitemap();
+    const sitemapPaths = new Set(sitemapEntries.map((entry) => new URL(entry.url).pathname));
+    expect(sitemapPaths.size).toBe(sitemapEntries.length);
     expect(new Set(getCalculatorStaticParams().map((item) => item.slug))).toEqual(new Set(calculatorPages.map((item) => item.slug)));
     expect(new Set(getExampleStaticParams().map((item) => item.slug))).toEqual(new Set(exampleDetails.map((item) => item.slug)));
     for (const calculator of calculatorPages.filter((item) => item.indexable)) {
@@ -66,16 +75,22 @@ describe("programmatic SEO architecture", () => {
     expect(sitemapPaths.has("/daily-challenge")).toBe(true);
     expect(sitemapPaths.has("/percent-and-decimal")).toBe(true);
     expect(sitemapPaths.has("/equivalent-fractions")).toBe(true);
-    expect(getFractionStaticParams()).toHaveLength(1500);
+    const fractionParams = getFractionStaticParams();
+    expect(fractionParams).toHaveLength(fractionCandidates.length * 2);
+    expect(new Set(fractionParams.map((item) => item.slug)).size).toBe(fractionParams.length);
+    expect(indexableFractionCandidates).toEqual(fractionCandidates.filter(fractionIndexable));
+    expect(indexableFractionCandidates.length).toBeGreaterThan(0);
+    expect(indexableFractionCandidates.length).toBeLessThan(fractionCandidates.length);
     const percentPaths = [...sitemapPaths].filter((pathname) => /^\d+-\d+-as-a-percent-and-decimal$/.test(pathname.slice(1)));
     const equivalentPaths = [...sitemapPaths].filter((pathname) => /^what-is-equivalent-to-\d+-\d+-fraction$/.test(pathname.slice(1)));
-    expect(percentPaths).toHaveLength(fractionCandidates.length);
-    expect(equivalentPaths).toHaveLength(fractionCandidates.length);
+    expect(percentPaths).toHaveLength(indexableFractionCandidates.length);
+    expect(equivalentPaths).toHaveLength(indexableFractionCandidates.length);
     expect(sitemapPaths.has("/99-97-as-a-percent-and-decimal")).toBe(false);
     expect(sitemapPaths.has("/what-is-equivalent-to-99-97-fraction")).toBe(false);
     for (const candidate of fractionCandidates) {
-      expect(sitemapPaths.has(`/${percentDecimalSlug(candidate)}`)).toBe(true);
-      expect(sitemapPaths.has(`/${equivalentFractionSlug(candidate)}`)).toBe(true);
+      const expectedInSitemap = fractionIndexable(candidate);
+      expect(sitemapPaths.has(`/${percentDecimalSlug(candidate)}`)).toBe(expectedInSitemap);
+      expect(sitemapPaths.has(`/${equivalentFractionSlug(candidate)}`)).toBe(expectedInSitemap);
     }
     const homeEntry = sitemap().find((entry) => new URL(entry.url).pathname === "/");
     expect(homeEntry?.lastModified && new Date(homeEntry.lastModified).toISOString().startsWith("2026-10-11")).toBe(true);
@@ -158,7 +173,9 @@ describe("programmatic SEO architecture", () => {
     for (const schema of schemas) {
       expect(() => JSON.parse(serializeJsonLd(schema))).not.toThrow();
     }
-    expect((schemas[0] as { potentialAction: { "mathExpression-input": string } }).potentialAction["mathExpression-input"]).toBe("required name=math_expression_string");
+    const mathSolver = schemas[0] as { "@type": string[]; provider: { url: string } };
+    expect(mathSolver["@type"]).toContain("MathSolver");
+    expect(mathSolver.provider.url).toBe("https://calculussolver.net");
   });
 
   it("contains no common encoding-corruption markers in generated content", () => {

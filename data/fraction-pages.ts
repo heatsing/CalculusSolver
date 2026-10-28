@@ -33,6 +33,17 @@ export function publishableFractionCandidates<T extends Pick<FractionCandidate, 
 
 export const fractionCandidates = publishableFractionCandidates(rawCandidates as FractionCandidate[]);
 
+/**
+ * A and B candidates have enough search demand and page-specific value to be
+ * indexed. C candidates remain part of the static route inventory so existing
+ * URLs keep working, but search engines should not index them.
+ */
+export function fractionIndexable(candidate: Pick<FractionCandidate, "priority">): boolean {
+  return candidate.priority !== "C";
+}
+
+export const indexableFractionCandidates = fractionCandidates.filter(fractionIndexable);
+
 export function percentDecimalSlug(item: Pick<FractionCandidate, "numerator" | "denominator">): string {
   return `${item.numerator}-${item.denominator}-as-a-percent-and-decimal`;
 }
@@ -56,10 +67,10 @@ export function getFractionStaticParams(): { slug: string }[] {
 }
 
 export function relatedFractionCandidates(candidate: FractionCandidate, count = 6): FractionCandidate[] {
-  const sameDenominator = fractionCandidates.filter((item) =>
+  const sameDenominator = indexableFractionCandidates.filter((item) =>
     item.denominator === candidate.denominator && item.numerator !== candidate.numerator
   );
-  const sameValueNeighborhood = fractionCandidates
+  const sameValueNeighborhood = indexableFractionCandidates
     .filter((item) => item !== candidate && item.denominator !== candidate.denominator)
     .sort((a, b) => Math.abs(a.decimal - candidate.decimal) - Math.abs(b.decimal - candidate.decimal));
   return [...sameDenominator, ...sameValueNeighborhood]

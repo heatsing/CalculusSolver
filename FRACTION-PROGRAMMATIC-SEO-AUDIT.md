@@ -2,7 +2,7 @@
 
 ## Generation status
 
-New thin percent and equivalent-fraction pages are written only when `data/fraction-page-generation.json` sets `generateNewThinPages` to true. While that flag is false, the generator keeps the frozen allowlist and does not add URLs. Existing child URLs stay in place; this freeze does not delete or noindex them.
+New thin percent and equivalent-fraction pages are written only when `data/fraction-page-generation.json` sets `generateNewThinPages` to true. While that flag is false, the generator keeps the frozen allowlist and does not add URLs. The freeze preserves the published URL set; the independent quality policy keeps A/B pages indexable and marks C pages `noindex, follow`.
 
 ## Existing state
 
@@ -17,6 +17,8 @@ Before this expansion, CalcSolver had focused fraction, percentage, and decimal 
 - Percent and Decimal pages: 750.
 - Total generated child pages: 1500.
 - Candidate grades: A=127, B=164, C=459.
+- Indexable child pages (A and B): 582.
+- Noindex, follow child pages (C): 918.
 
 ## Selection and exclusions
 
@@ -34,8 +36,8 @@ Pages adapt to proper, improper, unit, reducible, terminating-decimal, repeating
 
 ## Metadata, schema, sitemap, and linking
 
-Every child page receives a unique title, description, H1, canonical, WebPage schema, BreadcrumbList, and visible FAQ schema. Only approved inventory pages enter the sitemap. Each family links to its hub, its mathematical counterpart, and a small set of nearby relevant fractions.
+Every child page receives a unique title, description, H1, canonical, WebPage schema, BreadcrumbList, and visible FAQ schema. A- and B-grade pages are indexable and enter the sitemap. C-grade URLs remain generated and crawlable with “noindex, follow” metadata, but are excluded from the sitemap and hub indexes. Each family links to its hub, its mathematical counterpart, and a small set of indexable nearby fractions.
 
 ## Quality validation
 
-Automated tests validate uniqueness, denominator safety, simplification, decimal and percent correctness, equivalent-fraction equality, reciprocal family links, sitemap inclusion, and representative content-profile variation. The build-time SEO audit verifies generated HTML, metadata, canonicals, schema, internal links, encoding, and minimum server-rendered content.
+Automated tests validate uniqueness, denominator safety, simplification, decimal and percent correctness, equivalent-fraction equality, reciprocal family links, grade-based indexation, sitemap inclusion, and representative content-profile variation. The build-time SEO audit verifies generated HTML, metadata, canonicals, schema, internal links, encoding, and minimum server-rendered content.

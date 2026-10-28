@@ -5,8 +5,10 @@ import sitemap from "@/app/sitemap";
 import {
   equivalentFractionSlug,
   fractionCandidates,
+  fractionIndexable,
   GENERATE_NEW_THIN_FRACTION_PAGES,
   getFractionStaticParams,
+  indexableFractionCandidates,
   percentDecimalSlug,
   publishableFractionCandidates
 } from "@/data/fraction-pages";
@@ -54,7 +56,12 @@ describe("thin fraction page generation freeze", () => {
     const thinPaths = [...sitemapPaths].filter((pathname) =>
       /^\d+-\d+-as-a-percent-and-decimal$/.test(pathname.slice(1)) || /^what-is-equivalent-to-\d+-\d+-fraction$/.test(pathname.slice(1))
     );
-    expect(thinPaths).toHaveLength(publishedKeys.length * 2);
+    expect(thinPaths).toHaveLength(indexableFractionCandidates.length * 2);
+    for (const candidate of fractionCandidates) {
+      const expectedInSitemap = fractionIndexable(candidate);
+      expect(sitemapPaths.has(`/${percentDecimalSlug(candidate)}`)).toBe(expectedInSitemap);
+      expect(sitemapPaths.has(`/${equivalentFractionSlug(candidate)}`)).toBe(expectedInSitemap);
+    }
     expect(sitemapPaths.has(`/${percentDecimalSlug(unreleasedCandidate)}`)).toBe(false);
     expect(sitemapPaths.has(`/${equivalentFractionSlug(unreleasedCandidate)}`)).toBe(false);
   });

@@ -21,12 +21,14 @@ test.describe("Unified calculator pages", () => {
         await expect(page, `Incorrect title format on ${route}`).toHaveTitle(/^Calculus Solver – Free Online /);
         await expect(page.getByText("Free online calculator", { exact: true }), `Missing shared hero on ${route}`).toBeVisible();
       }
+      await expect(page.locator("#main-content").getByRole("heading", { level: 1 }), `Missing shared hero on ${route}`).toBeVisible();
+      await expect(page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Calculators" }), `Missing calculator breadcrumb on ${route}`).toBeVisible();
       await expect(page.getByText("Step-by-step solutions", { exact: true }), `Missing shared benefits on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: /How to Use the/ }), `Missing shared instructions on ${route}`).toBeVisible();
       await expect(page.getByRole("heading", { name: "Frequently Asked Questions" }), `Missing shared FAQ on ${route}`).toBeVisible();
-      const moreCalculators = page.getByRole("heading", { name: "More Calculators" }).locator("..");
+      const moreCalculators = page.getByRole("heading", { name: "More Calculators" }).locator("xpath=ancestor::section[1]");
       await expect(moreCalculators, `Missing related tools on ${route}`).toBeVisible();
-      const relatedCount = await moreCalculators.getByRole("link").count();
+      const relatedCount = await moreCalculators.locator('a[href^="/"]:not([href="/calculators"])').count();
       expect(relatedCount, `Expected a focused related-calculator set on ${route}`).toBeGreaterThanOrEqual(4);
       expect(relatedCount, `Too many non-contextual calculator links on ${route}`).toBeLessThanOrEqual(7);
       await expect(page.getByRole("contentinfo"), `Missing shared footer on ${route}`).toBeVisible();

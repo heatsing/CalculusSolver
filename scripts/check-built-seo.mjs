@@ -11,6 +11,8 @@ if (!fs.existsSync(sitemapPath)) {
 
 const sitemapXml = fs.readFileSync(sitemapPath, "utf8");
 const urls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+const fractionCandidates = JSON.parse(fs.readFileSync(path.resolve("data/fraction-page-candidates.json"), "utf8"));
+const indexableFractionCount = fractionCandidates.filter((candidate) => candidate.priority !== "C").length;
 const titles = new Map();
 const descriptions = new Map();
 const indexedContent = [];
@@ -115,6 +117,11 @@ const sitemapRoutes = new Set(urls.map((url) => new URL(url).pathname));
 const htmlFiles = collectHtml(appDir);
 const generatedRoutes = new Set(htmlFiles.map(routeForHtml));
 
+const generatedFractionCounts = {
+  "percent-decimal": [...generatedRoutes].filter((route) => /^\/\d+-\d+-as-a-percent-and-decimal$/.test(route)).length,
+  "equivalent-fractions": [...generatedRoutes].filter((route) => /^\/what-is-equivalent-to-\d+-\d+-fraction$/.test(route)).length
+};
+
 for (const filePath of htmlFiles) {
   const route = routeForHtml(filePath);
   if (route.startsWith("/_") || route === "/404" || route === "/500") continue;
@@ -140,7 +147,12 @@ for (let left = 0; left < standardContent.length; left += 1) {
 
 for (const family of ["percent-decimal", "equivalent-fractions"]) {
   const familyContent = indexedContent.filter((item) => item.fractionFamily === family);
-  if (familyContent.length !== 750) failures.push(`${family}: expected 750 generated pages, found ${familyContent.length}`);
+  if (generatedFractionCounts[family] !== fractionCandidates.length) {
+    failures.push(`${family}: expected ${fractionCandidates.length} generated pages, found ${generatedFractionCounts[family]}`);
+  }
+  if (familyContent.length !== indexableFractionCount) {
+    failures.push(`${family}: expected ${indexableFractionCount} indexable sitemap pages, found ${familyContent.length}`);
+  }
   const step = Math.max(1, Math.floor(familyContent.length / 100));
   const sample = familyContent.filter((_, index) => index % step === 0).slice(0, 100);
   if (sample.length < 100) failures.push(`${family}: quality sample contains only ${sample.length} pages`);

@@ -3,7 +3,7 @@
 import * as React from "react";
 import Head from "next/head";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://calculussolver.net";
 const ogImage = `${appUrl}/og-image.png`;
 const siteName = "Calculus Solver";
 

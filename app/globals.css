@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  --font-roboto: "Roboto Variable";
   --font-sans: var(--font-roboto), "Roboto", "Noto Sans Math", system-ui, sans-serif;
   --font-serif: var(--font-roboto), "Roboto", system-ui, sans-serif;
   --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, monospace;
@@ -47,10 +48,6 @@
   .technical-grid {
     background-image: linear-gradient(#e0e0e0 1px, transparent 1px), linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
     background-size: 32px 32px;
-  }
-  .calculus-home-main > section:not(:first-child) {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 520px;
   }
 }
 

@@ -4,9 +4,18 @@ import { ScientificCalculusCalculator } from "@/components/calculator/scientific
 import { CalculatorBenefits, CalculatorFaqs, CalculatorFooter, CalculatorHeader, CalculatorHero, CalculatorHowTo, CalculatorRelatedTools, calculatorSection } from "@/components/calculator/calculator-layout";
 import { StaticMath } from "@/components/math/static-math";
 import { StructuredData } from "@/components/seo/structured-data";
-import { createMetadata, faqPageStructuredData } from "@/lib/seo";
+import {
+  breadcrumbStructuredData,
+  calculatorApplicationStructuredData,
+  createMetadata,
+  faqPageStructuredData,
+  howToStructuredData,
+  webPageStructuredData
+} from "@/lib/seo";
 
-export const metadata = createMetadata({ title: "Calculus Solver – Free Online Calculus Calculator", description: "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.", path: "/calculus-calculator", keywords: ["calculus calculator", "online calculus calculator", "derivative calculator", "integral calculator", "limit calculator", "free math calculator"] });
+const description = "Free online calculus calculator with interactive buttons. Compute derivatives, integrals, limits, and expressions with step-by-step explanations and graphs.";
+
+export const metadata = createMetadata({ title: "Calculus Solver – Free Online Calculus Calculator", description, path: "/calculus-calculator", keywords: ["calculus calculator", "online calculus calculator", "derivative calculator", "integral calculator", "limit calculator", "free math calculator"] });
 
 const faqs = [
   { question: "Is this calculus calculator free to use?", answer: "Yes. It is completely free and does not require an account." },
@@ -25,7 +34,12 @@ const howItWorks = [
 export default function CalculusCalculatorPage(): React.JSX.Element {
   const productRule = String.raw`\frac{d}{dx}[u(x)v(x)]=u'(x)v(x)+u(x)v'(x)`;
   const operations = [[SquareFunction, "Derivatives", "Find derivatives using product, quotient, chain, and other rules.", "bg-blue-600"], [Waves, "Integrals", "Compute indefinite and definite integrals with guided solutions.", "bg-violet-600"], [Infinity, "Limits", "Evaluate limits at a point or infinity, one-sided or two-sided.", "bg-cyan-700"], [Sigma, "Series", "Work with sequences, series, sums, and convergence.", "bg-orange-500"]] as const;
-  return <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]"><StructuredData data={faqPageStructuredData(faqs)} /><CalculatorHeader />
+  return <div className="min-h-screen overflow-x-hidden bg-[#f6f9fe] text-[#0a234f]">
+    <StructuredData data={webPageStructuredData({ name: "Calculus Calculator", description, path: "/calculus-calculator", updatedAt: "2026-08-10" })} />
+    <StructuredData data={calculatorApplicationStructuredData({ name: "Calculus Calculator", description, path: "/calculus-calculator", category: "Calculus", features: ["Derivative calculations", "Indefinite and definite integrals", "Limits and series", "Step-by-step explanations", "Function graphing"] })} />
+    <StructuredData data={breadcrumbStructuredData([{ name: "Home", path: "/" }, { name: "Calculators", path: "/calculators" }, { name: "Calculus Calculator", path: "/calculus-calculator" }])} />
+    <StructuredData data={howToStructuredData({ name: "How to Use the Calculus Calculator", description: "Enter a calculus expression and review its answer and explanation.", steps: howItWorks.map((item) => ({ name: item.step, text: item.description })) })} />
+    <StructuredData data={faqPageStructuredData(faqs)} /><CalculatorHeader />
     <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1240px] px-4 py-10 focus-visible:outline-none sm:px-6 lg:px-8">
       <CalculatorHero h1="Calculus Calculator" subtitle="Solve derivatives, integrals, limits, and more with clear step-by-step explanations." />
       <ScientificCalculusCalculator variant="calculus" /><div className="mt-6"><CalculatorBenefits /></div>

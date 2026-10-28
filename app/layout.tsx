@@ -1,23 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Roboto } from "next/font/google";
+import "@fontsource-variable/roboto/wght.css";
 import "./globals.css";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
+  organizationStructuredData,
+  siteUrl,
   websiteStructuredData
 } from "@/lib/seo";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: "variable",
-  variable: "--font-roboto",
-  display: "swap"
-});
-
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Calculus Solver | Step-by-Step Math Problems",
     template: "%s | Calculus Solver"
@@ -36,20 +29,27 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Calculus Solver",
     description: "Step-by-step solutions for calculus and algebra problems.",
-    url: appUrl,
+    url: siteUrl,
     siteName: "Calculus Solver",
     type: "website",
-    images: [`${appUrl}/og-image.png`]
+    images: [{ url: `${siteUrl}/og-image.png`, width: 1200, height: 630, alt: "Calculus Solver" }]
   },
   twitter: {
     card: "summary_large_image",
     title: "Calculus Solver",
     description: "Step-by-step solutions for calculus and algebra problems.",
-    images: [`${appUrl}/og-image.png`]
+    images: [{ url: `${siteUrl}/og-image.png`, alt: "Calculus Solver" }]
   },
   robots: {
     index: true,
-    follow: true
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
   },
   icons: {
     icon: "/favicon.ico",
@@ -86,14 +86,14 @@ export default function RootLayout({
   children
 }: Readonly<{ children: React.ReactNode }>): React.JSX.Element {
   return (
-    <html lang="en" className={roboto.variable}>
+    <html lang="en">
       <head>
-        <StructuredData data={websiteStructuredData()} />
+        <StructuredData data={[websiteStructuredData(), organizationStructuredData()]} />
         <Script
           defer
           src="https://cloud.umami.is/script.js"
           data-website-id="1932d792-2720-4ed8-bb65-b1c7e98517f3"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </head>
       <body className="min-h-screen bg-background font-sans text-heading antialiased">

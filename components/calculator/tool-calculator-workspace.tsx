@@ -93,10 +93,10 @@ export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: 
 
   return (
     <section aria-label={`${title} interactive calculator`}>
-      <form onSubmit={(event) => { event.preventDefault(); void calculate(); }} aria-busy={state.status === "loading"} className="mx-auto max-w-[780px] rounded-[30px] border-4 border-[#182d3f] bg-[linear-gradient(145deg,#173149,#0b1d2c)] p-3 shadow-[0_24px_65px_rgba(14,35,58,.28),inset_0_1px_0_rgba(255,255,255,.16)] sm:p-5">
+      <form onSubmit={(event) => { event.preventDefault(); void calculate(); }} aria-busy={state.status === "loading"} className="mx-auto max-w-[780px] rounded-[24px] border-2 border-[#182d3f] bg-[linear-gradient(145deg,#173149,#0b1d2c)] p-3 shadow-[0_18px_45px_rgba(14,35,58,.22),inset_0_1px_0_rgba(255,255,255,.14)] sm:p-5">
         <div className="mb-3 flex items-center justify-between gap-3 px-1 text-white">
-          <div><p className="text-xs font-bold uppercase tracking-[.18em] text-blue-200">{profile.label} mode</p><p className="mt-1 text-sm font-semibold text-white/90">Exact answer · Step-by-step</p></div>
-          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-bold text-blue-100">ONLINE</span>
+          <div><p className="text-sm font-semibold text-white">{profile.label} calculator</p><p className="mt-0.5 text-xs text-blue-200">Type an expression or use the keypad</p></div>
+          <span className="hidden text-xs text-blue-200 sm:inline">Enter to calculate</span>
         </div>
 
         <div className="rounded-2xl border border-[#8ba0a0] bg-[linear-gradient(145deg,#e7eeea,#cfdcd7)] p-4 shadow-[inset_0_2px_5px_rgba(24,45,63,.22)] sm:p-5">
@@ -115,7 +115,7 @@ export function ToolCalculatorWorkspace({ title, mode }: { title: string; mode: 
         </div>
       </form>
 
-      <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center justify-center gap-2">{profile.examples.map((example) => <button key={example} type="button" onClick={() => { setInput(example); reset(); requestAnimationFrame(() => inputRef.current?.focus()); }} className="rounded-full border border-[#c5d8ef] bg-white px-4 py-2 font-mono text-xs font-semibold text-[#314567] shadow-sm hover:border-[#0967ed] hover:text-[#0967ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed]">{example}</button>)}<button type="button" onClick={() => { setInput(profile.initial); reset(); }} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#c5d8ef] bg-white px-4 text-xs font-semibold text-[#637392] hover:border-[#0967ed] hover:text-[#0967ed]"><RotateCcw className="h-3.5 w-3.5" />Reset</button></div>
+      <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center justify-center gap-2">{profile.examples.map((example) => <button key={example} type="button" onClick={() => { setInput(example); reset(); requestAnimationFrame(() => inputRef.current?.focus()); }} className="rounded-full border border-[#c5d8ef] bg-white px-4 py-2 font-mono text-xs font-semibold text-[#314567] hover:border-[#0967ed] hover:text-[#0967ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0967ed]">{example}</button>)}<button type="button" onClick={() => { setInput(profile.initial); reset(); }} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#c5d8ef] bg-white px-4 text-xs font-semibold text-[#637392] hover:border-[#0967ed] hover:text-[#0967ed]"><RotateCcw className="h-3.5 w-3.5" />Reset</button></div>
 
       {state.status === "error" && <div className="mx-auto mt-5 max-w-[780px] rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert"><strong>Could not calculate this problem.</strong><p className="mt-2">{state.message}</p></div>}
       {state.status === "success" && <div className="mx-auto mt-6 max-w-[980px] rounded-2xl border border-[#dbe6f6] bg-[#fbfdff] p-5 shadow-sm sm:p-6"><div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[#0a234f]">Step-by-step solution</h2><span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"><Check className="h-3.5 w-3.5" />Solved</span></div><ToolCalculatorResult result={state.result} /></div>}

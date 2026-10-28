@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://calculussolver.net";
 const ogImage = `${appUrl}/og-image.png`;
 const siteName = "Calculus Solver";
 

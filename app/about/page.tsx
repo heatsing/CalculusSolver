@@ -1,11 +1,17 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { createMetadata } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/structured-data";
+import { breadcrumbStructuredData, createMetadata, webPageStructuredData } from "@/lib/seo";
 
-export const metadata = createMetadata({ title: "About Calculus Solver", description: "Learn how Calculus Solver combines symbolic mathematics and optional AI explanations to support math learning.", path: "/about" });
+const description = "Learn how Calculus Solver combines symbolic mathematics, result verification, editorial review, and optional AI explanations to support math learning.";
+
+export const metadata = createMetadata({ title: "About Calculus Solver", description, path: "/about" });
 
 export default function AboutPage(): React.JSX.Element {
-  return <><Header /><main id="main-content" tabIndex={-1} className="mx-auto max-w-[1000px] px-4 py-12 sm:px-6 lg:px-8"><p className="text-sm font-semibold text-primary">About</p><h1 className="mt-2 text-4xl font-bold text-heading sm:text-5xl">Math answers you can inspect</h1><p className="mt-5 max-w-3xl text-lg leading-8 text-body">Calculus Solver is a free educational workspace focused on calculus and the algebra needed to learn it. The product is designed to expose the method behind an answer, not to replace mathematical judgment.</p><div className="mt-10 space-y-8 text-base leading-8 text-body">
+  return <>
+    <StructuredData data={webPageStructuredData({ name: "About Calculus Solver", description, path: "/about", updatedAt: "2026-08-10" })} />
+    <StructuredData data={breadcrumbStructuredData([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])} />
+    <Header /><main id="main-content" tabIndex={-1} className="mx-auto max-w-[1000px] px-4 py-12 sm:px-6 lg:px-8"><p className="text-sm font-semibold text-primary">About</p><h1 className="mt-2 text-4xl font-bold text-heading sm:text-5xl">Math answers you can inspect</h1><p className="mt-5 max-w-3xl text-lg leading-8 text-body">Calculus Solver is a free educational workspace focused on calculus and the algebra needed to learn it. The product is designed to expose the method behind an answer, not to replace mathematical judgment.</p><div className="mt-10 space-y-8 text-base leading-8 text-body">
     <section><h2 className="text-2xl font-semibold text-heading">What we are building</h2><p className="mt-3">The main solver recognizes derivatives, integrals, limits, equations, and common function notation. Focused calculators provide topic-specific input formats, while guides and worked examples connect the result to the rule being used.</p></section>
     <section><h2 className="text-2xl font-semibold text-heading">How answers are produced</h2><p className="mt-3">Supported expressions are parsed and computed with symbolic or numerical math engines. Deterministic checks run separately where possible: equation candidates can be substituted into the original equation, derivatives can be compared symbolically or numerically, and calculator inputs are validated before a result is presented.</p><p className="mt-3">When an AI explanation provider is configured, it may turn a computed result into clearer teaching language. AI text does not replace the underlying calculation or verification status, and the interface distinguishes a verified result from an explanation.</p></section>
     <section><h2 className="text-2xl font-semibold text-heading">Editorial and example policy</h2><p className="mt-3">Guides and worked examples are maintained by the Calculus Solver editorial team. Examples state the method, show ordered transformations, separate the final answer, and include a common mistake when it helps learning. We do not publish invented author credentials or imply that automated output is a formal proof.</p><p className="mt-3">Pages are updated when their mathematical explanation, supported input, or tool behavior changes. Cosmetic build activity alone is not treated as a content review.</p></section>
